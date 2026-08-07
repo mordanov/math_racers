@@ -1,0 +1,170 @@
+# ─── Python ───────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+wheels/
+share/python-wheels/
+MANIFEST
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+.env.local
+.env.*.local
+
+# pytest
+.pytest_cache/
+.cache/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# ruff / flake8
+.ruff_cache/
+
+# ─── Alembic ──────────────────────────────────────────────────────────────────
+# Keep versions/ tracked; ignore local override files
+alembic/versions/*.pyc
+
+# ─── FastAPI / Uvicorn ────────────────────────────────────────────────────────
+*.log
+
+# ─── Node / Frontend (React + Vite + TypeScript) ──────────────────────────────
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Vite
+.vite/
+vite.config.ts.timestamp-*
+
+# TypeScript
+*.tsbuildinfo
+
+# npm / yarn / pnpm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+.yarn/
+.pnp.*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# ─── Environment & Secrets ────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+secrets/
+
+# ─── Docker ───────────────────────────────────────────────────────────────────
+# Keep docker-compose.yml and Dockerfiles tracked
+.docker/
+
+# ─── Database ─────────────────────────────────────────────────────────────────
+*.sqlite3
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+pgdata/
+postgres-data/
+redis-data/
+
+# ─── Object Storage (local dev) ───────────────────────────────────────────────
+media/
+uploads/
+.minio/
+
+# ─── Generated Assets ─────────────────────────────────────────────────────────
+# AI-generated images should be stored in object storage, not git
+generated/
+assets/generated/
+*.png
+*.jpg
+*.jpeg
+*.webp
+!docs/**/*.png
+!docs/**/*.jpg
+!public/**/*.png
+!public/**/*.jpg
+!public/**/*.svg
+!src/**/*.svg
+
+# ─── macOS ────────────────────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.AppleDouble
+.LSOverride
+Icon?
+.DocumentRevisions-V100
+.fseventsd
+.TemporaryItems
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# ─── PyCharm / JetBrains IDE ──────────────────────────────────────────────────
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.idea_modules/
+atlassian-ide-plugin.xml
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+fabric.properties
+
+# ─── VS Code (secondary IDE support) ─────────────────────────────────────────
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json.example
+
+# ─── OS / Editor misc ─────────────────────────────────────────────────────────
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# ─── CI / Deployment ──────────────────────────────────────────────────────────
+.terraform/
+*.tfstate
+*.tfstate.backup
+.netlify/
+.vercel/
