@@ -4,7 +4,7 @@
 **Status:** Authoritative
 **Source:** GDD Chapter 12; speckit_constitution.md
 **Parent:** [Epic E6 — Engineering](../prd.md)
-**See also:** [../adr/](../../documentation/ADR/)
+**See also:** [../adr/](../../initial_spec/ADR/)
 
 ---
 
