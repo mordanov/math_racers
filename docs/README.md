@@ -37,8 +37,11 @@ Specifications
 | [feature-race-engine.md](gameplay/feature-race-engine.md) | Race mechanics, movement model, state machine |
 | [spec-race-engine.md](gameplay/spec-race-engine.md) | Implementation spec, edge cases, verification steps |
 | [feature-math-engine.md](gameplay/feature-math-engine.md) | Problem generation, difficulty tiers, adaptive difficulty |
+| [spec-math-engine.md](gameplay/spec-math-engine.md) | Math engine implementation spec — data models, generation algorithm, validation |
 | [feature-ai-opponents.md](gameplay/feature-ai-opponents.md) | AI personalities and behaviour simulation |
+| [spec-ai-opponents.md](gameplay/spec-ai-opponents.md) | AI opponent implementation spec — personality parameters, simulation algorithm |
 | [feature-game-modes.md](gameplay/feature-game-modes.md) | Quick Race, Championship, Training, Duel |
+| [spec-game-modes.md](gameplay/spec-game-modes.md) | Game modes implementation spec — session models, lifecycles, API endpoints |
 
 ### Economy (`economy/`)
 
@@ -46,9 +49,12 @@ Specifications
 |----------|-------|
 | [epic.md](economy/epic.md) | Epic E3 overview |
 | [feature-xp-progression.md](economy/feature-xp-progression.md) | XP awards, level curve, cosmetic rewards |
+| [spec-xp-progression.md](economy/spec-xp-progression.md) | XP & progression implementation spec — data models, formula, workflow |
 | [feature-adaptive-difficulty.md](economy/feature-adaptive-difficulty.md) | Skill score formula, adjustment rules |
 | [feature-achievements.md](economy/feature-achievements.md) | Achievement categories, presentation, persistence |
+| [spec-achievements.md](economy/spec-achievements.md) | Achievements implementation spec — trigger table, evaluation, presentation flow |
 | [feature-statistics.md](economy/feature-statistics.md) | Player, avatar, and session statistics |
+| [spec-statistics.md](economy/spec-statistics.md) | Statistics implementation spec — data models, aggregation, weekly summary |
 
 ### Content / Avatar System (`content/`)
 
@@ -88,6 +94,7 @@ Specifications
 | Document | Description |
 |----------|-------------|
 | [screens.md](ui/screens.md) | All screens, key components, navigation flow, accessibility |
+| [spec-ui-implementation.md](ui/spec-ui-implementation.md) | UI implementation spec — page inventory, component hierarchy, API client, offline rules |
 
 ### Engineering (`engineering/`)
 
@@ -96,6 +103,8 @@ Specifications
 | [technical-requirements.md](engineering/technical-requirements.md) | Stack, architecture, performance targets, security, testing |
 | [audio-design.md](engineering/audio-design.md) | Audio layers, music progression, sounds, accessibility |
 | [roadmap.md](engineering/roadmap.md) | Version roadmap, content calendar, what not to build |
+| [spec-backend-foundation.md](engineering/spec-backend-foundation.md) | Backend foundation spec — module layout, auth flow, error handling, job lifecycle |
+| [spec-infrastructure.md](engineering/spec-infrastructure.md) | Infrastructure spec — Docker Compose services, build phases, CI/CD, release criteria |
 
 ---
 
@@ -105,17 +114,17 @@ The original monolithic documents remain authoritative and unchanged:
 
 | Document | Role |
 |----------|------|
-| `documentation/gdd.md` | Complete Game Design Document (14 chapters) |
-| `documentation/game_economy_specification.md` | Economy & progression formulas |
-| `documentation/art_bible.md` | Visual language (4 parts) |
-| `documentation/prompt_bible.md` | All prompts (3 parts) |
-| `documentation/speckit_constitution.md` | Engineering principles & Definition of Done |
-| `documentation/speckit_specification.md` | Build phases & implementation strategy |
-| `documentation/ADR/ADR-001.md` | Foundation Architecture |
-| `documentation/ADR/ADR-002.md` | Backend Architecture |
-| `documentation/ADR/ADR-003.md` | AI Architecture |
-| `documentation/ADR/ADR-004.md` | Frontend Architecture |
-| `documentation/ADR/ADR-005.md` | Infrastructure Architecture |
+| `initial_spec/gdd.md` | Complete Game Design Document (14 chapters) |
+| `initial_spec/game_economy_specification.md` | Economy & progression formulas |
+| `initial_spec/art_bible.md` | Visual language (4 parts) |
+| `initial_spec/prompt_bible.md` | All prompts (3 parts) |
+| `initial_spec/speckit_constitution.md` | Engineering principles & Definition of Done |
+| `initial_spec/speckit_specification.md` | Build phases & implementation strategy (superseded by `docs/` specs) |
+| `initial_spec/ADR/ADR-001.md` | Foundation Architecture |
+| `initial_spec/ADR/ADR-002.md` | Backend Architecture |
+| `initial_spec/ADR/ADR-003.md` | AI Architecture |
+| `initial_spec/ADR/ADR-004.md` | Frontend Architecture |
+| `initial_spec/ADR/ADR-005.md` | Infrastructure Architecture |
 
 The `docs/` files are derived summaries and structured extracts. In any conflict, the source documents take precedence (per the Constitution's document hierarchy).
 

@@ -1,3 +1,16 @@
+> **Superseded.** This document has been split into feature-aligned specification files located in `docs/`. The source-of-truth for implementation specs is now:
+>
+> - `docs/gameplay/spec-*.md` — E1 Gameplay (race engine, math engine, AI opponents, game modes)
+> - `docs/content/spec-avatar-generation.md` — E2 Avatar System
+> - `docs/economy/spec-*.md` — E3 Progression (XP, achievements, statistics)
+> - `docs/ai/asset-pipeline.md` — E4 Content Pipeline
+> - `docs/ui/spec-ui-implementation.md` — E5 UI/UX
+> - `docs/engineering/spec-backend-foundation.md`, `spec-infrastructure.md` — E6 Engineering
+>
+> This file remains as a historical reference for the original build phases and workflow principles. Do not update it.
+
+---
+
 # Math Racers — Specification
 
 Version: 1.0

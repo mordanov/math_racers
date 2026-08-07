@@ -37,6 +37,26 @@ If a contradiction is discovered, implementation must follow the higher-priority
 
 No implementation may redefine architectural or gameplay decisions already documented.
 
+### Structured Documentation Hierarchy
+
+The `docs/` directory contains the derived, structured documentation hierarchy extracted from the source documents above.
+
+Its organisation follows the Spec Kit hierarchy:
+
+```
+Vision (docs/vision.md)
+       ↓
+Product Requirements Document (docs/prd.md)
+       ↓
+Epics (docs/*/epic.md)
+       ↓
+Features (docs/*/feature-*.md)
+       ↓
+Specifications (docs/*/spec-*.md)
+```
+
+Feature and specification documents in `docs/` are the implementation reference for each epic. In any conflict between a `docs/` file and a source document in the priority list above, the source document takes precedence.
+
 ---
 
 # 3. Project Vision
@@ -82,7 +102,7 @@ Implementation follows documentation.
 
 Documentation does not follow implementation.
 
-Before implementing any feature, the implementation must identify the relevant documentation.
+Before implementing any feature, the implementation must identify the relevant documentation. Feature and specification documents are located in `docs/`, organised by epic.
 
 If documentation is incomplete, the implementation should request documentation updates rather than invent behaviour.
 
@@ -315,6 +335,8 @@ Documentation is part of the implementation.
 Whenever public behaviour changes, relevant documentation should be updated.
 
 Documentation should remain concise, accurate and synchronised with the codebase.
+
+When a feature specification in `docs/` is affected by a change, that file must be updated as part of the same implementation task.
 
 Duplicating information across multiple documents should be avoided.
 
