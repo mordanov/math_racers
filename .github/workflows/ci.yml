@@ -55,7 +55,7 @@ jobs:
 
       - name: Format check (Prettier)
         working-directory: frontend
-        run: pnpm prettier --check "src/**/*"
+        run: pnpm prettier --check "src/**/*.{ts,tsx,css,json}" --ignore-unknown
 
       # ── 3. Lint ──────────────────────────────────────────────────────────────
       - name: Lint (Ruff)
