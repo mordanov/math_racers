@@ -38,7 +38,12 @@ async def run_worker() -> None:
     setup_logging(service="worker", level=cfg.LOG_LEVEL)
 
     import redis.asyncio as aioredis
-    client = aioredis.from_url(cfg.REDIS_URL)
+    from redis.exceptions import TimeoutError as RedisTimeoutError
+
+    # socket_timeout must exceed the blpop timeout so the client doesn't
+    # raise before blpop's own timeout returns None on an empty queue.
+    BLPOP_TIMEOUT = 5
+    client = aioredis.from_url(cfg.REDIS_URL, socket_timeout=BLPOP_TIMEOUT + 2)
 
     signal.signal(signal.SIGTERM, _handle_signal)
     signal.signal(signal.SIGINT, _handle_signal)
@@ -47,12 +52,15 @@ async def run_worker() -> None:
 
     while not SHUTDOWN:
         try:
-            item = await client.blpop(QUEUE_KEY, timeout=5)
+            item = await client.blpop(QUEUE_KEY, timeout=BLPOP_TIMEOUT)
             if item is None:
                 continue
             _, raw = item
             job = json.loads(raw)
             await process_job(job)
+        except RedisTimeoutError:
+            # Empty queue — normal; loop back and wait again
+            continue
         except Exception as exc:
             logger.error("Worker error", extra={"context": {"error": str(exc)}})
             await asyncio.sleep(1)

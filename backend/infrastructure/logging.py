@@ -63,6 +63,9 @@ def setup_logging(service: str = "backend", level: str = "INFO") -> None:
 
     # Suppress noisy third-party loggers
     logging.getLogger("uvicorn.access").propagate = False
+    logging.getLogger("httpx").setLevel(logging.WARNING)
+    logging.getLogger("httpcore").setLevel(logging.WARNING)
+    logging.getLogger("redis").setLevel(logging.WARNING)
 
 
 def get_logger(name: str) -> logging.Logger:
