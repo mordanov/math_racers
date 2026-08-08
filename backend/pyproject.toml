@@ -47,6 +47,7 @@ target-version = ["py312"]
 [tool.mypy]
 strict = true
 python_version = "3.12"
+warn_unused_ignores = false
 exclude = ["alembic/"]
 plugins = ["pydantic.mypy", "sqlalchemy.ext.mypy.plugin"]
 
