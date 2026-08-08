@@ -1,5 +1,4 @@
-import logging
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from infrastructure.logging import get_logger
 
@@ -16,15 +15,15 @@ async def recover_pending_jobs() -> None:
     are re-submitted to the Redis queue.
     """
     try:
-        from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+        import redis.asyncio as aioredis
         from sqlalchemy import text
+        from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
         from infrastructure.config import get_config
-        import redis.asyncio as aioredis
 
         cfg = get_config()
         engine = create_async_engine(cfg.DATABASE_URL.get_secret_value())
-        cutoff = datetime.now(timezone.utc) - timedelta(minutes=PENDING_JOB_AGE_MINUTES)
+        cutoff = datetime.now(UTC) - timedelta(minutes=PENDING_JOB_AGE_MINUTES)
 
         async with AsyncSession(engine) as session:
             result = await session.execute(
@@ -41,7 +40,7 @@ async def recover_pending_jobs() -> None:
             await engine.dispose()
             return
 
-        client = aioredis.from_url(cfg.REDIS_URL)
+        client = aioredis.from_url(cfg.REDIS_URL)  # type: ignore[no-untyped-call]
         import json as _json
 
         requeued = 0

@@ -9,12 +9,13 @@ import sys
 
 
 async def check() -> None:
-    from infrastructure.config import get_config
     import redis.asyncio as aioredis
+
+    from infrastructure.config import get_config
 
     cfg = get_config()
     try:
-        client = aioredis.from_url(cfg.REDIS_URL)
+        client = aioredis.from_url(cfg.REDIS_URL)  # type: ignore[no-untyped-call]
         await client.ping()
         await client.aclose()
         sys.exit(0)

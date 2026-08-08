@@ -6,7 +6,7 @@ from pydantic import SecretStr, ValidationError
 
 @pytest.mark.unit
 class TestConfigValidation:
-    def _make_valid_env(self) -> dict:
+    def _make_valid_env(self) -> dict[str, str]:
         return {
             "DATABASE_URL": "postgresql+asyncpg://user:pass@localhost:5432/db",
             "REDIS_URL": "redis://localhost:6379/0",
@@ -22,7 +22,7 @@ class TestConfigValidation:
         from infrastructure.config import Config
 
         env = self._make_valid_env()
-        cfg = Config(**env)  # type: ignore[call-arg]
+        cfg = Config.model_validate(env)
         assert cfg.ENVIRONMENT.value == "development"
 
     def test_invalid_database_url_raises(self) -> None:
@@ -31,7 +31,7 @@ class TestConfigValidation:
         env = self._make_valid_env()
         env["DATABASE_URL"] = "mysql://user:pass@localhost/db"
         with pytest.raises(ValidationError, match="DATABASE_URL must be a PostgreSQL DSN"):
-            Config(**env)  # type: ignore[call-arg]
+            Config.model_validate(env)
 
     def test_invalid_environment_raises(self) -> None:
         from infrastructure.config import Config
@@ -39,7 +39,7 @@ class TestConfigValidation:
         env = self._make_valid_env()
         env["ENVIRONMENT"] = "unknown"
         with pytest.raises(ValidationError):
-            Config(**env)  # type: ignore[call-arg]
+            Config.model_validate(env)
 
     def test_invalid_log_level_raises(self) -> None:
         from infrastructure.config import Config
@@ -47,13 +47,13 @@ class TestConfigValidation:
         env = self._make_valid_env()
         env["LOG_LEVEL"] = "TRACE"
         with pytest.raises(ValidationError, match="LOG_LEVEL"):
-            Config(**env)  # type: ignore[call-arg]
+            Config.model_validate(env)
 
     def test_secret_str_fields_not_exposed_in_repr(self) -> None:
         from infrastructure.config import Config
 
         env = self._make_valid_env()
-        cfg = Config(**env)  # type: ignore[call-arg]
+        cfg = Config.model_validate(env)
         cfg_repr = repr(cfg)
         # SecretStr repr is "**********" — raw values must not appear
         assert "pass" not in cfg_repr
@@ -64,7 +64,7 @@ class TestConfigValidation:
         from infrastructure.config import Config
 
         env = self._make_valid_env()
-        cfg = Config(**env)  # type: ignore[call-arg]
+        cfg = Config.model_validate(env)
         dumped = cfg.model_dump()
         # SecretStr appears as SecretStr object in dump, not raw string
         assert isinstance(dumped["JWT_SECRET"], SecretStr)

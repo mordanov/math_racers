@@ -10,7 +10,6 @@ import time
 import httpx
 import pytest
 
-
 HEALTH_URL = os.getenv("HEALTH_URL", "http://localhost/health")
 
 

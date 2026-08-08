@@ -1,9 +1,10 @@
-from enum import Enum
+from enum import StrEnum
+
 from pydantic import SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class Environment(str, Enum):
+class Environment(StrEnum):
     development = "development"
     staging = "staging"
     production = "production"
@@ -69,5 +70,5 @@ _config: Config | None = None
 def get_config() -> Config:
     global _config
     if _config is None:
-        _config = Config()  # type: ignore[call-arg]
+        _config = Config()
     return _config

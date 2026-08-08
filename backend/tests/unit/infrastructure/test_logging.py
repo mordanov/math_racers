@@ -2,6 +2,7 @@
 
 import json
 import logging
+
 import pytest
 
 from infrastructure.logging import StructuredFormatter, _redact, request_id_var
@@ -44,7 +45,9 @@ class TestRedaction:
 
 @pytest.mark.unit
 class TestStructuredFormatter:
-    def _make_record(self, message: str, context: dict | None = None) -> logging.LogRecord:
+    def _make_record(
+        self, message: str, context: dict[str, object] | None = None
+    ) -> logging.LogRecord:
         record = logging.LogRecord(
             name="test",
             level=logging.INFO,
@@ -55,7 +58,7 @@ class TestStructuredFormatter:
             exc_info=None,
         )
         if context is not None:
-            record.context = context  # type: ignore[attr-defined]
+            record.context = context
         return record
 
     def test_emits_all_required_fields(self) -> None:

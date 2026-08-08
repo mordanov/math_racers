@@ -4,10 +4,10 @@ import sys
 
 from fastapi import FastAPI
 
+from app.presentation.api.middleware.correlation_id import CorrelationIdMiddleware
+from app.presentation.api.v1.health import router as health_router
 from infrastructure.config import get_config
 from infrastructure.logging import setup_logging
-from app.presentation.api.v1.health import router as health_router
-from app.presentation.api.middleware.correlation_id import CorrelationIdMiddleware
 
 logger = logging.getLogger(__name__)
 
@@ -56,6 +56,7 @@ def create_app() -> FastAPI:
     async def startup() -> None:
         _run_migrations()
         from infrastructure.queue.recovery import recover_pending_jobs
+
         await recover_pending_jobs()
 
     return app

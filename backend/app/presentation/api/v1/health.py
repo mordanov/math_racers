@@ -1,13 +1,14 @@
 import asyncio
 import logging
 import time
+from typing import Any
 
 import httpx
 import redis.asyncio as aioredis
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
-from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 
 from infrastructure.config import get_config
 
@@ -15,12 +16,12 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 # Module-level singletons so health checks don't pay engine/client startup cost per request.
-_db_engine = None
-_redis_client = None
-_http_client = None
+_db_engine: AsyncEngine | None = None
+_redis_client: Any = None
+_http_client: httpx.AsyncClient | None = None
 
 
-def _get_db_engine():
+def _get_db_engine() -> AsyncEngine:
     global _db_engine
     if _db_engine is None:
         cfg = get_config()
@@ -32,15 +33,15 @@ def _get_db_engine():
     return _db_engine
 
 
-def _get_redis_client():
+def _get_redis_client() -> Any:
     global _redis_client
     if _redis_client is None:
         cfg = get_config()
-        _redis_client = aioredis.from_url(cfg.REDIS_URL, socket_timeout=2)
+        _redis_client = aioredis.from_url(cfg.REDIS_URL, socket_timeout=2)  # type: ignore[no-untyped-call]
     return _redis_client
 
 
-def _get_http_client():
+def _get_http_client() -> httpx.AsyncClient:
     global _http_client
     if _http_client is None:
         _http_client = httpx.AsyncClient(
@@ -80,7 +81,7 @@ async def _check_storage() -> str:
             timeout=0.8,
         )
         return "ok" if resp.status_code < 500 else "unavailable"
-    except asyncio.TimeoutError:
+    except TimeoutError:
         logger.warning("Storage health check timed out")
         return "unavailable"
     except Exception:
