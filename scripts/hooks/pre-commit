@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Pre-commit hook: scan staged changes for accidental secret patterns.
+# Install with: make hooks
+
+set -euo pipefail
+
+STAGED=$(git diff --cached --name-only 2>/dev/null || true)
+
+if [ -z "$STAGED" ]; then
+    exit 0
+fi
+
+DIFF=$(git diff --cached 2>/dev/null || true)
+
+# Patterns that indicate real secret values (not placeholder names)
+SECRET_PATTERNS=(
+    'sk-[a-zA-Z0-9]{32,}'               # OpenAI API key
+    'postgres://[^:]+:[^@]+@'            # PostgreSQL DSN with password
+    'redis://:.*@'                        # Redis URL with password
+    'ghp_[a-zA-Z0-9]{36}'               # GitHub personal access token
+    'AKIA[0-9A-Z]{16}'                  # AWS access key
+    'eyJ[a-zA-Z0-9_-]{20,}\.eyJ'        # JWT token (encoded)
+)
+
+found=0
+for pattern in "${SECRET_PATTERNS[@]}"; do
+    if echo "$DIFF" | grep -qE "\\+.*${pattern}"; then
+        echo "ERROR: Possible secret matching pattern '$pattern' found in staged changes"
+        found=1
+    fi
+done
+
+if [ "$found" -eq 1 ]; then
+    echo ""
+    echo "Commit blocked. Review staged changes and remove any secret values."
+    echo "Use environment variables or .env (git-ignored) instead."
+    exit 1
+fi
+
+exit 0

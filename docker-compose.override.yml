@@ -1,0 +1,13 @@
+services:
+  backend:
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app:cached
+    environment:
+      ENVIRONMENT: development
+      LOG_LEVEL: DEBUG
+
+  postgres:
+    ports:
+      - "5432:5432"

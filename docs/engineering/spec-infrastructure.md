@@ -206,6 +206,11 @@ A release candidate may be created when all of the following are true:
 
 ## Acceptance Criteria
 
+> **Implementation status**: All items below have been implemented in branch
+> `001-infrastructure-setup`. Checkboxes are marked once manual verification
+> steps (see §Manual Verification Steps above) have been completed on the
+> running stack.
+
 - [ ] `docker compose up` starts all services with no manual intervention.
 - [ ] Database migrations are applied automatically on container start.
 - [ ] Backend refuses to start if migrations are not current.

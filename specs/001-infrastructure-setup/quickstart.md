@@ -166,3 +166,69 @@ bash scripts/backup/pg-restore.sh <backup-file> mathracers_verify
 ```
 
 Run a full restore test at least monthly. Document the result.
+
+**Schedule daily backups** (add to server crontab):
+```
+0 2 * * * /path/to/scripts/backup/pg-backup.sh >> /var/log/mathracers-backup.log 2>&1
+```
+
+---
+
+## Monitoring and Alerting
+
+All services emit structured JSON logs. Configure your log aggregation tool
+(e.g., Grafana Loki, Datadog, CloudWatch) to ingest stdout from each container.
+
+**Alert conditions** (from `backend/infrastructure/config.py`):
+
+| Condition | Threshold | Window |
+|-----------|-----------|--------|
+| API error rate | > 1% | 5 minutes |
+| AI generation failure rate | > 10% | 15 minutes |
+| Health endpoint non-200 | Any | Immediate |
+| Worker queue depth | > 500 jobs | Any |
+| Database p95 response time | > 500 ms | Any |
+
+**Suggested monitoring setup (Prometheus + Grafana)**:
+1. Add a metrics exporter sidecar to the backend container (e.g., `prometheus-fastapi-instrumentator`).
+2. Configure Prometheus to scrape `backend:8000/metrics`.
+3. Import the FastAPI dashboard into Grafana.
+4. Define alert rules for the thresholds above using PromQL.
+
+**Certificate expiry alert**:
+```bash
+# Run weekly — alerts if cert expires in < 30 days
+bash scripts/cert-expiry-check.sh
+```
+
+---
+
+## TLS Certificate Renewal
+
+Math Racers uses Nginx for TLS termination. Certificates are mounted from the
+`nginx_certs` Docker volume at `/etc/nginx/certs/`.
+
+**Automated renewal (recommended — Let's Encrypt via certbot)**:
+```bash
+# Install certbot and obtain initial certificate
+certbot certonly --standalone -d yourdomain.com
+
+# Copy to Docker volume and reload Nginx
+cp /etc/letsencrypt/live/yourdomain.com/fullchain.pem /path/to/nginx_certs/
+cp /etc/letsencrypt/live/yourdomain.com/privkey.pem /path/to/nginx_certs/
+docker compose exec nginx nginx -s reload
+```
+
+**Automate renewal** (add to crontab — runs twice daily per Let's Encrypt recommendation):
+```
+0 0,12 * * * certbot renew --quiet --post-hook "docker compose exec nginx nginx -s reload"
+```
+
+**30-day expiry check** (run weekly to catch automation failures):
+```bash
+bash scripts/cert-expiry-check.sh
+```
+
+⚠️ HSTS is enabled with `max-age=63072000`. An expired certificate with HSTS
+active makes the site **completely inaccessible** via HTTP fallback. Certificate
+renewal must be automated and monitored — never rely on manual intervention.

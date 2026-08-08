@@ -1,0 +1,172 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.12"
+  NODE_VERSION: "20"
+
+jobs:
+  ci:
+    name: CI Pipeline
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Install dependencies ──────────────────────────────────────────────
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install uv
+        run: pip install uv
+
+      - name: Install Python dependencies
+        working-directory: backend
+        run: uv pip install --system -e ".[dev]"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install Node dependencies
+        working-directory: frontend
+        run: pnpm install --frozen-lockfile
+
+      # ── 2. Format check ──────────────────────────────────────────────────────
+      - name: Format check (Black)
+        working-directory: backend
+        run: black --check .
+
+      - name: Format check (Prettier)
+        working-directory: frontend
+        run: pnpm prettier --check "src/**/*"
+
+      # ── 3. Lint ──────────────────────────────────────────────────────────────
+      - name: Lint (Ruff)
+        working-directory: backend
+        run: ruff check .
+
+      - name: Lint (ESLint)
+        working-directory: frontend
+        run: pnpm eslint src
+
+      # ── 4. Static analysis ───────────────────────────────────────────────────
+      - name: Type check (mypy)
+        working-directory: backend
+        run: mypy .
+
+      - name: Type check (tsc)
+        working-directory: frontend
+        run: pnpm tsc --noEmit
+
+      # ── 5. Unit tests ────────────────────────────────────────────────────────
+      - name: Unit tests (pytest)
+        working-directory: backend
+        run: pytest -m unit --tb=short
+
+      - name: Unit tests (vitest)
+        working-directory: frontend
+        run: pnpm vitest run
+
+      # ── 6. Integration tests ─────────────────────────────────────────────────
+      - name: Integration tests
+        working-directory: backend
+        run: pytest -m integration --tb=short
+        env:
+          DATABASE_URL: postgresql+asyncpg://mathracers:testpass@localhost:5432/mathracers_test
+          REDIS_URL: redis://localhost:6379/0
+
+      # ── 7. Build container images ────────────────────────────────────────────
+      - name: Verify clean working tree
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "ERROR: working tree is dirty — cannot build release images"
+            exit 1
+          fi
+
+      - name: Build backend image
+        run: |
+          VERSION=${{ github.sha }}
+          docker build --build-arg VERSION=$VERSION \
+            -t math-racers/backend:$VERSION ./backend
+
+      - name: Build frontend image
+        run: |
+          VERSION=${{ github.sha }}
+          docker build -t math-racers/frontend:$VERSION ./frontend
+
+      # ── 8. Security scan ─────────────────────────────────────────────────────
+      - name: Security scan — backend image (trivy)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: math-racers/backend:${{ github.sha }}
+          exit-code: "1"
+          severity: CRITICAL
+          ignore-unfixed: true
+
+      - name: Security scan — frontend image (trivy)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: math-racers/frontend:${{ github.sha }}
+          exit-code: "1"
+          severity: CRITICAL
+          ignore-unfixed: true
+
+      - name: Security scan — Python deps (pip-audit)
+        working-directory: backend
+        run: pip-audit --requirement <(uv pip compile pyproject.toml)
+
+      - name: Security scan — Node deps (npm audit)
+        working-directory: frontend
+        run: npm audit --audit-level=critical
+
+      - name: Check for hardcoded secrets
+        run: |
+          if grep -rE "(SECRET|PASSWORD|API_KEY)\s*=\s*['\"][^\$]" . \
+              --include="*.py" --include="*.ts" --include="*.tsx" \
+              --include="*.yml" --include="*.yaml" \
+              --exclude-dir=".git" \
+              --exclude-dir="node_modules" \
+              --exclude="*.example"; then
+            echo "ERROR: Possible hardcoded secrets detected"
+            exit 1
+          fi
+
+      - name: Smoke test — HSTS header present
+        run: |
+          VERSION=${{ github.sha }}
+          docker compose up -d
+          # Wait for stack
+          timeout 60 bash -c 'until curl -sf http://localhost/health > /dev/null 2>&1; do sleep 2; done'
+          HSTS=$(curl -sI http://localhost/ | grep -i strict-transport-security || true)
+          if ! echo "$HSTS" | grep -q "max-age=63072000"; then
+            echo "ERROR: HSTS header missing or incorrect: '$HSTS'"
+            docker compose down
+            exit 1
+          fi
+          echo "HSTS OK: $HSTS"
+          docker compose down
+
+      # ── 9. Deploy (default branch only) ─────────────────────────────────────
+      - name: Deploy
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          echo "Deploying version ${{ github.sha }}"
+          # Replace with actual deployment command
+          # e.g.: VERSION=${{ github.sha }} ssh deploy@server docker compose pull && docker compose up -d
