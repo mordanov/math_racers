@@ -19,6 +19,31 @@ jobs:
     name: CI Pipeline
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: mathracers_test
+          POSTGRES_USER: mathracers
+          POSTGRES_PASSWORD: testpass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 3s
+          --health-retries 5
+
     steps:
       # ── 1. Install dependencies ──────────────────────────────────────────────
       - name: Checkout
@@ -85,12 +110,29 @@ jobs:
         run: pnpm vitest run
 
       # ── 6. Integration tests ─────────────────────────────────────────────────
+      - name: Start backend for integration tests
+        working-directory: backend
+        run: |
+          uvicorn app.main:app --host 0.0.0.0 --port 8000 &
+          timeout 30 bash -c 'until curl -sf http://localhost:8000/health > /dev/null 2>&1; do sleep 1; done'
+        env:
+          DATABASE_URL: postgresql+asyncpg://mathracers:testpass@localhost:5432/mathracers_test
+          REDIS_URL: redis://localhost:6379/0
+          JWT_SECRET: ${{ secrets.JWT_SECRET || 'ci-test-secret-32-bytes-minimum-xx' }}
+          OPENAI_API_KEY: sk-test-placeholder
+          STORAGE_ENDPOINT: https://CHANGE_ME
+          STORAGE_ACCESS_KEY: test
+          STORAGE_SECRET_KEY: test
+          STORAGE_BUCKET: test
+          ENVIRONMENT: development
+          VERSION: ${{ github.sha }}
+          LOG_LEVEL: WARNING
+
       - name: Integration tests
         working-directory: backend
         run: pytest -m integration --tb=short
         env:
-          DATABASE_URL: postgresql+asyncpg://mathracers:testpass@localhost:5432/mathracers_test
-          REDIS_URL: redis://localhost:6379/0
+          HEALTH_URL: http://localhost:8000/health
 
       # ── 7. Build container images ────────────────────────────────────────────
       - name: Verify clean working tree
