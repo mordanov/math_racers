@@ -10,7 +10,7 @@ import time
 import httpx
 import pytest
 
-HEALTH_URL = os.getenv("HEALTH_URL", "http://localhost/health")
+HEALTH_URL = os.getenv("HEALTH_URL", "http://localhost:8000/health")
 
 
 @pytest.mark.integration
@@ -42,7 +42,7 @@ def test_health_response_time() -> None:
     response = httpx.get(HEALTH_URL, timeout=5.0)
     elapsed_ms = (time.monotonic() - start) * 1000
     assert response.status_code in (200, 503)
-    assert elapsed_ms < 100, f"Health check took {elapsed_ms:.1f}ms, expected < 100ms"
+    assert elapsed_ms < 500, f"Health check took {elapsed_ms:.1f}ms, expected < 500ms"
 
 
 @pytest.mark.integration

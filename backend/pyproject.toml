@@ -29,6 +29,9 @@ dev = [
     "sqlalchemy[mypy]>=2.0.0",
 ]
 
+[tool.hatch.build.targets.wheel]
+packages = ["app", "infrastructure"]
+
 [tool.ruff]
 line-length = 100
 exclude = ["alembic/versions/"]
