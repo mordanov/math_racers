@@ -11,6 +11,8 @@ RUN pnpm build
 
 FROM nginx:1.27-alpine AS runtime
 
+RUN apk upgrade --no-cache
+
 COPY --from=builder /build/dist /usr/share/nginx/html
 COPY nginx.frontend.conf /etc/nginx/conf.d/default.conf
 
