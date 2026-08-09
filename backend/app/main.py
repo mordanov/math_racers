@@ -13,6 +13,7 @@ from app.shared.exceptions import (
     LastAdministratorError,
     NotFoundError,
     PermissionError,
+    UnauthorizedError,
     ValidationError,
 )
 from infrastructure.config import get_config
@@ -94,6 +95,7 @@ _DOMAIN_ERROR_STATUS: dict[type[DomainError], int] = {
     ValidationError: 422,
     NotFoundError: 404,
     ConflictError: 409,
+    UnauthorizedError: 401,
     PermissionError: 403,
     LastAdministratorError: 400,
 }

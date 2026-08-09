@@ -35,8 +35,17 @@ class ConflictError(DomainError):
         super().__init__(error_code, message)
 
 
+class UnauthorizedError(DomainError):
+    """Missing or invalid credentials — HTTP 401."""
+
+    def __init__(
+        self, error_code: str = "UNAUTHORIZED", message: str = "Authentication required."
+    ) -> None:
+        super().__init__(error_code, message)
+
+
 class PermissionError(DomainError):
-    """Authentication or authorisation failure."""
+    """Authenticated but insufficient permissions — HTTP 403."""
 
     def __init__(self, error_code: str = "FORBIDDEN", message: str = "Permission denied.") -> None:
         super().__init__(error_code, message)

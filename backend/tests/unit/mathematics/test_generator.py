@@ -9,7 +9,7 @@ from app.mathematics.types import Operation
 def test_determinism_same_seed_same_output() -> None:
     a = generate_problem_set(2, 1234567890, 8)
     b = generate_problem_set(2, 1234567890, 8)
-    for pa, pb in zip(a.problems, b.problems):
+    for pa, pb in zip(a.problems, b.problems, strict=True):
         assert pa.operation == pb.operation
         assert pa.operand_a == pb.operand_a
         assert pa.operand_b == pb.operand_b
@@ -23,7 +23,7 @@ def test_determinism_different_seed_different_output() -> None:
         pa.operation == pb.operation
         and pa.operand_a == pb.operand_a
         and pa.operand_b == pb.operand_b
-        for pa, pb in zip(a.problems, b.problems)
+        for pa, pb in zip(a.problems, b.problems, strict=True)
     )
     assert not all_same
 

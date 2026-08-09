@@ -62,9 +62,7 @@ export function generateProblemSet(
   customTierConfig?: TierConfig,
 ): ProblemSet {
   const config: TierConfig =
-    tier === 6
-      ? customTierConfig ?? { ...TIER_CONFIGS[5], tier: 6 }
-      : TIER_CONFIGS[tier as Exclude<Tier, 6>];
+    tier === 6 ? (customTierConfig ?? { ...TIER_CONFIGS[5], tier: 6 }) : TIER_CONFIGS[tier];
 
   const rng = createRng(seed);
   const problems: Problem[] = [];

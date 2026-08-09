@@ -5,6 +5,7 @@ import uuid
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.accounts.models import Account
 from app.mathematics.difficulty import select_tier
 from app.mathematics.exceptions import PlayerNotFoundError
 from app.mathematics.models import PlayerDifficulty
@@ -12,9 +13,7 @@ from app.mathematics.repository import SQLAlchemyPlayerDifficultyRepository
 from app.mathematics.schemas import DifficultyPatchRequest, DifficultyResponse
 from app.presentation.api.middleware.auth import (
     get_current_account,
-    require_administrator,
 )
-from app.accounts.models import Account
 from infrastructure.database.session import get_session
 
 router = APIRouter(prefix="/api/v1/players", tags=["mathematics"])
@@ -48,15 +47,17 @@ async def patch_difficulty(
 ) -> DifficultyResponse:
     repo = SQLAlchemyPlayerDifficultyRepository(session)
     record = await repo.get_by_player_id(player_id)
-    if record is None:
-        raise PlayerNotFoundError(player_id)
+    current_tier = record.current_tier if record is not None else 1
 
     updated = PlayerDifficulty(
-        player_id=record.player_id,
-        current_tier=record.current_tier,
+        player_id=player_id,
+        current_tier=current_tier,
         parent_override=body.parent_override,
     )
-    saved = await repo.upsert(updated)
+    try:
+        saved = await repo.upsert(updated)
+    except Exception:
+        raise PlayerNotFoundError(player_id) from None
     effective = select_tier(saved.current_tier, 0.75, saved.parent_override)
     return DifficultyResponse(
         player_id=saved.player_id,

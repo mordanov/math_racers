@@ -54,7 +54,7 @@ def test_determinism_across_requests() -> None:
     params = {"tier": 3, "seed": 777, "count": 5}
     a = httpx.get(f"{BASE_URL}/api/v1/problems", params=params).json()["problems"]
     b = httpx.get(f"{BASE_URL}/api/v1/problems", params=params).json()["problems"]
-    for pa, pb in zip(a, b):
+    for pa, pb in zip(a, b, strict=True):
         assert pa["operation"] == pb["operation"]
         assert pa["operand_a"] == pb["operand_a"]
         assert pa["operand_b"] == pb["operand_b"]
