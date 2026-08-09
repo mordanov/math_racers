@@ -215,18 +215,18 @@ jobs:
             'ENVIRONMENT=development' \
             'LOG_LEVEL=WARNING' \
             > .env
-          VERSION=${{ github.sha }} docker compose up -d
+          VERSION=${{ github.sha }} docker compose -f docker-compose.yml -f docker-compose.smoke.yml up -d
           # Wait for HTTPS stack (self-signed cert — skip verification)
           timeout 60 bash -c 'until curl -skf https://localhost/health > /dev/null 2>&1; do sleep 2; done'
           HSTS=$(curl -skI https://localhost/ | grep -i strict-transport-security || true)
           if ! echo "$HSTS" | grep -q "max-age=63072000"; then
             echo "ERROR: HSTS header missing or incorrect: '$HSTS'"
-            docker compose down
+            docker compose -f docker-compose.yml -f docker-compose.smoke.yml down
             rm -f .env
             exit 1
           fi
           echo "HSTS OK: $HSTS"
-          docker compose down
+          docker compose -f docker-compose.yml -f docker-compose.smoke.yml down
           rm -f .env
 
       # ── 9. Deploy (default branch only) ─────────────────────────────────────
