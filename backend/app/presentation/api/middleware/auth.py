@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.accounts.domain_service import AccountDomainService
 from app.accounts.models import Account, ApprovalStatus
 from app.accounts.repository import AccountRepository, SQLAlchemyAccountRepository
-from app.shared.exceptions import PermissionError
+from app.shared.exceptions import PermissionError, UnauthorizedError
 from infrastructure.config import Config, get_config
 from infrastructure.database.session import get_session
 
@@ -26,7 +26,7 @@ async def get_current_account(
 ) -> Account:
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
-        raise PermissionError("UNAUTHORIZED", "Authentication required.")
+        raise UnauthorizedError("UNAUTHORIZED", "Authentication required.")
 
     token = auth_header.removeprefix("Bearer ").strip()
     domain_service = AccountDomainService()
@@ -35,10 +35,10 @@ async def get_current_account(
     account_id = uuid.UUID(str(payload["sub"]))
     account = await account_repo.get_by_id(account_id)
     if account is None:
-        raise PermissionError("UNAUTHORIZED", "Account not found.")
+        raise UnauthorizedError("UNAUTHORIZED", "Account not found.")
 
     if account.approval_status != ApprovalStatus.approved:
-        raise PermissionError("UNAUTHORIZED", "Account is not approved.")
+        raise PermissionError("ACCOUNT_PENDING", "Account is not approved.")
 
     return account
 

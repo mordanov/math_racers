@@ -89,9 +89,9 @@ class TestListAccounts:
         )
         assert response.status_code == 403
 
-    def test_unauthenticated_gets_403(self) -> None:
+    def test_unauthenticated_gets_401(self) -> None:
         response = httpx.get(f"{BASE_URL}/api/v1/admin/accounts", timeout=10.0)
-        assert response.status_code == 403
+        assert response.status_code == 401
 
     def test_filter_by_status(self) -> None:
         token = _admin_token()

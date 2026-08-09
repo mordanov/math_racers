@@ -70,7 +70,9 @@ def domain_service() -> AccountDomainService:
 
 @pytest.fixture
 def use_case(
-    account_repo: AsyncMock, refresh_repo: AsyncMock, domain_service: AccountDomainService
+    account_repo: AsyncMock,
+    refresh_repo: AsyncMock,
+    domain_service: AccountDomainService,
 ) -> LoginUseCase:
     return LoginUseCase(account_repo, refresh_repo, domain_service)
 
