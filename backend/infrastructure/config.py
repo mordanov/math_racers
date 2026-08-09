@@ -36,6 +36,14 @@ class Config(BaseSettings):
     STORAGE_SECRET_KEY: SecretStr
     STORAGE_BUCKET: str
 
+    # Administrator seeding — required, no defaults (startup fails if absent)
+    ADMIN_EMAIL: SecretStr
+    ADMIN_PASSWORD: SecretStr
+
+    # JWT token lifetimes
+    JWT_ACCESS_TTL_MINUTES: int = 15
+    JWT_REFRESH_TTL_DAYS: int = 30
+
     # Application
     ENVIRONMENT: Environment = Environment.development
     VERSION: str = "dev"

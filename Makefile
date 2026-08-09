@@ -3,8 +3,8 @@ SHELL := /bin/bash
 
 VERSION ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo "dev")
 
-.PHONY: help up down ci fmt-check lint type-check test-unit test-int build \
-        security-scan migrate hooks release-check
+.PHONY: help up down ci ci-local fmt-check lint type-check test-unit test-int build \
+		security-scan migrate hooks release-check
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
@@ -18,6 +18,9 @@ down: ## Stop all services
 	docker compose down
 
 ci: fmt-check lint type-check test-unit test-int build security-scan ## Run full CI pipeline locally
+
+ci-local: ## Run GitHub Actions CI workflow checks via local script
+	bash scripts/run-local-ci-checks.sh
 
 fmt-check: ## Check formatting (Black + Prettier)
 	docker compose run --rm backend black --check .
