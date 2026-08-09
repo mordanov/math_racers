@@ -124,6 +124,8 @@ jobs:
           STORAGE_ACCESS_KEY: test
           STORAGE_SECRET_KEY: test
           STORAGE_BUCKET: test
+          ADMIN_EMAIL: admin@example.com
+          ADMIN_PASSWORD: adminpassword123
           ENVIRONMENT: development
           VERSION: ${{ github.sha }}
           LOG_LEVEL: WARNING

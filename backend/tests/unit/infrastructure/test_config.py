@@ -16,6 +16,8 @@ class TestConfigValidation:
             "STORAGE_ACCESS_KEY": "access",
             "STORAGE_SECRET_KEY": "secret",
             "STORAGE_BUCKET": "bucket",
+            "ADMIN_EMAIL": "admin@example.com",
+            "ADMIN_PASSWORD": "adminpassword123",
         }
 
     def test_valid_config_creates_successfully(self) -> None:

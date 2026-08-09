@@ -21,7 +21,7 @@ def _redact(obj: Any, depth: int = 0) -> Any:
         return obj
     if isinstance(obj, dict):
         return {
-            k: "***REDACTED***" if _REDACT_PATTERN.search(str(k)) else _redact(v, depth + 1)
+            k: ("***REDACTED***" if _REDACT_PATTERN.search(str(k)) else _redact(v, depth + 1))
             for k, v in obj.items()
         }
     if isinstance(obj, (list, tuple)):
