@@ -58,18 +58,14 @@ class TestPasswordHashing:
 
 @pytest.mark.unit
 class TestJwtTokens:
-    def test_encode_decode_roundtrip(
-        self, svc: AccountDomainService, cfg: Config
-    ) -> None:
+    def test_encode_decode_roundtrip(self, svc: AccountDomainService, cfg: Config) -> None:
         account_id = uuid.uuid4()
         token = svc.create_access_token(account_id, "parent", cfg)
         payload = svc.decode_access_token(token, cfg)
         assert payload["sub"] == str(account_id)
         assert payload["role"] == "parent"
 
-    def test_expired_token_raises_permission_error(
-        self, svc: AccountDomainService
-    ) -> None:
+    def test_expired_token_raises_permission_error(self, svc: AccountDomainService) -> None:
         cfg = _make_config(JWT_ACCESS_TTL_MINUTES=0)
         account_id = uuid.uuid4()
         token = svc.create_access_token(account_id, "parent", cfg)
@@ -96,9 +92,7 @@ class TestJwtTokens:
     ) -> None:
         account_id = uuid.uuid4()
         token = svc.create_access_token(account_id, "parent", cfg)
-        wrong_cfg = _make_config(
-            **{"JWT_SECRET": "completely-different-secret-value!!"}
-        )
+        wrong_cfg = _make_config(**{"JWT_SECRET": "completely-different-secret-value!!"})
         with pytest.raises(PermissionError) as exc_info:
             svc.decode_access_token(token, wrong_cfg)
         assert exc_info.value.error_code == "INVALID_TOKEN"

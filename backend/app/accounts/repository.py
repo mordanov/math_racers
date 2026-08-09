@@ -38,15 +38,11 @@ class SQLAlchemyAccountRepository:
         self._session = session
 
     async def get_by_id(self, account_id: uuid.UUID) -> Account | None:
-        result = await self._session.execute(
-            select(Account).where(Account.id == account_id)
-        )
+        result = await self._session.execute(select(Account).where(Account.id == account_id))
         return result.scalar_one_or_none()
 
     async def get_by_email(self, email: str) -> Account | None:
-        result = await self._session.execute(
-            select(Account).where(Account.email == email)
-        )
+        result = await self._session.execute(select(Account).where(Account.email == email))
         return result.scalar_one_or_none()
 
     async def save(self, account: Account) -> Account:
@@ -108,9 +104,7 @@ class SQLAlchemyRefreshTokenRepository:
         await self._session.refresh(token)
         return token
 
-    async def revoke(
-        self, token_id: uuid.UUID, replaced_by_id: uuid.UUID | None = None
-    ) -> None:
+    async def revoke(self, token_id: uuid.UUID, replaced_by_id: uuid.UUID | None = None) -> None:
         await self._session.execute(
             update(RefreshToken)
             .where(RefreshToken.id == token_id)

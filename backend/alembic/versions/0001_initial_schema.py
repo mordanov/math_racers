@@ -20,9 +20,7 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     op.create_table(
         "job_audit",
-        sa.Column(
-            "job_id", postgresql.UUID(as_uuid=True), nullable=False, primary_key=True
-        ),
+        sa.Column("job_id", postgresql.UUID(as_uuid=True), nullable=False, primary_key=True),
         sa.Column("job_type", sa.String(length=100), nullable=False),
         sa.Column("payload", postgresql.JSONB(astext_type=sa.Text()), nullable=False),
         sa.Column(
@@ -32,9 +30,7 @@ def upgrade() -> None:
             server_default=sa.text("now()"),
         ),
         sa.Column("attempts", sa.Integer(), nullable=False, server_default="0"),
-        sa.Column(
-            "status", sa.String(length=50), nullable=False, server_default="pending"
-        ),
+        sa.Column("status", sa.String(length=50), nullable=False, server_default="pending"),
     )
     op.create_index("ix_job_audit_status", "job_audit", ["status"])
     op.create_index("ix_job_audit_created_at", "job_audit", ["created_at"])

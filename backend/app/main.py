@@ -63,9 +63,7 @@ async def _seed_default_admin() -> None:
     from infrastructure.database.engine import get_engine
 
     engine = get_engine()
-    session_factory = async_sessionmaker(
-        bind=engine, expire_on_commit=False, autoflush=False
-    )
+    session_factory = async_sessionmaker(bind=engine, expire_on_commit=False, autoflush=False)
 
     async with session_factory() as session:
         async with session.begin():
