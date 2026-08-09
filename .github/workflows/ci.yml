@@ -192,18 +192,42 @@ jobs:
 
       - name: Smoke test — HSTS header present
         run: |
-          VERSION=${{ github.sha }}
-          docker compose up -d
-          # Wait for stack
-          timeout 60 bash -c 'until curl -sf http://localhost/health > /dev/null 2>&1; do sleep 2; done'
-          HSTS=$(curl -sI http://localhost/ | grep -i strict-transport-security || true)
+          # Generate self-signed cert and populate the nginx_certs named volume
+          mkdir -p /tmp/ci-nginx-certs
+          openssl req -x509 -nodes -newkey rsa:2048 -days 1 \
+            -keyout /tmp/ci-nginx-certs/privkey.pem \
+            -out /tmp/ci-nginx-certs/fullchain.pem \
+            -subj "/CN=localhost" 2>/dev/null
+          docker volume create math_racers_nginx_certs
+          docker run --rm \
+            -v /tmp/ci-nginx-certs:/src:ro \
+            -v math_racers_nginx_certs:/dst \
+            alpine sh -c 'cp /src/* /dst/'
+          cat > .env << 'ENVEOF'
+DATABASE_URL=postgresql+asyncpg://mathracers:mathracers_dev@postgres:5432/mathracers
+REDIS_URL=redis://redis:6379/0
+JWT_SECRET=ci-test-secret-32-bytes-minimum-xx
+OPENAI_API_KEY=sk-test-placeholder
+STORAGE_ENDPOINT=https://CHANGE_ME
+STORAGE_ACCESS_KEY=test
+STORAGE_SECRET_KEY=test
+STORAGE_BUCKET=test
+ENVIRONMENT=development
+LOG_LEVEL=WARNING
+ENVEOF
+          VERSION=${{ github.sha }} docker compose up -d
+          # Wait for HTTPS stack (self-signed cert — skip verification)
+          timeout 60 bash -c 'until curl -skf https://localhost/health > /dev/null 2>&1; do sleep 2; done'
+          HSTS=$(curl -skI https://localhost/ | grep -i strict-transport-security || true)
           if ! echo "$HSTS" | grep -q "max-age=63072000"; then
             echo "ERROR: HSTS header missing or incorrect: '$HSTS'"
             docker compose down
+            rm -f .env
             exit 1
           fi
           echo "HSTS OK: $HSTS"
           docker compose down
+          rm -f .env
 
       # ── 9. Deploy (default branch only) ─────────────────────────────────────
       - name: Deploy
