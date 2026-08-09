@@ -1,8 +1,9 @@
 """Unit tests for LoginUseCase (T021)."""
+
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock
 
 import pytest
@@ -16,22 +17,24 @@ from infrastructure.config import Config
 
 def _make_config() -> Config:
     return Config.model_validate(
-        dict(
-            DATABASE_URL="postgresql+asyncpg://u:p@localhost/db",
-            REDIS_URL="redis://localhost:6379/0",
-            JWT_SECRET="test-secret-that-is-long-enough-32chars",
-            OPENAI_API_KEY="sk-test",
-            STORAGE_ENDPOINT="http://localhost:9000",
-            STORAGE_ACCESS_KEY="minio",
-            STORAGE_SECRET_KEY="minio123",
-            STORAGE_BUCKET="test",
-            ADMIN_EMAIL="admin@example.com",
-            ADMIN_PASSWORD="adminpass123",
-        )
+        {
+            "DATABASE_URL": "postgresql+asyncpg://u:p@localhost/db",
+            "REDIS_URL": "redis://localhost:6379/0",
+            "JWT_SECRET": "test-secret-that-is-long-enough-32chars",
+            "OPENAI_API_KEY": "sk-test",
+            "STORAGE_ENDPOINT": "http://localhost:9000",
+            "STORAGE_ACCESS_KEY": "minio",
+            "STORAGE_SECRET_KEY": "minio123",
+            "STORAGE_BUCKET": "test",
+            "ADMIN_EMAIL": "admin@example.com",
+            "ADMIN_PASSWORD": "adminpass123",
+        }
     )
 
 
-def _make_account(status: str = ApprovalStatus.approved, plain_password: str = "correct") -> Account:
+def _make_account(
+    status: str = ApprovalStatus.approved, plain_password: str = "correct"
+) -> Account:
     svc = AccountDomainService()
     return Account(
         id=uuid.uuid4(),
@@ -39,7 +42,7 @@ def _make_account(status: str = ApprovalStatus.approved, plain_password: str = "
         password_hash=svc.hash_password(plain_password),
         role=AccountRole.parent,
         approval_status=status,
-        created_at=datetime.now(tz=timezone.utc),
+        created_at=datetime.now(tz=UTC),
     )
 
 
@@ -66,10 +69,13 @@ def domain_service() -> AccountDomainService:
 
 
 @pytest.fixture
-def use_case(account_repo, refresh_repo, domain_service) -> LoginUseCase:
+def use_case(
+    account_repo: AsyncMock, refresh_repo: AsyncMock, domain_service: AccountDomainService
+) -> LoginUseCase:
     return LoginUseCase(account_repo, refresh_repo, domain_service)
 
 
+@pytest.mark.unit
 class TestLoginUseCase:
     async def test_approved_account_returns_tokens(
         self,
@@ -78,9 +84,7 @@ class TestLoginUseCase:
         cfg: Config,
     ) -> None:
         account_repo.get_by_email.return_value = _make_account()
-        access_token, raw_refresh = await use_case.execute(
-            "user@example.com", "correct", cfg
-        )
+        access_token, raw_refresh = await use_case.execute("user@example.com", "correct", cfg)
         assert access_token
         assert raw_refresh
 

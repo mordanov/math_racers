@@ -13,7 +13,9 @@ class DomainError(Exception):
 class ValidationError(DomainError):
     """An invariant was violated or input failed domain-level validation."""
 
-    def __init__(self, error_code: str = "VALIDATION_ERROR", message: str = "Invalid input.") -> None:
+    def __init__(
+        self, error_code: str = "VALIDATION_ERROR", message: str = "Invalid input."
+    ) -> None:
         super().__init__(error_code, message)
 
 
@@ -27,7 +29,9 @@ class NotFoundError(DomainError):
 class ConflictError(DomainError):
     """A duplicate or conflicting entity already exists."""
 
-    def __init__(self, error_code: str = "CONFLICT", message: str = "Resource already exists.") -> None:
+    def __init__(
+        self, error_code: str = "CONFLICT", message: str = "Resource already exists."
+    ) -> None:
         super().__init__(error_code, message)
 
 

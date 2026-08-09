@@ -1,4 +1,5 @@
 """Unit tests for AccountDomainService (T019)."""
+
 from __future__ import annotations
 
 import time
@@ -11,19 +12,19 @@ from app.shared.exceptions import PermissionError
 from infrastructure.config import Config
 
 
-def _make_config(**overrides) -> Config:
-    defaults = dict(
-        DATABASE_URL="postgresql+asyncpg://u:p@localhost/db",
-        REDIS_URL="redis://localhost:6379/0",
-        JWT_SECRET="test-secret-that-is-long-enough-32chars",
-        OPENAI_API_KEY="sk-test",
-        STORAGE_ENDPOINT="http://localhost:9000",
-        STORAGE_ACCESS_KEY="minio",
-        STORAGE_SECRET_KEY="minio123",
-        STORAGE_BUCKET="test",
-        ADMIN_EMAIL="admin@example.com",
-        ADMIN_PASSWORD="adminpass123",
-    )
+def _make_config(**overrides: object) -> Config:
+    defaults: dict[str, object] = {
+        "DATABASE_URL": "postgresql+asyncpg://u:p@localhost/db",
+        "REDIS_URL": "redis://localhost:6379/0",
+        "JWT_SECRET": "test-secret-that-is-long-enough-32chars",
+        "OPENAI_API_KEY": "sk-test",
+        "STORAGE_ENDPOINT": "http://localhost:9000",
+        "STORAGE_ACCESS_KEY": "minio",
+        "STORAGE_SECRET_KEY": "minio123",
+        "STORAGE_BUCKET": "test",
+        "ADMIN_EMAIL": "admin@example.com",
+        "ADMIN_PASSWORD": "adminpass123",
+    }
     defaults.update(overrides)
     return Config.model_validate(defaults)
 
@@ -38,6 +39,7 @@ def cfg() -> Config:
     return _make_config()
 
 
+@pytest.mark.unit
 class TestPasswordHashing:
     def test_hash_and_verify_roundtrip(self, svc: AccountDomainService) -> None:
         plain = "s3cr3tP@ssword"
@@ -54,19 +56,16 @@ class TestPasswordHashing:
         assert h1 != h2
 
 
+@pytest.mark.unit
 class TestJwtTokens:
-    def test_encode_decode_roundtrip(
-        self, svc: AccountDomainService, cfg: Config
-    ) -> None:
+    def test_encode_decode_roundtrip(self, svc: AccountDomainService, cfg: Config) -> None:
         account_id = uuid.uuid4()
         token = svc.create_access_token(account_id, "parent", cfg)
         payload = svc.decode_access_token(token, cfg)
         assert payload["sub"] == str(account_id)
         assert payload["role"] == "parent"
 
-    def test_expired_token_raises_permission_error(
-        self, svc: AccountDomainService
-    ) -> None:
+    def test_expired_token_raises_permission_error(self, svc: AccountDomainService) -> None:
         cfg = _make_config(JWT_ACCESS_TTL_MINUTES=0)
         account_id = uuid.uuid4()
         token = svc.create_access_token(account_id, "parent", cfg)
@@ -93,12 +92,13 @@ class TestJwtTokens:
     ) -> None:
         account_id = uuid.uuid4()
         token = svc.create_access_token(account_id, "parent", cfg)
-        wrong_cfg = _make_config(JWT_SECRET="completely-different-secret-value!!")
+        wrong_cfg = _make_config(**{"JWT_SECRET": "completely-different-secret-value!!"})
         with pytest.raises(PermissionError) as exc_info:
             svc.decode_access_token(token, wrong_cfg)
         assert exc_info.value.error_code == "INVALID_TOKEN"
 
 
+@pytest.mark.unit
 class TestRefreshTokenGeneration:
     def test_returns_tuple_of_raw_and_hash(self, svc: AccountDomainService) -> None:
         raw, token_hash = svc.generate_refresh_token()

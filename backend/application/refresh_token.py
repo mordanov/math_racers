@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import hashlib
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from app.accounts.domain_service import AccountDomainService
 from app.accounts.models import RefreshToken
@@ -21,19 +21,17 @@ class RefreshTokenUseCase:
         self._refresh_token_repo = refresh_token_repo
         self._domain_service = domain_service
 
-    async def execute(
-        self, raw_token: str, settings: Config
-    ) -> tuple[str, str]:
+    async def execute(self, raw_token: str, settings: Config) -> tuple[str, str]:
         token_hash = hashlib.sha256(raw_token.encode()).hexdigest()
 
         stored = await self._refresh_token_repo.get_by_hash(token_hash)
         if stored is None:
             raise PermissionError("INVALID_REFRESH_TOKEN", "Refresh token not found.")
 
-        now = datetime.now(tz=timezone.utc)
+        now = datetime.now(tz=UTC)
         expires_at = stored.expires_at
         if expires_at.tzinfo is None:
-            expires_at = expires_at.replace(tzinfo=timezone.utc)
+            expires_at = expires_at.replace(tzinfo=UTC)
 
         if expires_at < now:
             raise PermissionError("INVALID_REFRESH_TOKEN", "Refresh token has expired.")

@@ -16,7 +16,7 @@ from app.shared.exceptions import (
     ValidationError,
 )
 from infrastructure.config import get_config
-from infrastructure.logging import get_logger, request_id_var, setup_logging
+from infrastructure.logging import request_id_var, setup_logging
 
 logger = logging.getLogger(__name__)
 
@@ -55,12 +55,12 @@ async def _seed_default_admin() -> None:
         logger.error("ADMIN_EMAIL or ADMIN_PASSWORD not configured — aborting startup")
         sys.exit(1)
 
-    from infrastructure.database.engine import get_engine
-    from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
+    from sqlalchemy.ext.asyncio import async_sessionmaker
 
     from app.accounts.domain_service import AccountDomainService
     from app.accounts.models import Account, AccountRole, ApprovalStatus
     from app.accounts.repository import SQLAlchemyAccountRepository
+    from infrastructure.database.engine import get_engine
 
     engine = get_engine()
     session_factory = async_sessionmaker(bind=engine, expire_on_commit=False, autoflush=False)
@@ -120,8 +120,8 @@ def create_app() -> FastAPI:
     app.add_middleware(CorrelationIdMiddleware)
     app.include_router(health_router)
 
-    from app.presentation.api.v1.auth import router as auth_router
     from app.presentation.api.v1.admin import router as admin_router
+    from app.presentation.api.v1.auth import router as auth_router
 
     app.include_router(auth_router)
     app.include_router(admin_router)

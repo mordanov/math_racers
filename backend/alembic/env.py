@@ -17,8 +17,8 @@ cfg = get_config()
 config.set_main_option("sqlalchemy.url", cfg.DATABASE_URL.get_secret_value())
 
 # Import all models so Alembic autogenerate can detect schema changes.
-import app.accounts.models  # noqa: F401
-from infrastructure.database.base import Base
+import app.accounts.models  # noqa: F401, E402
+from infrastructure.database.base import Base  # noqa: E402
 
 target_metadata = Base.metadata
 

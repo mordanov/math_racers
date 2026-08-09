@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Protocol
 
 from sqlalchemy import func, select, update
@@ -27,7 +27,9 @@ class AccountRepository(Protocol):
 class RefreshTokenRepository(Protocol):
     async def get_by_hash(self, token_hash: str) -> RefreshToken | None: ...
     async def save(self, token: RefreshToken) -> RefreshToken: ...
-    async def revoke(self, token_id: uuid.UUID, replaced_by_id: uuid.UUID | None = None) -> None: ...
+    async def revoke(
+        self, token_id: uuid.UUID, replaced_by_id: uuid.UUID | None = None
+    ) -> None: ...
     async def revoke_all_for_account(self, account_id: uuid.UUID) -> None: ...
 
 
@@ -36,15 +38,11 @@ class SQLAlchemyAccountRepository:
         self._session = session
 
     async def get_by_id(self, account_id: uuid.UUID) -> Account | None:
-        result = await self._session.execute(
-            select(Account).where(Account.id == account_id)
-        )
+        result = await self._session.execute(select(Account).where(Account.id == account_id))
         return result.scalar_one_or_none()
 
     async def get_by_email(self, email: str) -> Account | None:
-        result = await self._session.execute(
-            select(Account).where(Account.email == email)
-        )
+        result = await self._session.execute(select(Account).where(Account.email == email))
         return result.scalar_one_or_none()
 
     async def save(self, account: Account) -> Account:
@@ -80,7 +78,9 @@ class SQLAlchemyAccountRepository:
 
     async def count_approved_administrators(self) -> int:
         result = await self._session.execute(
-            select(func.count()).select_from(Account).where(
+            select(func.count())
+            .select_from(Account)
+            .where(
                 Account.role == "administrator",
                 Account.approval_status == ApprovalStatus.approved,
             )
@@ -109,7 +109,7 @@ class SQLAlchemyRefreshTokenRepository:
             update(RefreshToken)
             .where(RefreshToken.id == token_id)
             .values(
-                revoked_at=datetime.now(tz=timezone.utc),
+                revoked_at=datetime.now(tz=UTC),
                 replaced_by=replaced_by_id,
             )
         )
@@ -121,5 +121,5 @@ class SQLAlchemyRefreshTokenRepository:
                 RefreshToken.account_id == account_id,
                 RefreshToken.revoked_at.is_(None),
             )
-            .values(revoked_at=datetime.now(tz=timezone.utc))
+            .values(revoked_at=datetime.now(tz=UTC))
         )

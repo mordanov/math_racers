@@ -6,14 +6,17 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.accounts.domain_service import AccountDomainService
 from app.accounts.models import Account
-from app.accounts.repository import SQLAlchemyAccountRepository, SQLAlchemyRefreshTokenRepository
+from app.accounts.repository import (
+    SQLAlchemyAccountRepository,
+    SQLAlchemyRefreshTokenRepository,
+)
 from app.accounts.schemas import LoginRequest, RegisterRequest, TokenResponse
+from app.presentation.api.middleware.auth import get_current_account
+from app.shared.exceptions import PermissionError
 from application.login import LoginUseCase
 from application.logout import LogoutUseCase
 from application.refresh_token import RefreshTokenUseCase
 from application.register_account import RegisterAccountUseCase
-from app.presentation.api.middleware.auth import get_current_account
-from app.shared.exceptions import PermissionError
 from infrastructure.config import Config, get_config
 from infrastructure.database.session import get_session
 
@@ -27,7 +30,7 @@ router = APIRouter(prefix="/api/v1/auth", tags=["auth"])
 async def register(
     body: RegisterRequest,
     session: AsyncSession = Depends(get_session),
-) -> dict:
+) -> dict[str, str]:
     account_repo = SQLAlchemyAccountRepository(session)
     use_case = RegisterAccountUseCase(account_repo, AccountDomainService())
     await use_case.execute(body.email, body.password)

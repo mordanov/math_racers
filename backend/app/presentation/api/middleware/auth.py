@@ -3,6 +3,7 @@ from __future__ import annotations
 import uuid
 
 from fastapi import Depends, Request
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.accounts.domain_service import AccountDomainService
 from app.accounts.models import Account, ApprovalStatus
@@ -10,7 +11,6 @@ from app.accounts.repository import AccountRepository, SQLAlchemyAccountReposito
 from app.shared.exceptions import PermissionError
 from infrastructure.config import Config, get_config
 from infrastructure.database.session import get_session
-from sqlalchemy.ext.asyncio import AsyncSession
 
 
 async def get_account_repository(
@@ -32,7 +32,7 @@ async def get_current_account(
     domain_service = AccountDomainService()
     payload = domain_service.decode_access_token(token, settings)
 
-    account_id = uuid.UUID(payload["sub"])
+    account_id = uuid.UUID(str(payload["sub"]))
     account = await account_repo.get_by_id(account_id)
     if account is None:
         raise PermissionError("UNAUTHORIZED", "Account not found.")

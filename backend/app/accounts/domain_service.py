@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import bcrypt
 import jwt
@@ -21,10 +21,8 @@ class AccountDomainService:
     def verify_password(self, plain: str, hashed: str) -> bool:
         return bcrypt.checkpw(plain.encode(), hashed.encode())
 
-    def create_access_token(
-        self, account_id: uuid.UUID, role: str, settings: Config
-    ) -> str:
-        now = datetime.now(tz=timezone.utc)
+    def create_access_token(self, account_id: uuid.UUID, role: str, settings: Config) -> str:
+        now = datetime.now(tz=UTC)
         payload = {
             "sub": str(account_id),
             "role": role,
@@ -37,17 +35,17 @@ class AccountDomainService:
             algorithm=self._ALGORITHM,
         )
 
-    def decode_access_token(self, token: str, settings: Config) -> dict:
+    def decode_access_token(self, token: str, settings: Config) -> dict[str, object]:
         try:
             return jwt.decode(
                 token,
                 settings.JWT_SECRET.get_secret_value(),
                 algorithms=[self._ALGORITHM],
             )
-        except jwt.ExpiredSignatureError:
-            raise PermissionError("TOKEN_EXPIRED", "Access token has expired.")
-        except jwt.InvalidTokenError:
-            raise PermissionError("INVALID_TOKEN", "Access token is invalid.")
+        except jwt.ExpiredSignatureError as exc:
+            raise PermissionError("TOKEN_EXPIRED", "Access token has expired.") from exc
+        except jwt.InvalidTokenError as exc:
+            raise PermissionError("INVALID_TOKEN", "Access token is invalid.") from exc
 
     def generate_refresh_token(self) -> tuple[str, str]:
         raw = str(uuid.uuid4())

@@ -40,7 +40,12 @@ exclude = ["alembic/versions/"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "UP", "B", "A", "C4", "RUF"]
-ignore = ["E501"]
+ignore = [
+    "E501",
+    "B008",   # Depends() in function defaults is standard FastAPI pattern
+    "A004",   # PermissionError shadow is intentional domain design
+    "A001",   # same as A004 at variable level
+]
 
 [tool.black]
 line-length = 100

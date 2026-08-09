@@ -1,25 +1,26 @@
 """Unit tests for RegisterAccountUseCase (T020)."""
+
 from __future__ import annotations
 
 import uuid
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock
 
 import pytest
 
-from app.accounts.models import Account, AccountRole, ApprovalStatus
 from app.accounts.domain_service import AccountDomainService
+from app.accounts.models import Account, AccountRole, ApprovalStatus
 from app.shared.exceptions import ConflictError
 from application.register_account import RegisterAccountUseCase
 
 
-def _make_account(**kwargs) -> Account:
-    defaults = dict(
-        id=uuid.uuid4(),
-        email="user@example.com",
-        password_hash="$2b$12$hashed",
-        role=AccountRole.parent,
-        approval_status=ApprovalStatus.pending,
-    )
+def _make_account(**kwargs: object) -> Account:
+    defaults = {
+        "id": uuid.uuid4(),
+        "email": "user@example.com",
+        "password_hash": "$2b$12$hashed",
+        "role": AccountRole.parent,
+        "approval_status": ApprovalStatus.pending,
+    }
     defaults.update(kwargs)
     return Account(**defaults)
 
@@ -38,10 +39,13 @@ def domain_service() -> AccountDomainService:
 
 
 @pytest.fixture
-def use_case(account_repo, domain_service) -> RegisterAccountUseCase:
+def use_case(
+    account_repo: AsyncMock, domain_service: AccountDomainService
+) -> RegisterAccountUseCase:
     return RegisterAccountUseCase(account_repo, domain_service)
 
 
+@pytest.mark.unit
 class TestRegisterAccount:
     async def test_happy_path_creates_pending_account(
         self, use_case: RegisterAccountUseCase, account_repo: AsyncMock

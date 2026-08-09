@@ -1,8 +1,9 @@
 """Unit tests for ApproveAccountUseCase (T028)."""
+
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock
 
 import pytest
@@ -19,7 +20,7 @@ def _make_account(status: str = ApprovalStatus.pending) -> Account:
         password_hash="$2b$12$hashed",
         role=AccountRole.parent,
         approval_status=status,
-        created_at=datetime.now(tz=timezone.utc),
+        created_at=datetime.now(tz=UTC),
     )
 
 
@@ -31,10 +32,11 @@ def account_repo() -> AsyncMock:
 
 
 @pytest.fixture
-def use_case(account_repo) -> ApproveAccountUseCase:
+def use_case(account_repo: AsyncMock) -> ApproveAccountUseCase:
     return ApproveAccountUseCase(account_repo)
 
 
+@pytest.mark.unit
 class TestApproveAccount:
     async def test_happy_path_sets_approved_fields(
         self, use_case: ApproveAccountUseCase, account_repo: AsyncMock

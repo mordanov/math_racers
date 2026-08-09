@@ -92,9 +92,7 @@ class TestFullAuthCycle:
         )
         assert list_resp.status_code == 200
         items = list_resp.json()["items"]
-        account_id = next(
-            (item["id"] for item in items if item["email"] == email), None
-        )
+        account_id = next((item["id"] for item in items if item["email"] == email), None)
         assert account_id is not None, f"Account {email} not found in pending list"
 
         # Step 5: admin approves
@@ -113,7 +111,7 @@ class TestFullAuthCycle:
             assert login_resp.cookies.get("refresh_token")
 
             # Step 7: refresh returns new tokens
-            refresh_cookie = login_resp.cookies.get("refresh_token")
+            refresh_cookie = login_resp.cookies.get("refresh_token") or ""
             refresh_resp = client.post(
                 f"{BASE_URL}/api/v1/auth/refresh",
                 cookies={"refresh_token": refresh_cookie},
@@ -137,7 +135,7 @@ class TestFullAuthCycle:
             assert logout_resp.status_code == 204
 
             # Step 10: refresh after logout fails
-            new_cookie = refresh_resp.cookies.get("refresh_token")
+            new_cookie = refresh_resp.cookies.get("refresh_token") or ""
             post_logout_refresh = client.post(
                 f"{BASE_URL}/api/v1/auth/refresh",
                 cookies={"refresh_token": new_cookie},

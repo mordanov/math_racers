@@ -28,7 +28,7 @@ def _login(email: str, password: str) -> httpx.Response:
 def _admin_token() -> str:
     resp = _login(ADMIN_EMAIL, ADMIN_PASSWORD)
     assert resp.status_code == 200, f"Admin login failed: {resp.text}"
-    return resp.json()["access_token"]
+    return str(resp.json()["access_token"])
 
 
 def _register_and_get_id(email: str, admin_token: str) -> str:
@@ -46,7 +46,7 @@ def _register_and_get_id(email: str, admin_token: str) -> str:
     items = list_resp.json()["items"]
     account_id = next((item["id"] for item in items if item["email"] == email), None)
     assert account_id is not None
-    return account_id
+    return str(account_id)
 
 
 @pytest.mark.integration
