@@ -135,6 +135,9 @@ jobs:
         run: pytest -m integration --tb=short
         env:
           HEALTH_URL: http://localhost:8000/health
+          API_URL: http://localhost:8000
+          ADMIN_EMAIL: admin@ci.local
+          ADMIN_PASSWORD: ci-admin-password-placeholder
 
       # ── 7. Build container images ────────────────────────────────────────────
       - name: Verify clean working tree
