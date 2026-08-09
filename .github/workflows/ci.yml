@@ -200,16 +200,16 @@ jobs:
             -subj "/CN=localhost" 2>/dev/null
           # Minimal nginx config: just verify HSTS header is served over TLS
           mkdir -p /tmp/ci-nginx-conf
-          cat > /tmp/ci-nginx-conf/hsts-check.conf << 'NGINXEOF'
-server {
-    listen 443 ssl;
-    server_name _;
-    ssl_certificate /etc/nginx/certs/fullchain.pem;
-    ssl_certificate_key /etc/nginx/certs/privkey.pem;
-    add_header Strict-Transport-Security "max-age=63072000; includeSubDomains" always;
-    location / { return 200 "ok"; add_header Content-Type text/plain; }
-}
-NGINXEOF
+          printf '%s\n' \
+            'server {' \
+            '  listen 443 ssl;' \
+            '  server_name _;' \
+            '  ssl_certificate /etc/nginx/certs/fullchain.pem;' \
+            '  ssl_certificate_key /etc/nginx/certs/privkey.pem;' \
+            '  add_header Strict-Transport-Security "max-age=63072000; includeSubDomains" always;' \
+            '  location / { return 200 "ok"; add_header Content-Type text/plain; }' \
+            '}' \
+            > /tmp/ci-nginx-conf/hsts-check.conf
           docker run -d --name ci-nginx \
             -p 443:443 \
             -v "/tmp/ci-nginx-certs:/etc/nginx/certs:ro" \
