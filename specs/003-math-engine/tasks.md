@@ -17,10 +17,10 @@
 
 **Purpose**: Create module skeletons so imports resolve and tasks in later phases can target specific files without ambiguity.
 
-- [ ] T001 Create `frontend/src/engine/math/` directory with empty placeholder files: `types.ts`, `rng.ts`, `tiers.ts`, `generator.ts`, `validator.ts`, `difficulty.ts`, `index.ts`
-- [ ] T002 Create `backend/app/mathematics/` domain module with empty `__init__.py`, `types.py`, `rng.py`, `tiers.py`, `generator.py`, `difficulty.py`, `models.py`, `repository.py`, `schemas.py`, `exceptions.py`
-- [ ] T003 [P] Create `frontend/tests/engine/math/` directory with empty `generator.test.ts`, `validator.test.ts`, `difficulty.test.ts`
-- [ ] T004 [P] Create `backend/tests/unit/mathematics/` and `backend/tests/integration/api/` directories with empty `test_generator.py`, `test_difficulty.py`, `test_problems.py`, `test_difficulty_api.py`
+- [x] T001 Create `frontend/src/engine/math/` directory with empty placeholder files: `types.ts`, `rng.ts`, `tiers.ts`, `generator.ts`, `validator.ts`, `difficulty.ts`, `index.ts`
+- [x] T002 Create `backend/app/mathematics/` domain module with empty `__init__.py`, `types.py`, `rng.py`, `tiers.py`, `generator.py`, `difficulty.py`, `models.py`, `repository.py`, `schemas.py`, `exceptions.py`
+- [x] T003 [P] Create `frontend/tests/engine/math/` directory with empty `generator.test.ts`, `validator.test.ts`, `difficulty.test.ts`
+- [x] T004 [P] Create `backend/tests/unit/mathematics/` and `backend/tests/integration/api/` directories with empty `test_generator.py`, `test_difficulty.py`, `test_problems.py`, `test_difficulty_api.py`
 
 **Checkpoint**: All target files exist; imports will not fail due to missing modules.
 
@@ -32,12 +32,12 @@
 
 **⚠️ CRITICAL**: Phases 3–6 all depend on T005–T010.
 
-- [ ] T005 Define all TypeScript types (`Operation`, `Problem`, `ProblemSet`, `Tier`, `TierConfig`, `ValidationResult`, `TierSelectionInput`) in `frontend/src/engine/math/types.ts` per `data-model.md`
-- [ ] T006 [P] Define Python types (`Operation` StrEnum, `Problem` frozen dataclass, `ProblemSet` frozen dataclass) in `backend/app/mathematics/types.py` per `data-model.md`
-- [ ] T007 [P] Implement Mulberry32 seeded PRNG as a factory function `createRng(seed: number): () => number` in `frontend/src/engine/math/rng.ts` (research.md Decision 1); verify output is in [0, 1)
-- [ ] T008 [P] Implement Python port of Mulberry32 as `create_rng(seed: int)` generator in `backend/app/mathematics/rng.py`; apply 32-bit mask `& 0xFFFFFFFF` after every operation to match JS semantics (research.md Decision 3)
-- [ ] T009 [P] Define static `TIER_CONFIGS` map (`Tier → TierConfig`) for tiers 1–5 in `frontend/src/engine/math/tiers.ts`; Tier 6 maps to `null` (data-model.md tier table)
-- [ ] T010 [P] Define Python `TIER_CONFIGS` dict for tiers 1–5 in `backend/app/mathematics/tiers.py`; Tier 6 maps to `None`
+- [x] T005 Define all TypeScript types (`Operation`, `Problem`, `ProblemSet`, `Tier`, `TierConfig`, `ValidationResult`, `TierSelectionInput`) in `frontend/src/engine/math/types.ts` per `data-model.md`
+- [x] T006 [P] Define Python types (`Operation` StrEnum, `Problem` frozen dataclass, `ProblemSet` frozen dataclass) in `backend/app/mathematics/types.py` per `data-model.md`
+- [x] T007 [P] Implement Mulberry32 seeded PRNG as a factory function `createRng(seed: number): () => number` in `frontend/src/engine/math/rng.ts` (research.md Decision 1); verify output is in [0, 1)
+- [x] T008 [P] Implement Python port of Mulberry32 as `create_rng(seed: int)` generator in `backend/app/mathematics/rng.py`; apply 32-bit mask `& 0xFFFFFFFF` after every operation to match JS semantics (research.md Decision 3)
+- [x] T009 [P] Define static `TIER_CONFIGS` map (`Tier → TierConfig`) for tiers 1–5 in `frontend/src/engine/math/tiers.ts`; Tier 6 maps to `null` (data-model.md tier table)
+- [x] T010 [P] Define Python `TIER_CONFIGS` dict for tiers 1–5 in `backend/app/mathematics/tiers.py`; Tier 6 maps to `None`
 
 **Checkpoint**: Foundation ready. All user story work can now begin in parallel.
 
@@ -49,14 +49,14 @@
 
 **Independent Test**: Generate the same `(tier=2, seed=1234567890, count=8)` twice and assert byte-identical output. Generate 100 problems at Tier 4 and assert all division answers are integers. Run `pnpm test frontend/tests/engine/math/generator.test.ts`.
 
-- [ ] T011 [P] [US1] [US2] Write failing unit tests for problem generation in `frontend/tests/engine/math/generator.test.ts`: determinism (same seed → same sequence), different seed → different sequence, `count=0` returns empty set, Tier 1 = addition-only with operands in [1,10], Tier 4 division answers are integers, subtraction result ≥ 0, operands clamped to tier max
-- [ ] T012 [P] [US1] [US2] Write failing Python unit tests in `backend/tests/unit/mathematics/test_generator.py` covering the same invariants as T011 plus 32-bit RNG parity pre-check
-- [ ] T013 [US1] [US2] Implement `pickOperation(tier, rng)`, `pickOperands(operation, tierConfig, rng)`, `compute(operation, a, b)` and `generateProblemSet(tier, seed, count, customTierConfig?)` in `frontend/src/engine/math/generator.ts`; Tier 6 fallback to Tier 5 config when `customTierConfig` is absent; subtraction: ensure `operand_a >= operand_b` at generation time (FR-015)
-- [ ] T014 [US1] [US2] Implement Python `pick_operation`, `pick_operands`, `compute`, `generate_problem_set` in `backend/app/mathematics/generator.py`; mirror the TypeScript algorithm exactly using `rng.py` and `tiers.py`
-- [ ] T015 [US1] [US2] Implement Pydantic request query model and response schema for `/api/v1/problems` in `backend/app/mathematics/schemas.py`; validate `tier` in [1,6], `count` in [0,100], `seed` in [0, 4294967295] (contracts/math-api.md)
-- [ ] T016 [US1] [US2] Implement `GET /api/v1/problems` router in `backend/app/presentation/api/v1/problems.py`; delegate to `generate_problem_set`; return HTTP 422 on Pydantic validation failure (contracts/math-api.md)
-- [ ] T017 [US1] [US2] Write failing backend integration tests in `backend/tests/integration/api/test_problems.py`: valid request returns 200 with correct shape, `tier=7` returns 422, `count=101` returns 422, parity test (same seed on both Python and TypeScript produces identical `operation/operand_a/operand_b/answer` per problem)
-- [ ] T018 [US1] [US2] Export `generateProblemSet` from `frontend/src/engine/math/index.ts`; confirm all T011 tests pass
+- [x] T011 [P] [US1] [US2] Write failing unit tests for problem generation in `frontend/tests/engine/math/generator.test.ts`: determinism (same seed → same sequence), different seed → different sequence, `count=0` returns empty set, Tier 1 = addition-only with operands in [1,10], Tier 4 division answers are integers, subtraction result ≥ 0, operands clamped to tier max
+- [x] T012 [P] [US1] [US2] Write failing Python unit tests in `backend/tests/unit/mathematics/test_generator.py` covering the same invariants as T011 plus 32-bit RNG parity pre-check
+- [x] T013 [US1] [US2] Implement `pickOperation(tier, rng)`, `pickOperands(operation, tierConfig, rng)`, `compute(operation, a, b)` and `generateProblemSet(tier, seed, count, customTierConfig?)` in `frontend/src/engine/math/generator.ts`; Tier 6 fallback to Tier 5 config when `customTierConfig` is absent; subtraction: ensure `operand_a >= operand_b` at generation time (FR-015)
+- [x] T014 [US1] [US2] Implement Python `pick_operation`, `pick_operands`, `compute`, `generate_problem_set` in `backend/app/mathematics/generator.py`; mirror the TypeScript algorithm exactly using `rng.py` and `tiers.py`
+- [x] T015 [US1] [US2] Implement Pydantic request query model and response schema for `/api/v1/problems` in `backend/app/mathematics/schemas.py`; validate `tier` in [1,6], `count` in [0,100], `seed` in [0, 4294967295] (contracts/math-api.md)
+- [x] T016 [US1] [US2] Implement `GET /api/v1/problems` router in `backend/app/presentation/api/v1/problems.py`; delegate to `generate_problem_set`; return HTTP 422 on Pydantic validation failure (contracts/math-api.md)
+- [x] T017 [US1] [US2] Write failing backend integration tests in `backend/tests/integration/api/test_problems.py`: valid request returns 200 with correct shape, `tier=7` returns 422, `count=101` returns 422, parity test (same seed on both Python and TypeScript produces identical `operation/operand_a/operand_b/answer` per problem)
+- [x] T018 [US1] [US2] Export `generateProblemSet` from `frontend/src/engine/math/index.ts`; confirm all T011 tests pass
 
 **Checkpoint**: `generateProblemSet` is fully functional and tested on both sides. The reference API endpoint works. Parity test passes.
 
@@ -68,9 +68,9 @@
 
 **Independent Test**: Call `validateAnswer` with correct, wrong, and non-numeric inputs; assert results. Run `pnpm test frontend/tests/engine/math/validator.test.ts`.
 
-- [ ] T019 [P] [US4] Write failing unit tests in `frontend/tests/engine/math/validator.test.ts`: correct integer returns `{correct: true}`, wrong integer returns `{correct: false}`, non-numeric returns `{correct: false, reason: 'not_a_number'}`, whitespace-padded input is trimmed and evaluated, `elapsedMs` is a non-negative number
-- [ ] T020 [P] [US4] Implement `validateAnswer(problem, playerInput): ValidationResult` in `frontend/src/engine/math/validator.ts`; `parseInt(playerInput.trim())`; record `elapsedMs` as `Date.now()` delta from a `renderTime` argument (passed by the caller when the problem is rendered)
-- [ ] T021 [P] [US4] Export `validateAnswer` from `frontend/src/engine/math/index.ts`; confirm all T019 tests pass
+- [x] T019 [P] [US4] Write failing unit tests in `frontend/tests/engine/math/validator.test.ts`: correct integer returns `{correct: true}`, wrong integer returns `{correct: false}`, non-numeric returns `{correct: false, reason: 'not_a_number'}`, whitespace-padded input is trimmed and evaluated, `elapsedMs` is a non-negative number
+- [x] T020 [P] [US4] Implement `validateAnswer(problem, playerInput): ValidationResult` in `frontend/src/engine/math/validator.ts`; `parseInt(playerInput.trim())`; record `elapsedMs` as `Date.now()` delta from a `renderTime` argument (passed by the caller when the problem is rendered)
+- [x] T021 [P] [US4] Export `validateAnswer` from `frontend/src/engine/math/index.ts`; confirm all T019 tests pass
 
 **Checkpoint**: Answer validation is independently functional and tested.
 
@@ -82,9 +82,9 @@
 
 **Independent Test**: Generate 500 problems at Tier 1 (most constrained) and scan for consecutive identical tuples. Run `pnpm test frontend/tests/engine/math/generator.test.ts`.
 
-- [ ] T022 [US3] Add `isDuplicate(candidate, last)` helper and retry loop (max 10 retries per slot) to `frontend/src/engine/math/generator.ts`; retry count resets per slot
-- [ ] T023 [US3] Add duplicate-prevention test cases to `frontend/tests/engine/math/generator.test.ts`: no consecutive identical tuple in a 500-problem Tier 1 set; loop terminates when retry limit is reached (mock constrained tier)
-- [ ] T024 [US3] Add equivalent retry logic to `backend/app/mathematics/generator.py` and corresponding test cases to `backend/tests/unit/mathematics/test_generator.py`
+- [x] T022 [US3] Add `isDuplicate(candidate, last)` helper and retry loop (max 10 retries per slot) to `frontend/src/engine/math/generator.ts`; retry count resets per slot
+- [x] T023 [US3] Add duplicate-prevention test cases to `frontend/tests/engine/math/generator.test.ts`: no consecutive identical tuple in a 500-problem Tier 1 set; loop terminates when retry limit is reached (mock constrained tier)
+- [x] T024 [US3] Add equivalent retry logic to `backend/app/mathematics/generator.py` and corresponding test cases to `backend/tests/unit/mathematics/test_generator.py`
 
 **Checkpoint**: Duplicate prevention works and is verified. All prior story tests still pass.
 
@@ -96,18 +96,18 @@
 
 **Independent Test**: Call `selectTier` with all boundary inputs; assert output. Call `GET/PATCH /api/v1/players/{id}/difficulty`; assert responses. Run `pnpm test frontend/tests/engine/math/difficulty.test.ts` and `pytest tests/integration/api/test_difficulty_api.py`.
 
-- [ ] T025 [P] [US5] Write failing unit tests for `selectTier` in `frontend/tests/engine/math/difficulty.test.ts`: skill ≥ 0.90 → tier+1 (capped at 6), skill < 0.60 → tier-1 (floored at 1), 0.60 ≤ skill < 0.90 → unchanged, parent override returns clamped override regardless of skill score, override outside [1,6] is clamped silently
-- [ ] T026 [P] [US5] Write failing Python unit tests for `select_tier` in `backend/tests/unit/mathematics/test_difficulty.py` covering the same cases as T025
-- [ ] T027 [P] [US5] Implement `selectTier(input: TierSelectionInput): Tier` in `frontend/src/engine/math/difficulty.ts`; clamp `parentOverride` to [1,6] if provided (FR-008, FR-009)
-- [ ] T028 [P] [US5] Implement `select_tier(current_tier, skill_score, parent_override)` function in `backend/app/mathematics/difficulty.py`
-- [ ] T029 [US5] Create `PlayerDifficulty` SQLAlchemy ORM model (`player_id` FK, `current_tier` int, `parent_override` nullable int, `updated_at`) in `backend/app/mathematics/models.py`
-- [ ] T030 [US5] Create Alembic migration `add_player_difficulty` in `backend/alembic/versions/`; include rollback `downgrade()` function
-- [ ] T031 [US5] Implement `PlayerDifficultyRepository` protocol and `SQLAlchemyPlayerDifficultyRepository` in `backend/app/mathematics/repository.py` (get by player_id, upsert)
-- [ ] T032 [US5] Add difficulty request/response Pydantic schemas to `backend/app/mathematics/schemas.py` (contracts/math-api.md `GET/PATCH /api/v1/players/{id}/difficulty`)
-- [ ] T033 [US5] Add `PlayerNotFoundError` to `backend/app/mathematics/exceptions.py`
-- [ ] T034 [US5] Implement `GET /api/v1/players/{id}/difficulty` and `PATCH /api/v1/players/{id}/difficulty` routers in `backend/app/presentation/api/v1/difficulty.py`; derive `effective_tier` at read time; validate `parent_override` in [1,6] or null; return 422 on out-of-range value; return 404 for unknown player; enforce authentication + parent-only authorization for PATCH
-- [ ] T035 [US5] Write integration tests in `backend/tests/integration/api/test_difficulty_api.py`: GET returns current tier, PATCH sets override, PATCH null clears override, PATCH with value 7 returns 422, unknown player returns 404, unauthenticated request returns 401
-- [ ] T036 [US5] Export `selectTier` from `frontend/src/engine/math/index.ts`; confirm all T025 tests pass
+- [x] T025 [P] [US5] Write failing unit tests for `selectTier` in `frontend/tests/engine/math/difficulty.test.ts`: skill ≥ 0.90 → tier+1 (capped at 6), skill < 0.60 → tier-1 (floored at 1), 0.60 ≤ skill < 0.90 → unchanged, parent override returns clamped override regardless of skill score, override outside [1,6] is clamped silently
+- [x] T026 [P] [US5] Write failing Python unit tests for `select_tier` in `backend/tests/unit/mathematics/test_difficulty.py` covering the same cases as T025
+- [x] T027 [P] [US5] Implement `selectTier(input: TierSelectionInput): Tier` in `frontend/src/engine/math/difficulty.ts`; clamp `parentOverride` to [1,6] if provided (FR-008, FR-009)
+- [x] T028 [P] [US5] Implement `select_tier(current_tier, skill_score, parent_override)` function in `backend/app/mathematics/difficulty.py`
+- [x] T029 [US5] Create `PlayerDifficulty` SQLAlchemy ORM model (`player_id` FK, `current_tier` int, `parent_override` nullable int, `updated_at`) in `backend/app/mathematics/models.py`
+- [x] T030 [US5] Create Alembic migration `add_player_difficulty` in `backend/alembic/versions/`; include rollback `downgrade()` function
+- [x] T031 [US5] Implement `PlayerDifficultyRepository` protocol and `SQLAlchemyPlayerDifficultyRepository` in `backend/app/mathematics/repository.py` (get by player_id, upsert)
+- [x] T032 [US5] Add difficulty request/response Pydantic schemas to `backend/app/mathematics/schemas.py` (contracts/math-api.md `GET/PATCH /api/v1/players/{id}/difficulty`)
+- [x] T033 [US5] Add `PlayerNotFoundError` to `backend/app/mathematics/exceptions.py`
+- [x] T034 [US5] Implement `GET /api/v1/players/{id}/difficulty` and `PATCH /api/v1/players/{id}/difficulty` routers in `backend/app/presentation/api/v1/difficulty.py`; derive `effective_tier` at read time; validate `parent_override` in [1,6] or null; return 422 on out-of-range value; return 404 for unknown player; enforce authentication + parent-only authorization for PATCH
+- [x] T035 [US5] Write integration tests in `backend/tests/integration/api/test_difficulty_api.py`: GET returns current tier, PATCH sets override, PATCH null clears override, PATCH with value 7 returns 422, unknown player returns 404, unauthenticated request returns 401
+- [x] T036 [US5] Export `selectTier` from `frontend/src/engine/math/index.ts`; confirm all T025 tests pass
 
 **Checkpoint**: Tier selection is fully functional on both sides, backed by persistent storage. All prior story tests still pass.
 
@@ -117,11 +117,11 @@
 
 **Purpose**: Wire everything together, validate end-to-end, and update documentation.
 
-- [ ] T037 [P] Register `problems` and `difficulty` routers in `backend/app/presentation/api/v1/` router registry (or `backend/app/main.py` depending on existing pattern); confirm routes are discoverable via OpenAPI at `/api/v1/openapi.json`
-- [ ] T038 [P] Add structured error logging (FR-014) to `generator.py` / `generator.ts`: log on retry-limit exhaustion (duplicate accepted) and on unexpected non-numeric validation input exceeding a threshold
+- [x] T037 [P] Register `problems` and `difficulty` routers in `backend/app/presentation/api/v1/` router registry (or `backend/app/main.py` depending on existing pattern); confirm routes are discoverable via OpenAPI at `/api/v1/openapi.json`
+- [x] T038 [P] Add structured error logging (FR-014) to `generator.py` / `generator.ts`: log on retry-limit exhaustion (duplicate accepted) and on unexpected non-numeric validation input exceeding a threshold
 - [ ] T039 Run quickstart.md Scenario 5 (frontend ↔ backend parity check) manually and confirm all 5 problem fields match for `tier=3, seed=777, count=5`
-- [ ] T040 [P] Update `docs/gameplay/spec-math-engine.md` if any implemented behaviour diverges from the spec (Constitution §XX)
-- [ ] T041 Run `pnpm test frontend/tests/engine/math/` and `pytest backend/tests/unit/mathematics/ backend/tests/integration/api/test_problems.py backend/tests/integration/api/test_difficulty_api.py` — confirm zero failures
+- [x] T040 [P] Update `docs/gameplay/spec-math-engine.md` if any implemented behaviour diverges from the spec (Constitution §XX)
+- [x] T041 Run `pnpm test frontend/tests/engine/math/` and `pytest backend/tests/unit/mathematics/ backend/tests/integration/api/test_problems.py backend/tests/integration/api/test_difficulty_api.py` — confirm zero failures
 
 ---
 
