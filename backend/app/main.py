@@ -2,18 +2,26 @@ import logging
 import subprocess
 import sys
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 
 from app.presentation.api.middleware.correlation_id import CorrelationIdMiddleware
 from app.presentation.api.v1.health import router as health_router
+from app.shared.exceptions import (
+    ConflictError,
+    DomainError,
+    LastAdministratorError,
+    NotFoundError,
+    PermissionError,
+    ValidationError,
+)
 from infrastructure.config import get_config
-from infrastructure.logging import setup_logging
+from infrastructure.logging import get_logger, request_id_var, setup_logging
 
 logger = logging.getLogger(__name__)
 
 
 def _run_migrations() -> None:
-    """Apply pending migrations. Abort startup on failure."""
     try:
         result = subprocess.run(
             ["alembic", "upgrade", "head"],
@@ -38,6 +46,66 @@ def _run_migrations() -> None:
         sys.exit(1)
 
 
+async def _seed_default_admin() -> None:
+    cfg = get_config()
+    try:
+        admin_email = cfg.ADMIN_EMAIL.get_secret_value().strip().lower()
+        admin_password = cfg.ADMIN_PASSWORD.get_secret_value()
+    except Exception:
+        logger.error("ADMIN_EMAIL or ADMIN_PASSWORD not configured — aborting startup")
+        sys.exit(1)
+
+    from infrastructure.database.engine import get_engine
+    from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
+
+    from app.accounts.domain_service import AccountDomainService
+    from app.accounts.models import Account, AccountRole, ApprovalStatus
+    from app.accounts.repository import SQLAlchemyAccountRepository
+
+    engine = get_engine()
+    session_factory = async_sessionmaker(bind=engine, expire_on_commit=False, autoflush=False)
+
+    async with session_factory() as session:
+        async with session.begin():
+            repo = SQLAlchemyAccountRepository(session)
+            count = await repo.count_approved_administrators()
+            if count == 0:
+                domain_service = AccountDomainService()
+                password_hash = domain_service.hash_password(admin_password)
+                admin = Account(
+                    email=admin_email,
+                    password_hash=password_hash,
+                    role=AccountRole.administrator,
+                    approval_status=ApprovalStatus.approved,
+                )
+                await repo.save(admin)
+                logger.info(
+                    "Default administrator account seeded",
+                    extra={"context": {"email": admin_email}},
+                )
+            else:
+                logger.info(
+                    "Administrator account(s) already exist — skipping seed",
+                    extra={"context": {"count": count}},
+                )
+
+
+_DOMAIN_ERROR_STATUS: dict[type[DomainError], int] = {
+    ValidationError: 422,
+    NotFoundError: 404,
+    ConflictError: 409,
+    PermissionError: 403,
+    LastAdministratorError: 400,
+}
+
+
+def _domain_error_status(exc: DomainError) -> int:
+    for cls, status in _DOMAIN_ERROR_STATUS.items():
+        if isinstance(exc, cls):
+            return status
+    return 500
+
+
 def create_app() -> FastAPI:
     cfg = get_config()
     setup_logging(service="backend", level=cfg.LOG_LEVEL)
@@ -52,9 +120,27 @@ def create_app() -> FastAPI:
     app.add_middleware(CorrelationIdMiddleware)
     app.include_router(health_router)
 
+    from app.presentation.api.v1.auth import router as auth_router
+    from app.presentation.api.v1.admin import router as admin_router
+
+    app.include_router(auth_router)
+    app.include_router(admin_router)
+
+    @app.exception_handler(DomainError)
+    async def domain_error_handler(request: Request, exc: DomainError) -> JSONResponse:
+        return JSONResponse(
+            status_code=_domain_error_status(exc),
+            content={
+                "error_code": exc.error_code,
+                "message": exc.message,
+                "request_id": request_id_var.get(),
+            },
+        )
+
     @app.on_event("startup")
     async def startup() -> None:
         _run_migrations()
+        await _seed_default_admin()
         from infrastructure.queue.recovery import recover_pending_jobs
 
         await recover_pending_jobs()

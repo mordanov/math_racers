@@ -16,10 +16,11 @@ if config.config_file_name is not None:
 cfg = get_config()
 config.set_main_option("sqlalchemy.url", cfg.DATABASE_URL.get_secret_value())
 
-# Import all models here so Alembic autogenerate can detect them.
-# Add new model imports as domain modules are created.
-# from app.accounts.models import *
-target_metadata = None  # Replace with Base.metadata once models exist
+# Import all models so Alembic autogenerate can detect schema changes.
+import app.accounts.models  # noqa: F401
+from infrastructure.database.base import Base
+
+target_metadata = Base.metadata
 
 
 def run_migrations_offline() -> None:
