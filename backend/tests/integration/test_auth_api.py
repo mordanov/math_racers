@@ -107,7 +107,6 @@ class TestFullAuthCycle:
                 json={"email": email, "password": "parentpassword123"},
             )
             assert login_resp.status_code == 200
-            access_token = login_resp.json()["access_token"]
             assert login_resp.cookies.get("refresh_token")
 
             # Step 7: refresh returns new tokens
