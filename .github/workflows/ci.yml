@@ -203,18 +203,18 @@ jobs:
             -v /tmp/ci-nginx-certs:/src:ro \
             -v math_racers_nginx_certs:/dst \
             alpine sh -c 'cp /src/* /dst/'
-          cat > .env << 'ENVEOF'
-DATABASE_URL=postgresql+asyncpg://mathracers:mathracers_dev@postgres:5432/mathracers
-REDIS_URL=redis://redis:6379/0
-JWT_SECRET=ci-test-secret-32-bytes-minimum-xx
-OPENAI_API_KEY=sk-test-placeholder
-STORAGE_ENDPOINT=https://CHANGE_ME
-STORAGE_ACCESS_KEY=test
-STORAGE_SECRET_KEY=test
-STORAGE_BUCKET=test
-ENVIRONMENT=development
-LOG_LEVEL=WARNING
-ENVEOF
+          printf '%s\n' \
+            'DATABASE_URL=postgresql+asyncpg://mathracers:mathracers_dev@postgres:5432/mathracers' \
+            'REDIS_URL=redis://redis:6379/0' \
+            'JWT_SECRET=ci-test-secret-32-bytes-minimum-xx' \
+            'OPENAI_API_KEY=sk-test-placeholder' \
+            'STORAGE_ENDPOINT=https://CHANGE_ME' \
+            'STORAGE_ACCESS_KEY=test' \
+            'STORAGE_SECRET_KEY=test' \
+            'STORAGE_BUCKET=test' \
+            'ENVIRONMENT=development' \
+            'LOG_LEVEL=WARNING' \
+            > .env
           VERSION=${{ github.sha }} docker compose up -d
           # Wait for HTTPS stack (self-signed cert — skip verification)
           timeout 60 bash -c 'until curl -skf https://localhost/health > /dev/null 2>&1; do sleep 2; done'
