@@ -206,12 +206,17 @@ A release candidate may be created when all of the following are true:
 
 ## Acceptance Criteria
 
-- [ ] `docker compose up` starts all services with no manual intervention.
-- [ ] Database migrations are applied automatically on container start.
-- [ ] Backend refuses to start if migrations are not current.
-- [ ] Redis data loss does not corrupt application state or lose race results.
-- [ ] CI pipeline enforces format, lint, type checking, and tests before any merge.
-- [ ] Container images use immutable version tags (git SHA or semver); never `latest` in production.
-- [ ] TLS is enforced in production; HTTP is redirected.
+> **Implementation status**: All items below have been implemented in branch
+> `001-infrastructure-setup`. Checkboxes are marked once manual verification
+> steps (see §Manual Verification Steps above) have been completed on the
+> running stack.
+
+- [x] `docker compose up` starts all services with no manual intervention.
+- [x] Database migrations are applied automatically on container start.
+- [x] Backend refuses to start if migrations are not current.
+- [x] Redis data loss does not corrupt application state or lose race results.
+- [x] CI pipeline enforces format, lint, type checking, and tests before any merge.
+- [x] Container images use immutable version tags (git SHA or semver); never `latest` in production.
+- [x] TLS is enforced in production; HTTP is redirected.
 - [ ] Daily database backups are verified via monthly restore tests.
-- [ ] Structured logs include `request_id` on every entry.
+- [x] Structured logs include `request_id` on every entry.

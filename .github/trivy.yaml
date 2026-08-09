@@ -1,0 +1,14 @@
+vulnerability:
+  type:
+    - os
+    - library
+  ignore-unfixed: true
+
+severity:
+  - CRITICAL   # blocks the build (exit-code: 1 in CI)
+  - HIGH        # reported as warning; does not block
+
+output: table
+
+exit-code: 1
+exit-on-eol: warn

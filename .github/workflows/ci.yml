@@ -1,0 +1,239 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.12"
+  NODE_VERSION: "20"
+
+jobs:
+  ci:
+    name: CI Pipeline
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: mathracers_test
+          POSTGRES_USER: mathracers
+          POSTGRES_PASSWORD: testpass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 3s
+          --health-retries 5
+
+    steps:
+      # ── 1. Install dependencies ──────────────────────────────────────────────
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install uv
+        run: pip install uv pip-audit
+
+      - name: Install Python dependencies
+        working-directory: backend
+        run: uv pip install --system -e ".[dev]"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install Node dependencies
+        working-directory: frontend
+        run: pnpm install --frozen-lockfile
+
+      # ── 2. Format check ──────────────────────────────────────────────────────
+      - name: Format check (Black)
+        working-directory: backend
+        run: black --check .
+
+      - name: Format check (Prettier)
+        working-directory: frontend
+        run: pnpm prettier --check "src/**/*.{ts,tsx,css,json}" --ignore-unknown
+
+      # ── 3. Lint ──────────────────────────────────────────────────────────────
+      - name: Lint (Ruff)
+        working-directory: backend
+        run: ruff check .
+
+      - name: Lint (ESLint)
+        working-directory: frontend
+        run: pnpm eslint src
+
+      # ── 4. Static analysis ───────────────────────────────────────────────────
+      - name: Type check (mypy)
+        working-directory: backend
+        run: mypy .
+
+      - name: Type check (tsc)
+        working-directory: frontend
+        run: pnpm tsc --noEmit
+
+      # ── 5. Unit tests ────────────────────────────────────────────────────────
+      - name: Unit tests (pytest)
+        working-directory: backend
+        run: pytest -m unit --tb=short
+
+      - name: Unit tests (vitest)
+        working-directory: frontend
+        run: pnpm vitest run
+
+      # ── 6. Integration tests ─────────────────────────────────────────────────
+      - name: Start backend for integration tests
+        working-directory: backend
+        run: |
+          uvicorn app.main:app --host 0.0.0.0 --port 8000 &
+          timeout 30 bash -c 'until curl -sf http://localhost:8000/health > /dev/null 2>&1; do sleep 1; done'
+        env:
+          DATABASE_URL: postgresql+asyncpg://mathracers:testpass@localhost:5432/mathracers_test
+          REDIS_URL: redis://localhost:6379/0
+          JWT_SECRET: ${{ secrets.JWT_SECRET || 'ci-test-secret-32-bytes-minimum-xx' }}
+          OPENAI_API_KEY: sk-test-placeholder
+          STORAGE_ENDPOINT: https://CHANGE_ME
+          STORAGE_ACCESS_KEY: test
+          STORAGE_SECRET_KEY: test
+          STORAGE_BUCKET: test
+          ENVIRONMENT: development
+          VERSION: ${{ github.sha }}
+          LOG_LEVEL: WARNING
+
+      - name: Integration tests
+        working-directory: backend
+        run: pytest -m integration --tb=short
+        env:
+          HEALTH_URL: http://localhost:8000/health
+
+      # ── 7. Build container images ────────────────────────────────────────────
+      - name: Verify clean working tree
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "ERROR: working tree is dirty — cannot build release images"
+            exit 1
+          fi
+
+      - name: Build backend image
+        run: |
+          VERSION=${{ github.sha }}
+          docker build --build-arg VERSION=$VERSION \
+            -t math-racers/backend:$VERSION ./backend
+
+      - name: Build frontend image
+        run: |
+          VERSION=${{ github.sha }}
+          docker build -t math-racers/frontend:$VERSION ./frontend
+
+      # ── 8. Security scan ─────────────────────────────────────────────────────
+      - name: Security scan — backend image (trivy)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: math-racers/backend:${{ github.sha }}
+          exit-code: "1"
+          severity: CRITICAL
+          ignore-unfixed: true
+
+      - name: Security scan — frontend image (trivy)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: math-racers/frontend:${{ github.sha }}
+          exit-code: "1"
+          severity: CRITICAL
+          ignore-unfixed: true
+
+      - name: Security scan — Python deps (pip-audit)
+        working-directory: backend
+        run: pip-audit --requirement <(uv pip compile pyproject.toml)
+
+      - name: Security scan — Node deps (pnpm audit)
+        working-directory: frontend
+        run: pnpm audit --audit-level critical
+
+      - name: Check for hardcoded secrets
+        run: |
+          if grep -rE "(SECRET|PASSWORD|API_KEY)\s*=\s*['\"][^\$]" . \
+              --include="*.py" --include="*.ts" --include="*.tsx" \
+              --include="*.yml" --include="*.yaml" \
+              --exclude-dir=".git" \
+              --exclude-dir="node_modules" \
+              --exclude="*.example"; then
+            echo "ERROR: Possible hardcoded secrets detected"
+            exit 1
+          fi
+
+      - name: Smoke test — HSTS header present
+        run: |
+          # Generate self-signed cert for nginx TLS
+          mkdir -p /tmp/ci-nginx-certs
+          openssl req -x509 -nodes -newkey rsa:2048 -days 1 \
+            -keyout /tmp/ci-nginx-certs/privkey.pem \
+            -out /tmp/ci-nginx-certs/fullchain.pem \
+            -subj "/CN=localhost" 2>/dev/null
+          # Minimal nginx config: verify HSTS header is served over TLS.
+          # NOTE: no add_header inside location block — any add_header in a child
+          # block suppresses ALL inherited add_header directives (nginx inheritance rule).
+          mkdir -p /tmp/ci-nginx-conf
+          printf '%s\n' \
+            'server {' \
+            '  listen 443 ssl;' \
+            '  server_name _;' \
+            '  ssl_certificate /etc/nginx/certs/fullchain.pem;' \
+            '  ssl_certificate_key /etc/nginx/certs/privkey.pem;' \
+            '  default_type text/plain;' \
+            '  add_header Strict-Transport-Security "max-age=63072000; includeSubDomains" always;' \
+            '  location / { return 200 "ok"; }' \
+            '}' \
+            > /tmp/ci-nginx-conf/hsts-check.conf
+          docker run -d --name ci-nginx \
+            -p 443:443 \
+            -v "/tmp/ci-nginx-certs:/etc/nginx/certs:ro" \
+            -v "/tmp/ci-nginx-conf/hsts-check.conf:/etc/nginx/conf.d/default.conf:ro" \
+            nginx:1.27-alpine
+          sleep 3
+          HSTS=$(curl -skI https://localhost/ | grep -i strict-transport-security || true)
+          docker rm -f ci-nginx 2>/dev/null || true
+          if ! echo "$HSTS" | grep -q "max-age=63072000"; then
+            echo "ERROR: HSTS header missing or incorrect: '$HSTS'"
+            exit 1
+          fi
+          # Also verify our production nginx config contains the HSTS header
+          grep -q "max-age=63072000" nginx/conf.d/default.conf || \
+            { echo "ERROR: HSTS header missing from production nginx config"; exit 1; }
+          echo "HSTS OK: $HSTS"
+
+      # ── 9. Deploy (default branch only) ─────────────────────────────────────
+      - name: Deploy
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          echo "Deploying version ${{ github.sha }}"
+          # Replace with actual deployment command
+          # e.g.: VERSION=${{ github.sha }} ssh deploy@server docker compose pull && docker compose up -d
