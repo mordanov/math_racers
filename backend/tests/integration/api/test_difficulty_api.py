@@ -19,7 +19,9 @@ def _auth_headers(token: str) -> dict[str, str]:
 
 
 @pytest.mark.integration
-def test_unauthenticated_get_returns_401(player_id: str = "00000000-0000-0000-0000-000000000001") -> None:
+def test_unauthenticated_get_returns_401(
+    player_id: str = "00000000-0000-0000-0000-000000000001",
+) -> None:
     response = httpx.get(f"{BASE_URL}/api/v1/players/{player_id}/difficulty")
     assert response.status_code == 401
 

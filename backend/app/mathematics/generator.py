@@ -97,7 +97,13 @@ def generate_problem_set(
                 if attempt == _MAX_RETRIES and _is_duplicate(candidate, last):
                     logger.warning(
                         "Retry limit reached — accepting duplicate problem",
-                        extra={"context": {"tier": tier, "seed": seed, "slot": len(problems)}},
+                        extra={
+                            "context": {
+                                "tier": tier,
+                                "seed": seed,
+                                "slot": len(problems),
+                            }
+                        },
                     )
                 problem = candidate
                 break

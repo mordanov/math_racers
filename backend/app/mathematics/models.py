@@ -13,7 +13,9 @@ from infrastructure.database.base import Base
 class PlayerDifficulty(Base):
     __tablename__ = "player_difficulty"
     __table_args__ = (
-        CheckConstraint("current_tier BETWEEN 1 AND 6", name="ck_player_difficulty_current_tier"),
+        CheckConstraint(
+            "current_tier BETWEEN 1 AND 6", name="ck_player_difficulty_current_tier"
+        ),
         CheckConstraint(
             "parent_override IS NULL OR parent_override BETWEEN 1 AND 6",
             name="ck_player_difficulty_parent_override",

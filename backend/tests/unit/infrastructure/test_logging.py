@@ -80,7 +80,9 @@ class TestStructuredFormatter:
 
     def test_secret_context_keys_redacted(self) -> None:
         fmt = StructuredFormatter(service="backend")
-        record = self._make_record("msg", context={"api_key": "real-key", "user": "alice"})
+        record = self._make_record(
+            "msg", context={"api_key": "real-key", "user": "alice"}
+        )
         output = json.loads(fmt.format(record))
         assert output["context"]["api_key"] == "***REDACTED***"
         assert output["context"]["user"] == "alice"

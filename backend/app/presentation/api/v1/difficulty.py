@@ -10,7 +10,10 @@ from app.mathematics.exceptions import PlayerNotFoundError
 from app.mathematics.models import PlayerDifficulty
 from app.mathematics.repository import SQLAlchemyPlayerDifficultyRepository
 from app.mathematics.schemas import DifficultyPatchRequest, DifficultyResponse
-from app.presentation.api.middleware.auth import get_current_account, require_administrator
+from app.presentation.api.middleware.auth import (
+    get_current_account,
+    require_administrator,
+)
 from app.accounts.models import Account
 from infrastructure.database.session import get_session
 

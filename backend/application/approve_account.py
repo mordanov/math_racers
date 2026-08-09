@@ -12,7 +12,9 @@ class ApproveAccountUseCase:
     def __init__(self, account_repo: AccountRepository) -> None:
         self._account_repo = account_repo
 
-    async def execute(self, account_id: uuid.UUID, approving_admin_id: uuid.UUID) -> Account:
+    async def execute(
+        self, account_id: uuid.UUID, approving_admin_id: uuid.UUID
+    ) -> Account:
         account = await self._account_repo.get_by_id(account_id)
         if account is None:
             raise NotFoundError("ACCOUNT_NOT_FOUND", "Account not found.")

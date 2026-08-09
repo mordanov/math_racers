@@ -70,7 +70,9 @@ def domain_service() -> AccountDomainService:
 
 @pytest.fixture
 def use_case(
-    account_repo: AsyncMock, refresh_repo: AsyncMock, domain_service: AccountDomainService
+    account_repo: AsyncMock,
+    refresh_repo: AsyncMock,
+    domain_service: AccountDomainService,
 ) -> LoginUseCase:
     return LoginUseCase(account_repo, refresh_repo, domain_service)
 
@@ -84,7 +86,9 @@ class TestLoginUseCase:
         cfg: Config,
     ) -> None:
         account_repo.get_by_email.return_value = _make_account()
-        access_token, raw_refresh = await use_case.execute("user@example.com", "correct", cfg)
+        access_token, raw_refresh = await use_case.execute(
+            "user@example.com", "correct", cfg
+        )
         assert access_token
         assert raw_refresh
 

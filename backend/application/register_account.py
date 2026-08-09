@@ -20,7 +20,9 @@ class RegisterAccountUseCase:
 
         existing = await self._account_repo.get_by_email(normalised_email)
         if existing is not None:
-            raise ConflictError("EMAIL_TAKEN", "An account with this email already exists.")
+            raise ConflictError(
+                "EMAIL_TAKEN", "An account with this email already exists."
+            )
 
         password_hash = self._domain_service.hash_password(password)
         account = Account(

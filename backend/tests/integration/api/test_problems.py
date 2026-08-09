@@ -16,7 +16,9 @@ BASE_URL = os.getenv("API_URL", "http://localhost:8000")
 
 @pytest.mark.integration
 def test_valid_request_returns_200() -> None:
-    response = httpx.get(f"{BASE_URL}/api/v1/problems", params={"tier": 2, "seed": 1234, "count": 8})
+    response = httpx.get(
+        f"{BASE_URL}/api/v1/problems", params={"tier": 2, "seed": 1234, "count": 8}
+    )
     assert response.status_code == 200
     body = response.json()
     assert body["tier"] == 2
@@ -27,7 +29,9 @@ def test_valid_request_returns_200() -> None:
 
 @pytest.mark.integration
 def test_count_zero_returns_empty_set() -> None:
-    response = httpx.get(f"{BASE_URL}/api/v1/problems", params={"tier": 1, "seed": 1, "count": 0})
+    response = httpx.get(
+        f"{BASE_URL}/api/v1/problems", params={"tier": 1, "seed": 1, "count": 0}
+    )
     assert response.status_code == 200
     assert response.json()["problems"] == []
 
@@ -35,13 +39,17 @@ def test_count_zero_returns_empty_set() -> None:
 @pytest.mark.integration
 def test_tier_out_of_range_returns_422() -> None:
     for tier in (0, 7):
-        response = httpx.get(f"{BASE_URL}/api/v1/problems", params={"tier": tier, "seed": 1, "count": 5})
+        response = httpx.get(
+            f"{BASE_URL}/api/v1/problems", params={"tier": tier, "seed": 1, "count": 5}
+        )
         assert response.status_code == 422, f"Expected 422 for tier={tier}"
 
 
 @pytest.mark.integration
 def test_count_out_of_range_returns_422() -> None:
-    response = httpx.get(f"{BASE_URL}/api/v1/problems", params={"tier": 1, "seed": 1, "count": 101})
+    response = httpx.get(
+        f"{BASE_URL}/api/v1/problems", params={"tier": 1, "seed": 1, "count": 101}
+    )
     assert response.status_code == 422
 
 
@@ -59,7 +67,9 @@ def test_determinism_across_requests() -> None:
 
 @pytest.mark.integration
 def test_division_answers_are_integers() -> None:
-    response = httpx.get(f"{BASE_URL}/api/v1/problems", params={"tier": 4, "seed": 42, "count": 100})
+    response = httpx.get(
+        f"{BASE_URL}/api/v1/problems", params={"tier": 4, "seed": 42, "count": 100}
+    )
     problems = response.json()["problems"]
     for p in problems:
         if p["operation"] == "division":

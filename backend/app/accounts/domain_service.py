@@ -16,12 +16,16 @@ class AccountDomainService:
     _ALGORITHM = "HS256"
 
     def hash_password(self, plain: str) -> str:
-        return bcrypt.hashpw(plain.encode(), bcrypt.gensalt(self._BCRYPT_WORK_FACTOR)).decode()
+        return bcrypt.hashpw(
+            plain.encode(), bcrypt.gensalt(self._BCRYPT_WORK_FACTOR)
+        ).decode()
 
     def verify_password(self, plain: str, hashed: str) -> bool:
         return bcrypt.checkpw(plain.encode(), hashed.encode())
 
-    def create_access_token(self, account_id: uuid.UUID, role: str, settings: Config) -> str:
+    def create_access_token(
+        self, account_id: uuid.UUID, role: str, settings: Config
+    ) -> str:
         now = datetime.now(tz=UTC)
         payload = {
             "sub": str(account_id),
