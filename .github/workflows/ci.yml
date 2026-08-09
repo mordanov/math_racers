@@ -192,47 +192,27 @@ jobs:
 
       - name: Smoke test — HSTS header present
         run: |
-          # Generate self-signed cert and populate the nginx_certs named volume
+          # Generate self-signed cert for nginx TLS
           mkdir -p /tmp/ci-nginx-certs
           openssl req -x509 -nodes -newkey rsa:2048 -days 1 \
             -keyout /tmp/ci-nginx-certs/privkey.pem \
             -out /tmp/ci-nginx-certs/fullchain.pem \
             -subj "/CN=localhost" 2>/dev/null
-          docker volume create math_racers_nginx_certs
-          docker run --rm \
-            -v /tmp/ci-nginx-certs:/src:ro \
-            -v math_racers_nginx_certs:/dst \
-            alpine sh -c 'cp /src/* /dst/'
-          printf '%s\n' \
-            'DATABASE_URL=postgresql+asyncpg://mathracers:mathracers_dev@postgres:5432/mathracers' \
-            'REDIS_URL=redis://redis:6379/0' \
-            'JWT_SECRET=ci-test-secret-32-bytes-minimum-xx' \
-            'OPENAI_API_KEY=sk-test-placeholder' \
-            'STORAGE_ENDPOINT=https://CHANGE_ME' \
-            'STORAGE_ACCESS_KEY=test' \
-            'STORAGE_SECRET_KEY=test' \
-            'STORAGE_BUCKET=test' \
-            'ENVIRONMENT=development' \
-            'LOG_LEVEL=WARNING' \
-            > .env
-          VERSION=${{ github.sha }} docker compose -f docker-compose.yml -f docker-compose.smoke.yml up -d || {
-            echo "=== Backend logs ===" && docker logs math_racers-backend-1 2>&1 || true
-            docker compose -f docker-compose.yml -f docker-compose.smoke.yml down || true
-            rm -f .env
-            exit 1
-          }
-          # Wait for HTTPS stack (self-signed cert — skip verification)
-          timeout 120 bash -c 'until curl -skf https://localhost/health > /dev/null 2>&1; do sleep 2; done'
+          # Run nginx standalone (no backend dependency) to verify HSTS header in config
+          docker run -d --name ci-nginx \
+            -p 443:443 \
+            -v "$PWD/nginx/nginx.conf:/etc/nginx/nginx.conf:ro" \
+            -v "$PWD/nginx/conf.d:/etc/nginx/conf.d:ro" \
+            -v "/tmp/ci-nginx-certs:/etc/nginx/certs:ro" \
+            nginx:1.27-alpine
+          sleep 3
           HSTS=$(curl -skI https://localhost/ | grep -i strict-transport-security || true)
+          docker rm -f ci-nginx 2>/dev/null || true
           if ! echo "$HSTS" | grep -q "max-age=63072000"; then
             echo "ERROR: HSTS header missing or incorrect: '$HSTS'"
-            docker compose -f docker-compose.yml -f docker-compose.smoke.yml down
-            rm -f .env
             exit 1
           fi
           echo "HSTS OK: $HSTS"
-          docker compose -f docker-compose.yml -f docker-compose.smoke.yml down
-          rm -f .env
 
       # ── 9. Deploy (default branch only) ─────────────────────────────────────
       - name: Deploy
