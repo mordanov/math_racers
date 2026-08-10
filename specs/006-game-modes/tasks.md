@@ -26,10 +26,10 @@ No new tooling or project scaffolding required. Project structure is in place.
 
 **⚠️ CRITICAL**: Complete before any user story phase begins.
 
-- [ ] T001 Write Alembic migration for nullable `position` on `race_participants` and new `championships` + `championship_races` tables in `backend/alembic/versions/XXXX_game_modes.py`
-- [ ] T002 [P] Update `RaceParticipant.position` to nullable with `CHECK (position IS NULL OR position BETWEEN 1 AND 5)` in `backend/app/races/models.py`
-- [ ] T003 [P] Update `ParticipantSummaryRequest.position` to `Optional[int]` and add cross-field validation (null only when `mode == "training"`) in `backend/app/races/schemas.py` and `backend/app/races/domain_service.py`
-- [ ] T004 [P] Update `ParticipantSummary.position` to `number | null` in `frontend/src/engine/race/types.ts`
+- [x] T001 Write Alembic migration for nullable `position` on `race_participants` and new `championships` + `championship_races` tables in `backend/alembic/versions/0006_game_modes.py`
+- [x] T002 [P] Update `RaceParticipant.position` to nullable with `CHECK (position IS NULL OR position BETWEEN 1 AND 5)` in `backend/app/races/models.py`
+- [x] T003 [P] Update `ParticipantSummaryRequest.position` to `Optional[int]` and add cross-field validation (null only when `mode == "training"`) in `backend/app/races/schemas.py`
+- [x] T004 [P] Update `ParticipantSummary.position` to `number | null` in `frontend/src/engine/race/types.ts`
 
 **Checkpoint**: Migration written; backend races accepts null position for training; frontend type widened.
 
@@ -41,8 +41,8 @@ No new tooling or project scaffolding required. Project structure is in place.
 
 **Independent Test**: Run a Quick Race with 3 opponents; verify `xp_earned` in the submitted payload equals 10 × correct answers.
 
-- [ ] T005 [US1] Implement per-mode XP formula in `getSummary()` in `frontend/src/engine/race/raceEngine.ts` (Quick Race / Duel: 10 XP per correct answer; see data-model.md XP table)
-- [ ] T006 [US1] Unit tests for XP formula per mode (quick, duel) in `frontend/tests/engine/race/raceEngine.test.ts`
+- [x] T005 [US1] Implement per-mode XP formula in `getSummary()` in `frontend/src/engine/race/raceEngine.ts` (Quick Race / Duel: 10 XP per correct answer; see data-model.md XP table)
+- [x] T006 [US1] Unit tests for XP formula per mode (quick, duel) in `frontend/tests/engine/race/raceEngine.integration.test.ts`
 
 **Checkpoint**: Quick Race result submission includes correct `xp_earned` values. US1 independently testable.
 

@@ -38,7 +38,10 @@ class Race(Base):
 class RaceParticipant(Base):
     __tablename__ = "race_participants"
     __table_args__ = (
-        CheckConstraint("position BETWEEN 1 AND 5", name="ck_race_participants_position"),
+        CheckConstraint(
+            "position IS NULL OR position BETWEEN 1 AND 5",
+            name="ck_race_participants_position",
+        ),
         CheckConstraint(
             "problems_correct BETWEEN 0 AND 8", name="ck_race_participants_problems_correct"
         ),
@@ -58,7 +61,7 @@ class RaceParticipant(Base):
         nullable=False,
     )
     avatar_id: Mapped[str] = mapped_column(String, nullable=False)
-    position: Mapped[int] = mapped_column(Integer, nullable=False)
+    position: Mapped[int | None] = mapped_column(Integer, nullable=True)
     problems_correct: Mapped[int] = mapped_column(Integer, nullable=False)
     average_response_ms: Mapped[int] = mapped_column(Integer, nullable=False)
     total_distance: Mapped[int] = mapped_column(Integer, nullable=False)

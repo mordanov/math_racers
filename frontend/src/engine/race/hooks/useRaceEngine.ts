@@ -54,5 +54,7 @@ export function useRaceEngine(config: RaceConfig) {
     [],
   );
 
-  return { ...snapshot, submitAnswer, summaryStatus };
+  const forceComplete = useCallback(() => engineRef.current.forceComplete(), []);
+
+  return { ...snapshot, submitAnswer, forceComplete, summaryStatus };
 }

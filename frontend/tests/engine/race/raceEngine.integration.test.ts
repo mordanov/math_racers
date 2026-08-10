@@ -200,10 +200,65 @@ describe('Race Engine — per-opponent RNG independence', () => {
   });
 });
 
-describe('Race Engine — zero AI opponents', () => {
-  it('completes without error and returns 1-participant summary', () => {
+describe('Race Engine — XP calculation', () => {
+  function runAllCorrect(mode: RaceConfig['mode']): ReturnType<typeof createRaceEngine> {
     const cfg: RaceConfig = {
-      raceId: 'training-race',
+      raceId: `xp-test-${mode}`,
+      seed: 10,
+      tier: 1,
+      mode,
+      participants: [{ runnerId: 'player', isHuman: true, avatarId: 'a0' }],
+    };
+    const engine = createRaceEngine(cfg);
+    advanceToRacing(engine);
+    for (let i = 0; i < OBSTACLE_COUNT; i++) {
+      engine.tick(i * 16 + 16);
+      engine.submitAnswer({ isCorrect: true });
+    }
+    return engine;
+  }
+
+  it('quick mode: 10 XP per correct answer', () => {
+    const engine = runAllCorrect('quick');
+    const summary = engine.getSummary();
+    expect(summary.participants[0].xp_earned).toBe(OBSTACLE_COUNT * 10);
+  });
+
+  it('duel mode: 10 XP per correct answer', () => {
+    const engine = runAllCorrect('duel');
+    const summary = engine.getSummary();
+    expect(summary.participants[0].xp_earned).toBe(OBSTACLE_COUNT * 10);
+  });
+
+  it('championship mode 1st place: (10*10) + correct*5', () => {
+    const engine = runAllCorrect('championship');
+    const summary = engine.getSummary();
+    expect(summary.participants[0].xp_earned).toBe(100 + OBSTACLE_COUNT * 5);
+  });
+
+  it('quick mode with partial correct: 10 XP per correct only', () => {
+    const cfg: RaceConfig = {
+      raceId: 'xp-partial',
+      seed: 11,
+      tier: 1,
+      mode: 'quick',
+      participants: [{ runnerId: 'player', isHuman: true, avatarId: 'a0' }],
+    };
+    const engine = createRaceEngine(cfg);
+    advanceToRacing(engine);
+    for (let i = 0; i < OBSTACLE_COUNT; i++) {
+      engine.tick(i * 16 + 16);
+      engine.submitAnswer({ isCorrect: i % 2 === 0 }); // 4 correct, 4 incorrect
+    }
+    const summary = engine.getSummary();
+    expect(summary.participants[0].xp_earned).toBe(4 * 10);
+  });
+});
+
+describe('Race Engine — training mode', () => {
+  function makeTrainingEngine() {
+    const cfg: RaceConfig = {
+      raceId: 'training-xp',
       seed: 1,
       tier: 2,
       mode: 'training',
@@ -214,13 +269,48 @@ describe('Race Engine — zero AI opponents', () => {
     engine.transition('COUNTDOWN');
     engine.transition('RACING');
     engine.tick(0);
+    return engine;
+  }
+
+  it('forceComplete transitions from RACING to RESULTS', () => {
+    const engine = makeTrainingEngine();
+    expect(engine.getState().state).toBe('RACING');
+    engine.forceComplete();
+    expect(engine.getState().state).toBe('RESULTS');
+  });
+
+  it('training summary has null position', () => {
+    const engine = makeTrainingEngine();
+    for (let i = 0; i < 3; i++) {
+      engine.tick(i * 16 + 16);
+      engine.submitAnswer({ isCorrect: true });
+    }
+    engine.forceComplete();
+    const summary = engine.getSummary();
+    expect(summary.participants[0].position).toBeNull();
+  });
+
+  it('training XP: 5 XP per correct answer, no completion bonus', () => {
+    const engine = makeTrainingEngine();
+    for (let i = 0; i < 5; i++) {
+      engine.tick(i * 16 + 16);
+      engine.submitAnswer({ isCorrect: true });
+    }
+    engine.forceComplete();
+    const summary = engine.getSummary();
+    expect(summary.participants[0].xp_earned).toBe(5 * 5);
+    expect(summary.participants[0].problems_correct).toBe(5);
+  });
+
+  it('forceComplete on completed full race is a no-op (stays RESULTS)', () => {
+    const engine = makeTrainingEngine();
     for (let i = 0; i < OBSTACLE_COUNT; i++) {
       engine.tick(i * 16 + 16);
       engine.submitAnswer({ isCorrect: true });
     }
     expect(engine.getState().state).toBe('RESULTS');
-    const summary = engine.getSummary();
-    expect(summary.participants).toHaveLength(1);
+    engine.forceComplete();
+    expect(engine.getState().state).toBe('RESULTS');
   });
 });
 

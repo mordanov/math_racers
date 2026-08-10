@@ -92,6 +92,59 @@ async def test_non_unique_positions_raise_validation_error() -> None:
         await service.persist_race(request)
 
 
+def test_training_participant_requires_null_position() -> None:
+    from pydantic import ValidationError as PydanticValidationError
+    with pytest.raises(PydanticValidationError):
+        _make_request(
+            mode="training",
+            participants=[
+                ParticipantSummaryRequest(
+                    avatar_id="a1",
+                    position=1,  # must be null for training
+                    problems_correct=5,
+                    average_response_ms=1500,
+                    total_distance=90,
+                    xp_earned=25,
+                )
+            ],
+        )
+
+
+def test_training_participant_with_null_position_is_valid() -> None:
+    request = _make_request(
+        mode="training",
+        participants=[
+            ParticipantSummaryRequest(
+                avatar_id="a1",
+                position=None,
+                problems_correct=5,
+                average_response_ms=1500,
+                total_distance=90,
+                xp_earned=25,
+            )
+        ],
+    )
+    assert request.participants[0].position is None
+
+
+def test_non_training_participant_requires_non_null_position() -> None:
+    from pydantic import ValidationError as PydanticValidationError
+    with pytest.raises(PydanticValidationError):
+        _make_request(
+            mode="quick",
+            participants=[
+                ParticipantSummaryRequest(
+                    avatar_id="a1",
+                    position=None,  # must not be null for non-training
+                    problems_correct=5,
+                    average_response_ms=1500,
+                    total_distance=90,
+                    xp_earned=25,
+                )
+            ],
+        )
+
+
 @pytest.mark.asyncio
 async def test_valid_multi_participant_race_passes_validation() -> None:
     request = _make_request(

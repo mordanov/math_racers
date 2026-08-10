@@ -65,7 +65,7 @@ export interface RaceEngineState {
 
 export interface ParticipantSummary {
   avatar_id: string;
-  position: number;
+  position: number | null;
   problems_correct: number;
   average_response_ms: number;
   total_distance: number;
