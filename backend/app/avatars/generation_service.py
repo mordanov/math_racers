@@ -69,7 +69,7 @@ def _generate_thumbnails(image_bytes: bytes) -> dict[str, bytes]:
     img = Image.open(io.BytesIO(image_bytes)).convert("RGBA")
     result: dict[str, bytes] = {}
     for label, size in _THUMBNAIL_SIZES:
-        thumb = img.resize((size, size), Image.LANCZOS)
+        thumb = img.resize((size, size), Image.Resampling.LANCZOS)
         buf = io.BytesIO()
         thumb.save(buf, format="PNG")
         result[label] = buf.getvalue()
@@ -144,7 +144,8 @@ async def _call_image_api(prompt: str) -> bytes:
         quality="hd",
         response_format="b64_json",
     )
-    b64 = response.data[0].b64_json or ""
+    data = response.data or []
+    b64 = data[0].b64_json or "" if data else ""
     return base64.b64decode(b64)
 
 
