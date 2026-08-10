@@ -53,8 +53,10 @@ export function createRaceEngine(config: RaceConfig): RaceEngine {
   const runners: RunnerState[] = config.participants.map((p) => makeRunner(p.runnerId, p.isHuman));
 
   const humanIdx = runners.findIndex((r) => r.isHuman);
-  // Separate RNG for AI variance — offset by 1 to avoid colliding with problem seed
-  const aiRng = createRng(config.seed + 1);
+  // Per-opponent RNG — offset by participant index + 1 to avoid colliding with problem seed
+  const aiRngs = config.participants.map((p, i) =>
+    p.isHuman ? null : createRng(config.seed + i + 1),
+  );
 
   function doTransition(toState: RaceState): void {
     transition(state, toState);
@@ -93,11 +95,14 @@ export function createRaceEngine(config: RaceConfig): RaceEngine {
     // Simulate AI runners sequentially for this obstacle
     for (const aiRunner of runners) {
       if (aiRunner.isHuman) continue;
-      const cfg = config.participants.find((p) => p.runnerId === aiRunner.runnerId)!;
+      const pIdx = config.participants.findIndex((p) => p.runnerId === aiRunner.runnerId);
+      const cfg = config.participants[pIdx];
       if (!cfg.personality) continue;
+      const rng = aiRngs[pIdx]!;
       const { isCorrect: aiCorrect, responseTimeMs: aiTime } = simulateAiObstacle(
         cfg.personality,
-        aiRng,
+        obstacleIndex,
+        rng,
       );
       const { tier: aiTier, distanceMetres: aiDist } = calculateMovement(aiCorrect, aiTime);
       const aiResult: ObstacleResult = {
@@ -152,7 +157,7 @@ export function createRaceEngine(config: RaceConfig): RaceEngine {
       if (b.totalDistanceMetres !== a.totalDistanceMetres) {
         return b.totalDistanceMetres - a.totalDistanceMetres;
       }
-      return runners.indexOf(a) - runners.indexOf(b);
+      return a.runnerId < b.runnerId ? -1 : 1;
     });
 
     const participants: ParticipantSummary[] = sorted.map((runner, posIdx) => {

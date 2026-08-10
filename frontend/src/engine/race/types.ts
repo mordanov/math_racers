@@ -30,9 +30,12 @@ export interface RunnerState {
 
 export interface AiPersonality {
   id: string;
+  name: string;
   baseResponseTimeMs: number;
   responseTimeVarianceMs: number;
   accuracyRate: number;
+  speedProfile: 'uniform' | 'front_loaded' | 'back_loaded' | 'random';
+  tierOffset: number;
 }
 
 export type ParticipantConfig = {
