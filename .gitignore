@@ -162,6 +162,7 @@ fabric.properties
 .settings/
 
 # ─── CI / Deployment ──────────────────────────────────────────────────────────
+.tmp-ci/
 .terraform/
 *.tfstate
 *.tfstate.backup
