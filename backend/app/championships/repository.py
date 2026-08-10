@@ -31,8 +31,7 @@ class SQLAlchemyChampionshipRepository:
         championship = Championship(account_id=account_id, total_races=total_races)
         self._session.add(championship)
         await self._session.flush()
-        await self._session.refresh(championship)
-        return championship
+        return await self.get(championship.id)
 
     async def get(self, championship_id: uuid.UUID) -> Championship:
         result = await self._session.execute(
@@ -84,5 +83,4 @@ class SQLAlchemyChampionshipRepository:
             championship.status = "completed"
 
         await self._session.flush()
-        await self._session.refresh(championship, ["championship_races"])
-        return championship
+        return await self.get(championship.id)
