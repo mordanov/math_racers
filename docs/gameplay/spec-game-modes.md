@@ -176,11 +176,11 @@ Duel always creates exactly one AI opponent. The opponent's tier is matched to t
 
 ## Acceptance Criteria
 
-- [ ] Quick Race creates a session, completes a single race, and submits a result.
-- [ ] Championship preserves standings across browser sessions until completion.
-- [ ] Training runs without a finish line and records partial statistics on exit.
-- [ ] Duel creates exactly one AI opponent matched to the player's current difficulty tier.
-- [ ] Result submission is idempotent; XP is never awarded twice for the same race.
+- [x] Quick Race creates a session, completes a single race, and submits a result.
+- [x] Championship preserves standings across browser sessions until completion.
+- [x] Training runs without a finish line and records partial statistics on exit.
+- [x] Duel creates exactly one AI opponent matched to the player's current difficulty tier.
+- [x] Result submission is idempotent; XP is never awarded twice for the same race.
 - [ ] Race setup blocks start if no avatar is available.
-- [ ] Championship auto-transitions to `completed` when all races are submitted.
-- [ ] Points accumulate correctly across all championship races per the points table.
+- [x] Championship auto-transitions to `completed` when all races are submitted.
+- [x] Points accumulate correctly across all championship races per the points table.

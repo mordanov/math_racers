@@ -48,12 +48,9 @@ export async function recordChampionshipRace(
   raceIndex: number,
   participants: RecordRaceParticipant[],
 ): Promise<ChampionshipState> {
-  return request<ChampionshipState>(
-    `/api/v1/championships/${championshipId}/races/${raceId}`,
-    {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ race_index: raceIndex, participants }),
-    },
-  );
+  return request<ChampionshipState>(`/api/v1/championships/${championshipId}/races/${raceId}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ race_index: raceIndex, participants }),
+  });
 }

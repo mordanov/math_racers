@@ -94,6 +94,7 @@ async def test_non_unique_positions_raise_validation_error() -> None:
 
 def test_training_participant_requires_null_position() -> None:
     from pydantic import ValidationError as PydanticValidationError
+
     with pytest.raises(PydanticValidationError):
         _make_request(
             mode="training",
@@ -129,6 +130,7 @@ def test_training_participant_with_null_position_is_valid() -> None:
 
 def test_non_training_participant_requires_non_null_position() -> None:
     from pydantic import ValidationError as PydanticValidationError
+
     with pytest.raises(PydanticValidationError):
         _make_request(
             mode="quick",

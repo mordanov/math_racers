@@ -1,15 +1,17 @@
 """Unit tests for ChampionshipDomainService pure logic."""
+
 from __future__ import annotations
 
 import uuid
 from types import SimpleNamespace
+from typing import Any
 
 import pytest
 
 from app.championships.domain_service import _build_standings, _points_for_position
 
-
 # ── Points table ──────────────────────────────────────────────────────────────
+
 
 @pytest.mark.parametrize(
     "position,expected",
@@ -21,7 +23,8 @@ def test_points_for_position(position: int, expected: int) -> None:
 
 # ── Standings calculation ─────────────────────────────────────────────────────
 
-def _make_championship(race_rows: list[tuple]) -> SimpleNamespace:
+
+def _make_championship(race_rows: list[tuple[Any, ...]]) -> SimpleNamespace:
     """Create a duck-typed championship for testing _build_standings.
 
     race_rows: list of (avatar_id, is_player, finishing_position, points_earned)
@@ -49,11 +52,13 @@ def _make_championship(race_rows: list[tuple]) -> SimpleNamespace:
 
 
 def test_standings_single_race_correct_order() -> None:
-    championship = _make_championship([
-        ("p1", True, 1, 10),
-        ("ai1", False, 2, 6),
-        ("ai2", False, 3, 3),
-    ])
+    championship = _make_championship(
+        [
+            ("p1", True, 1, 10),
+            ("ai1", False, 2, 6),
+            ("ai2", False, 3, 3),
+        ]
+    )
     standings = _build_standings(championship)
     assert standings[0].avatar_id == "p1"
     assert standings[0].points == 10
@@ -65,12 +70,14 @@ def test_standings_single_race_correct_order() -> None:
 
 
 def test_standings_cumulative_across_races() -> None:
-    championship = _make_championship([
-        ("p1", True, 2, 6),   # race 0
-        ("ai1", False, 1, 10),
-        ("p1", True, 1, 10),  # race 1
-        ("ai1", False, 2, 6),
-    ])
+    championship = _make_championship(
+        [
+            ("p1", True, 2, 6),  # race 0
+            ("ai1", False, 1, 10),
+            ("p1", True, 1, 10),  # race 1
+            ("ai1", False, 2, 6),
+        ]
+    )
     standings = _build_standings(championship)
     assert standings[0].avatar_id == "p1"
     assert standings[0].points == 16
@@ -81,10 +88,12 @@ def test_standings_cumulative_across_races() -> None:
 
 
 def test_standings_podium_count() -> None:
-    championship = _make_championship([
-        ("p1", True, 1, 10),
-        ("ai1", False, 4, 1),
-    ])
+    championship = _make_championship(
+        [
+            ("p1", True, 1, 10),
+            ("ai1", False, 4, 1),
+        ]
+    )
     standings = _build_standings(championship)
     player = next(s for s in standings if s.is_player)
     ai = next(s for s in standings if not s.is_player)
@@ -93,12 +102,14 @@ def test_standings_podium_count() -> None:
 
 
 def test_standings_tiebreak_by_podiums() -> None:
-    championship = _make_championship([
-        ("p1", True, 3, 3),   # 3 pts, 1 podium
-        ("ai1", False, 4, 1), # 1 pt,  0 podiums — race 0
-        ("p1", True, 3, 3),   # +3 = 6 pts, 2 podiums
-        ("ai1", False, 1, 10),# +10 = 11 pts, 1 podium
-    ])
+    championship = _make_championship(
+        [
+            ("p1", True, 3, 3),  # 3 pts, 1 podium
+            ("ai1", False, 4, 1),  # 1 pt,  0 podiums — race 0
+            ("p1", True, 3, 3),  # +3 = 6 pts, 2 podiums
+            ("ai1", False, 1, 10),  # +10 = 11 pts, 1 podium
+        ]
+    )
     standings = _build_standings(championship)
     assert standings[0].avatar_id == "ai1"
     assert standings[0].points == 11
@@ -110,10 +121,12 @@ def test_standings_empty_returns_empty_list() -> None:
 
 
 def test_standings_position_field_is_1indexed() -> None:
-    championship = _make_championship([
-        ("p1", True, 1, 10),
-        ("ai1", False, 2, 6),
-    ])
+    championship = _make_championship(
+        [
+            ("p1", True, 1, 10),
+            ("ai1", False, 2, 6),
+        ]
+    )
     standings = _build_standings(championship)
     assert standings[0].position == 1
     assert standings[1].position == 2

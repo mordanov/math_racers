@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import uuid
-from typing import Protocol
+from typing import Any, Protocol
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -19,7 +19,7 @@ class ChampionshipRepository(Protocol):
         championship: Championship,
         race_id: uuid.UUID,
         race_index: int,
-        participants: list[dict],
+        participants: list[dict[str, Any]],
     ) -> Championship: ...
 
 
@@ -53,7 +53,7 @@ class SQLAlchemyChampionshipRepository:
         championship: Championship,
         race_id: uuid.UUID,
         race_index: int,
-        participants: list[dict],
+        participants: list[dict[str, Any]],
     ) -> Championship:
         existing_races = championship.championship_races
         if any(str(cr.race_id) == str(race_id) for cr in existing_races):

@@ -57,9 +57,7 @@ def upgrade() -> None:
             server_default=sa.text("now()"),
         ),
         sa.CheckConstraint("total_races BETWEEN 3 AND 7", name="ck_championships_total_races"),
-        sa.CheckConstraint(
-            "status IN ('active', 'completed')", name="ck_championships_status"
-        ),
+        sa.CheckConstraint("status IN ('active', 'completed')", name="ck_championships_status"),
     )
 
     op.create_table(

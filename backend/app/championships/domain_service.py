@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import uuid
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from app.championships.schemas import ChampionshipResponse, StandingEntry
 from app.shared.exceptions import PermissionError, ValidationError
@@ -19,8 +19,8 @@ def _points_for_position(position: int) -> int:
     return _POINTS_TABLE[idx] if 0 <= idx < len(_POINTS_TABLE) else 0
 
 
-def _build_standings(championship: Championship) -> list[StandingEntry]:
-    totals: dict[str, dict] = {}
+def _build_standings(championship: Any) -> list[StandingEntry]:
+    totals: dict[str, dict[str, Any]] = {}
     for cr in championship.championship_races:
         if cr.avatar_id not in totals:
             totals[cr.avatar_id] = {
@@ -67,9 +67,7 @@ class ChampionshipDomainService:
         championship = await self._repository.create(account_id, request.total_races)
         return _to_response(championship)
 
-    async def get(
-        self, account_id: uuid.UUID, championship_id: uuid.UUID
-    ) -> ChampionshipResponse:
+    async def get(self, account_id: uuid.UUID, championship_id: uuid.UUID) -> ChampionshipResponse:
         championship = await self._repository.get(championship_id)
         if championship.account_id != account_id:
             raise PermissionError(
@@ -92,9 +90,7 @@ class ChampionshipDomainService:
                 message="You do not own this championship.",
             )
         if championship.status == "completed":
-            raise ValidationError(
-                message="Championship is already completed."
-            )
+            raise ValidationError(message="Championship is already completed.")
 
         player_entries = [p for p in request.participants if p.is_player]
         if len(player_entries) != 1:

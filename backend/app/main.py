@@ -122,7 +122,6 @@ def create_app() -> FastAPI:
     app.add_middleware(CorrelationIdMiddleware)
     app.include_router(health_router)
 
-    from app.championships.models import Championship, ChampionshipRace  # noqa: F401 — register with metadata
     from app.presentation.api.v1.admin import router as admin_router
     from app.presentation.api.v1.auth import router as auth_router
     from app.presentation.api.v1.championships import router as championships_router

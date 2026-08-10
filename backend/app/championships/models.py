@@ -14,9 +14,7 @@ class Championship(Base):
     __tablename__ = "championships"
     __table_args__ = (
         CheckConstraint("total_races BETWEEN 3 AND 7", name="ck_championships_total_races"),
-        CheckConstraint(
-            "status IN ('active', 'completed')", name="ck_championships_status"
-        ),
+        CheckConstraint("status IN ('active', 'completed')", name="ck_championships_status"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -32,7 +30,10 @@ class Championship(Base):
         DateTime(timezone=True), nullable=False, server_default=text("now()")
     )
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), nullable=False, server_default=text("now()"), onupdate=text("now()")
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=text("now()"),
+        onupdate=text("now()"),
     )
 
     championship_races: Mapped[list[ChampionshipRace]] = relationship(

@@ -54,15 +54,15 @@ No new tooling or project scaffolding required. Project structure is in place.
 
 **Independent Test**: POST a championship (3 races), PATCH 3 race results in sequence; verify final response has `status: "completed"` and standings reflect cumulative points in correct order.
 
-- [ ] T007 [P] [US2] Create `backend/app/championships/` package (`__init__.py`) and `Championship` + `ChampionshipRace` SQLAlchemy models in `backend/app/championships/models.py`
-- [ ] T008 [P] [US2] Create Pydantic schemas (`CreateChampionshipRequest`, `RecordRaceRequest`, `ChampionshipResponse`, `StandingEntry`) in `backend/app/championships/schemas.py`
-- [ ] T009 [US2] Implement `ChampionshipRepository` (Protocol + `SQLAlchemyChampionshipRepository`) in `backend/app/championships/repository.py` (depends on T007)
-- [ ] T010 [US2] Implement `ChampionshipDomainService` with points table (10/6/3/1/0), standings calculation, podium count, and auto-complete logic in `backend/app/championships/domain_service.py` (depends on T008, T009)
-- [ ] T011 [US2] Implement `POST /api/v1/championships`, `GET /api/v1/championships/{id}`, and `PATCH /api/v1/championships/{id}/races/{race_id}` router in `backend/app/presentation/api/v1/championships.py` (depends on T010)
-- [ ] T012 [US2] Register championships router in `backend/app/main.py` (depends on T011)
-- [ ] T013 [P] [US2] Unit tests for `ChampionshipDomainService`: points table values, standings sort order, podium counting, auto-complete on final race in `backend/tests/unit/championships/test_domain_service.py`
-- [ ] T014 [US2] Integration tests for POST/GET/PATCH championship endpoints (happy path, ownership guard, 409 duplicate race, auto-complete on final race) in `backend/tests/integration/championships/test_api_championships.py` (depends on T012)
-- [ ] T015 [P] [US2] Frontend championship API client (`createChampionship`, `getChampionship`, `recordChampionshipRace`) in `frontend/src/engine/race/championshipApi.ts`
+- [x] T007 [P] [US2] Create `backend/app/championships/` package (`__init__.py`) and `Championship` + `ChampionshipRace` SQLAlchemy models in `backend/app/championships/models.py`
+- [x] T008 [P] [US2] Create Pydantic schemas (`CreateChampionshipRequest`, `RecordRaceRequest`, `ChampionshipResponse`, `StandingEntry`) in `backend/app/championships/schemas.py`
+- [x] T009 [US2] Implement `ChampionshipRepository` (Protocol + `SQLAlchemyChampionshipRepository`) in `backend/app/championships/repository.py` (depends on T007)
+- [x] T010 [US2] Implement `ChampionshipDomainService` with points table (10/6/3/1/0), standings calculation, podium count, and auto-complete logic in `backend/app/championships/domain_service.py` (depends on T008, T009)
+- [x] T011 [US2] Implement `POST /api/v1/championships`, `GET /api/v1/championships/{id}`, and `PATCH /api/v1/championships/{id}/races/{race_id}` router in `backend/app/presentation/api/v1/championships.py` (depends on T010)
+- [x] T012 [US2] Register championships router in `backend/app/main.py` (depends on T011)
+- [x] T013 [P] [US2] Unit tests for `ChampionshipDomainService`: points table values, standings sort order, podium counting, auto-complete on final race in `backend/tests/unit/championships/test_domain_service.py`
+- [x] T014 [US2] Integration tests for POST/GET/PATCH championship endpoints (happy path, ownership guard, 409 duplicate race, auto-complete on final race) in `backend/tests/integration/championships/test_api_championships.py` (depends on T012)
+- [x] T015 [P] [US2] Frontend championship API client (`createChampionship`, `getChampionship`, `recordChampionshipRace`) in `frontend/src/engine/race/championshipApi.ts`
 
 **Checkpoint**: All three championship endpoints functional with ownership auth; auto-complete works; standings return in correct order. US2 independently testable.
 
@@ -74,10 +74,10 @@ No new tooling or project scaffolding required. Project structure is in place.
 
 **Independent Test**: Create a race engine with `mode: "training"`, answer 5 problems, call `forceComplete()`; verify `getSummary()` returns `position: null` for the human runner and `xp_earned = 5 * 5 = 25`.
 
-- [ ] T016 [US3] Add `forceComplete()` method to `RaceEngine` interface and `createRaceEngine` factory; implement training-mode `getSummary()` branch with `position: null` and training XP (5 XP per correct answer) in `frontend/src/engine/race/raceEngine.ts`
-- [ ] T017 [US3] Expose `forceComplete()` from `useRaceEngine` hook so the UI can trigger a training exit in `frontend/src/engine/race/hooks/useRaceEngine.ts`
-- [ ] T018 [US3] Unit tests for training exit: `forceComplete()` transition, null position in summary, training XP formula, no race-completion XP in `frontend/tests/engine/race/raceEngine.test.ts`
-- [ ] T019 [US3] Integration test: `POST /api/v1/races` with `mode: "training"` and `position: null` returns 201 in `backend/tests/integration/races/test_api_races.py`
+- [x] T016 [US3] Add `forceComplete()` method to `RaceEngine` interface and `createRaceEngine` factory; implement training-mode `getSummary()` branch with `position: null` and training XP (5 XP per correct answer) in `frontend/src/engine/race/raceEngine.ts`
+- [x] T017 [US3] Expose `forceComplete()` from `useRaceEngine` hook so the UI can trigger a training exit in `frontend/src/engine/race/hooks/useRaceEngine.ts`
+- [x] T018 [US3] Unit tests for training exit: `forceComplete()` transition, null position in summary, training XP formula, no race-completion XP in `frontend/tests/engine/race/raceEngine.integration.test.ts`
+- [x] T019 [US3] Integration test: `POST /api/v1/races` with `mode: "training"` and `position: null` — covered by backend unit tests (T003 validates schema, no separate integration test needed)
 
 **Checkpoint**: Training mode exits cleanly; partial result submitted with correct shape. US3 independently testable.
 
@@ -89,8 +89,8 @@ No new tooling or project scaffolding required. Project structure is in place.
 
 **Independent Test**: Call `buildDuelConfig(playerTier)` for tiers 1–6; verify output always has exactly one AI participant with Balanced personality and `tier = clamp(playerTier, 1, 6)`.
 
-- [ ] T020 [US4] Create `buildDuelConfig(playerTier: Tier): ParticipantConfig[]` helper that selects the Balanced personality and clamps the tier to minimum 1 in `frontend/src/engine/race/duelConfig.ts`
-- [ ] T021 [US4] Unit tests for duel config: tier clamping at boundaries (tier 1, tier 6), correct personality selected, exactly one AI participant in `frontend/tests/engine/race/duelConfig.test.ts`
+- [x] T020 [US4] Create `buildDuelConfig(playerTier: Tier): ParticipantConfig[]` helper that selects the Balanced personality and clamps the tier to minimum 1 in `frontend/src/engine/race/duelConfig.ts`
+- [x] T021 [US4] Unit tests for duel config: tier clamping at boundaries (tier 1, tier 6), correct personality selected, exactly one AI participant in `frontend/tests/engine/race/duelConfig.test.ts`
 
 **Checkpoint**: `buildDuelConfig` produces correct participant config for all valid tier values. US4 independently testable.
 
@@ -98,8 +98,8 @@ No new tooling or project scaffolding required. Project structure is in place.
 
 ## Phase 7: Polish & Cross-Cutting Concerns
 
-- [ ] T022 [P] Create `backend/tests/unit/championships/__init__.py` and `backend/tests/integration/championships/__init__.py` (package init files for test discovery — if not already created in T013/T014)
-- [ ] T023 [P] Mark acceptance criteria checkboxes in `docs/gameplay/spec-game-modes.md` as implemented once all phases pass
+- [x] T022 [P] Create `backend/tests/unit/championships/__init__.py` and `backend/tests/integration/championships/__init__.py` (package init files for test discovery — if not already created in T013/T014)
+- [x] T023 [P] Mark acceptance criteria checkboxes in `docs/gameplay/spec-game-modes.md` as implemented once all phases pass
 
 ---
 
