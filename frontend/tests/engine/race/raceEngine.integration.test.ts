@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { OBSTACLE_COUNT } from '../../../src/engine/race/constants';
 import { RaceStateError } from '../../../src/engine/race/stateMachine';
 import { createRaceEngine } from '../../../src/engine/race/raceEngine';
-import type { RaceConfig } from '../../../src/engine/race/types';
+import type { AiPersonality, RaceConfig } from '../../../src/engine/race/types';
 
 const BASE_CONFIG: RaceConfig = {
   raceId: 'test-race-1',
@@ -11,6 +11,16 @@ const BASE_CONFIG: RaceConfig = {
   tier: 1,
   mode: 'quick',
   participants: [{ runnerId: 'player-1', isHuman: true, avatarId: 'avatar-1' }],
+};
+
+const MEDIUM_PERSONALITY: AiPersonality = {
+  id: 'medium',
+  name: 'Medium',
+  baseResponseTimeMs: 3000,
+  responseTimeVarianceMs: 500,
+  accuracyRate: 0.8,
+  speedProfile: 'uniform',
+  tierOffset: 0,
 };
 
 function advanceToRacing(engine: ReturnType<typeof createRaceEngine>) {
@@ -123,12 +133,7 @@ describe('Race Engine — AI determinism', () => {
         runnerId: 'ai-0',
         isHuman: false,
         avatarId: 'ai',
-        personality: {
-          id: 'medium',
-          baseResponseTimeMs: 3000,
-          responseTimeVarianceMs: 500,
-          accuracyRate: 0.8,
-        },
+        personality: MEDIUM_PERSONALITY,
       },
     ],
   };
@@ -155,6 +160,109 @@ describe('Race Engine — AI determinism', () => {
         expect(r.isCorrect).toBe(runB[idx].obstacleResults[oIdx].isCorrect);
       });
     });
+  });
+});
+
+describe('Race Engine — per-opponent RNG independence', () => {
+  it('3 AI opponents of the same personality produce at least one diverging checkpoint', () => {
+    const cfg: RaceConfig = {
+      raceId: 'test-multi-ai',
+      seed: 99,
+      tier: 3,
+      mode: 'quick',
+      participants: [
+        { runnerId: 'player', isHuman: true, avatarId: 'avatar-0' },
+        { runnerId: 'ai-1', isHuman: false, avatarId: 'ai-1', personality: MEDIUM_PERSONALITY },
+        { runnerId: 'ai-2', isHuman: false, avatarId: 'ai-2', personality: MEDIUM_PERSONALITY },
+        { runnerId: 'ai-3', isHuman: false, avatarId: 'ai-3', personality: MEDIUM_PERSONALITY },
+      ],
+    };
+    const engine = createRaceEngine(cfg);
+    engine.transition('LOBBY');
+    engine.transition('COUNTDOWN');
+    engine.transition('RACING');
+    engine.tick(0);
+    for (let i = 0; i < OBSTACLE_COUNT; i++) {
+      engine.tick(i * 16 + 16);
+      engine.submitAnswer({ isCorrect: true });
+    }
+    const runners = engine.getState().runners.filter((r) => !r.isHuman);
+    // At least one obstacle where not all 3 AI runners produced identical distance
+    let foundDivergence = false;
+    for (let obs = 0; obs < OBSTACLE_COUNT; obs++) {
+      const dists = runners.map((r) => r.obstacleResults[obs].distanceMetres);
+      if (new Set(dists).size > 1) {
+        foundDivergence = true;
+        break;
+      }
+    }
+    expect(foundDivergence).toBe(true);
+  });
+});
+
+describe('Race Engine — zero AI opponents', () => {
+  it('completes without error and returns 1-participant summary', () => {
+    const cfg: RaceConfig = {
+      raceId: 'training-race',
+      seed: 1,
+      tier: 2,
+      mode: 'training',
+      participants: [{ runnerId: 'player', isHuman: true, avatarId: 'avatar-0' }],
+    };
+    const engine = createRaceEngine(cfg);
+    engine.transition('LOBBY');
+    engine.transition('COUNTDOWN');
+    engine.transition('RACING');
+    engine.tick(0);
+    for (let i = 0; i < OBSTACLE_COUNT; i++) {
+      engine.tick(i * 16 + 16);
+      engine.submitAnswer({ isCorrect: true });
+    }
+    expect(engine.getState().state).toBe('RESULTS');
+    const summary = engine.getSummary();
+    expect(summary.participants).toHaveLength(1);
+  });
+});
+
+describe('Race Engine — tiebreaker determinism', () => {
+  it('getSummary tiebreaker is stable across two identical replays', () => {
+    // Two AI runners with same seed will have same distance — tiebreaker must be stable
+    const cfg: RaceConfig = {
+      raceId: 'tie-race',
+      seed: 5,
+      tier: 1,
+      mode: 'quick',
+      participants: [
+        { runnerId: 'player', isHuman: true, avatarId: 'a0' },
+        {
+          runnerId: 'ai-beta',
+          isHuman: false,
+          avatarId: 'a1',
+          personality: { ...MEDIUM_PERSONALITY, accuracyRate: 0.0 }, // always zero distance
+        },
+        {
+          runnerId: 'ai-alpha',
+          isHuman: false,
+          avatarId: 'a2',
+          personality: { ...MEDIUM_PERSONALITY, accuracyRate: 0.0 }, // always zero distance
+        },
+      ],
+    };
+    function runAndGetPositions() {
+      const engine = createRaceEngine(cfg);
+      engine.transition('LOBBY');
+      engine.transition('COUNTDOWN');
+      engine.transition('RACING');
+      engine.tick(0);
+      for (let i = 0; i < OBSTACLE_COUNT; i++) {
+        engine.tick(i * 16 + 16);
+        engine.submitAnswer({ isCorrect: true });
+      }
+      return engine.getSummary().participants.map((p) => p.avatar_id);
+    }
+    const run1 = runAndGetPositions();
+    const run2 = runAndGetPositions();
+    expect(run1).toEqual(run2);
   });
 });
 

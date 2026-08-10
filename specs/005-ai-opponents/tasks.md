@@ -16,7 +16,7 @@
 
 **Purpose**: Create new directories and empty `__init__.py` files so subsequent tasks can import from them.
 
-- [ ] T001 Create backend/app/opponents/__init__.py, backend/tests/unit/opponents/__init__.py, and backend/tests/integration/opponents/__init__.py as empty files
+- [x] T001 Create backend/app/opponents/__init__.py, backend/tests/unit/opponents/__init__.py, and backend/tests/integration/opponents/__init__.py as empty files
 
 ---
 
@@ -26,7 +26,7 @@
 
 **⚠️ CRITICAL**: No US1, US2, or US3 frontend work can begin until this is complete.
 
-- [ ] T002 Extend `AiPersonality` interface in `frontend/src/engine/race/types.ts` — add three fields: `name: string`, `speedProfile: 'uniform' | 'front_loaded' | 'back_loaded' | 'random'`, `tierOffset: number`; keep existing fields (`id`, `accuracyRate`, `baseResponseTimeMs`, `responseTimeVarianceMs`) unchanged for backward compatibility
+- [x] T002 Extend `AiPersonality` interface in `frontend/src/engine/race/types.ts` — add three fields: `name: string`, `speedProfile: 'uniform' | 'front_loaded' | 'back_loaded' | 'random'`, `tierOffset: number`; keep existing fields (`id`, `accuracyRate`, `baseResponseTimeMs`, `responseTimeVarianceMs`) unchanged for backward compatibility
 
 **Checkpoint**: Extended type in place — US1, US2, US3 frontend tasks can now begin.
 
@@ -40,15 +40,15 @@
 
 ### Implementation
 
-- [ ] T003 [US1] Update `simulateAiObstacle` in `frontend/src/engine/race/aiRunner.ts` — add `checkpointIndex: number` as second parameter (before `rng`); replace the Gaussian noise response-time model with `sampleResponseTime` + `speedMultiplier` per `contracts/ai-simulation.md`; preserve the `accuracyRoll` logic; return type `AiObstacleResult` unchanged
+- [x] T003 [US1] Update `simulateAiObstacle` in `frontend/src/engine/race/aiRunner.ts` — add `checkpointIndex: number` as second parameter (before `rng`); replace the Gaussian noise response-time model with `sampleResponseTime` + `speedMultiplier` per `contracts/ai-simulation.md`; preserve the `accuracyRoll` logic; return type `AiObstacleResult` unchanged
 
-- [ ] T004 [US1] Update `createRaceEngine` in `frontend/src/engine/race/raceEngine.ts` — (1) replace single `aiRng = createRng(config.seed + 1)` with per-participant array `aiRngs` using `createRng(config.seed + i + 1)` where `i` is the 0-based participant index; (2) pass the per-opponent `rng` and `obstacleIndex` to `simulateAiObstacle`; (3) fix `getSummary` tiebreaker from `runners.indexOf(a) - runners.indexOf(b)` to `a.runnerId < b.runnerId ? -1 : 1`
+- [x] T004 [US1] Update `createRaceEngine` in `frontend/src/engine/race/raceEngine.ts` — (1) replace single `aiRng = createRng(config.seed + 1)` with per-participant array `aiRngs` using `createRng(config.seed + i + 1)` where `i` is the 0-based participant index; (2) pass the per-opponent `rng` and `obstacleIndex` to `simulateAiObstacle`; (3) fix `getSummary` tiebreaker from `runners.indexOf(a) - runners.indexOf(b)` to `a.runnerId < b.runnerId ? -1 : 1`
 
 ### Tests
 
-- [ ] T005 [P] [US1] Extend `frontend/tests/engine/race/aiRunner.test.ts` — add tests: (a) same seed + same checkpointIndex produces identical result (determinism per checkpoint); (b) Speedster at checkpointIndex=0 vs checkpointIndex=7 produces lower responseTimeMs at index 0 (front_loaded arc); (c) Slow Starter at checkpointIndex=7 produces lower responseTimeMs than at checkpointIndex=0 (back_loaded arc); (d) `accuracyRate=0.0` always returns `isCorrect=false` regardless of checkpointIndex (existing test extended to cover new signature)
+- [x] T005 [P] [US1] Extend `frontend/tests/engine/race/aiRunner.test.ts` — add tests: (a) same seed + same checkpointIndex produces identical result (determinism per checkpoint); (b) Speedster at checkpointIndex=0 vs checkpointIndex=7 produces lower responseTimeMs at index 0 (front_loaded arc); (c) Slow Starter at checkpointIndex=7 produces lower responseTimeMs than at checkpointIndex=0 (back_loaded arc); (d) `accuracyRate=0.0` always returns `isCorrect=false` regardless of checkpointIndex (existing test extended to cover new signature)
 
-- [ ] T006 [P] [US1] Extend `frontend/tests/engine/race/raceEngine.integration.test.ts` — add tests: (a) race with 3 AI opponents of the same personality produces at least one checkpoint where not all 3 distances are identical (per-opponent RNG independence); (b) race with zero AI opponents completes and `getSummary()` returns 1 participant; (c) two replays of the same race (same seed, same personalities) produce identical `totalDistanceMetres` per AI runner; (d) `getSummary()` tiebreaker is stable — same tied race replayed twice returns the same runner at position 1
+- [x] T006 [P] [US1] Extend `frontend/tests/engine/race/raceEngine.integration.test.ts` — add tests: (a) race with 3 AI opponents of the same personality produces at least one checkpoint where not all 3 distances are identical (per-opponent RNG independence); (b) race with zero AI opponents completes and `getSummary()` returns 1 participant; (c) two replays of the same race (same seed, same personalities) produce identical `totalDistanceMetres` per AI runner; (d) `getSummary()` tiebreaker is stable — same tied race replayed twice returns the same runner at position 1
 
 **Checkpoint**: US1 complete and testable. `pnpm vitest run` passes.
 
@@ -62,11 +62,11 @@
 
 ### Implementation
 
-- [ ] T007 [US2] Create `frontend/src/engine/race/personalities.ts` — export five named `AiPersonality` constants (`STEADY`, `SPEEDSTER`, `SLOW_STARTER`, `UNPREDICTABLE`, `BALANCED`) using the exact field values from `data-model.md` constants table; also export a `PERSONALITIES` array containing all five; no fetch logic in this task
+- [x] T007 [US2] Create `frontend/src/engine/race/personalities.ts` — export five named `AiPersonality` constants (`STEADY`, `SPEEDSTER`, `SLOW_STARTER`, `UNPREDICTABLE`, `BALANCED`) using the exact field values from `data-model.md` constants table; also export a `PERSONALITIES` array containing all five; no fetch logic in this task
 
 ### Tests
 
-- [ ] T008 [US2] Create `frontend/tests/engine/race/personalities.test.ts` — tests: (a) `PERSONALITIES.length === 5`; (b) each personality has a unique `id` and a non-empty `name`; (c) `SPEEDSTER.speedProfile === 'front_loaded'`, `SLOW_STARTER.speedProfile === 'back_loaded'`, `UNPREDICTABLE.speedProfile === 'random'`, `STEADY.speedProfile === 'uniform'`; (d) using `simulateAiObstacle` + `createRng`, Speedster's average `responseTimeMs` at checkpoints 0–2 is lower than at checkpoints 5–7 over 20 seeds; (e) Slow Starter's average `responseTimeMs` at checkpoints 5–7 is lower than at checkpoints 0–2 over 20 seeds
+- [x] T008 [US2] Create `frontend/tests/engine/race/personalities.test.ts` — tests: (a) `PERSONALITIES.length === 5`; (b) each personality has a unique `id` and a non-empty `name`; (c) `SPEEDSTER.speedProfile === 'front_loaded'`, `SLOW_STARTER.speedProfile === 'back_loaded'`, `UNPREDICTABLE.speedProfile === 'random'`, `STEADY.speedProfile === 'uniform'`; (d) using `simulateAiObstacle` + `createRng`, Speedster's average `responseTimeMs` at checkpoints 0–2 is lower than at checkpoints 5–7 over 20 seeds; (e) Slow Starter's average `responseTimeMs` at checkpoints 5–7 is lower than at checkpoints 0–2 over 20 seeds
 
 **Checkpoint**: US2 complete. All 5 personalities defined and verified distinct.
 
@@ -80,21 +80,21 @@
 
 ### Implementation
 
-- [ ] T009 [P] [US3] Create `backend/app/opponents/schemas.py` — define `PersonalityDefinitionResponse` Pydantic model with fields matching `contracts/get-personalities.md` (`id`, `name`, `accuracy_rate → accuracyRate`, `base_response_time_ms → baseResponseTimeMs`, `response_time_variance_ms → responseTimeVarianceMs`, `speed_profile → speedProfile`, `tier_offset → tierOffset`); use `model_config = ConfigDict(populate_by_name=True)` and `Field(alias=...)` for camelCase serialisation
+- [x] T009 [P] [US3] Create `backend/app/opponents/schemas.py` — define `PersonalityDefinitionResponse` Pydantic model with fields matching `contracts/get-personalities.md` (`id`, `name`, `accuracy_rate → accuracyRate`, `base_response_time_ms → baseResponseTimeMs`, `response_time_variance_ms → responseTimeVarianceMs`, `speed_profile → speedProfile`, `tier_offset → tierOffset`); use `model_config = ConfigDict(populate_by_name=True)` and `Field(alias=...)` for camelCase serialisation
 
-- [ ] T010 [P] [US3] Create `backend/app/opponents/personalities.py` — define `PERSONALITIES: list[PersonalityDefinitionResponse]` with the 5 hardcoded entries from `data-model.md` constants table; import schema from `app.opponents.schemas`
+- [x] T010 [P] [US3] Create `backend/app/opponents/personalities.py` — define `PERSONALITIES: list[PersonalityDefinitionResponse]` with the 5 hardcoded entries from `data-model.md` constants table; import schema from `app.opponents.schemas`
 
-- [ ] T011 [US3] Create `backend/app/presentation/api/v1/opponents.py` — define `router = APIRouter(prefix="/api/v1", tags=["opponents"])` with a single `GET /opponents/personalities` route that returns `PERSONALITIES`; `response_model=list[PersonalityDefinitionResponse]`; no authentication dependency
+- [x] T011 [US3] Create `backend/app/presentation/api/v1/opponents.py` — define `router = APIRouter(prefix="/api/v1", tags=["opponents"])` with a single `GET /opponents/personalities` route that returns `PERSONALITIES`; `response_model=list[PersonalityDefinitionResponse]`; no authentication dependency
 
-- [ ] T012 [US3] Register the opponents router in `backend/app/main.py` — add `from app.presentation.api.v1.opponents import router as opponents_router` and `app.include_router(opponents_router)` in `create_app()`, following the same pattern as `problems_router` and `difficulty_router`
+- [x] T012 [US3] Register the opponents router in `backend/app/main.py` — add `from app.presentation.api.v1.opponents import router as opponents_router` and `app.include_router(opponents_router)` in `create_app()`, following the same pattern as `problems_router` and `difficulty_router`
 
-- [ ] T013 [P] [US3] Add `fetchPersonalities()` to `frontend/src/engine/race/personalities.ts` — async function that calls `GET /api/v1/opponents/personalities` (use the same base URL pattern as `raceApi.ts`) and returns `AiPersonality[]`; map response JSON fields from camelCase to the `AiPersonality` interface fields
+- [x] T013 [P] [US3] Add `fetchPersonalities()` to `frontend/src/engine/race/personalities.ts` — async function that calls `GET /api/v1/opponents/personalities` (use the same base URL pattern as `raceApi.ts`) and returns `AiPersonality[]`; map response JSON fields from camelCase to the `AiPersonality` interface fields
 
 ### Tests
 
-- [ ] T014 [P] [US3] Create `backend/tests/unit/opponents/test_personalities.py` — unit tests (no DB, no HTTP): (a) `len(PERSONALITIES) == 5`; (b) all `id` values are unique; (c) all `accuracy_rate` values are in `[0.0, 1.0]`; (d) all `speed_profile` values are one of `{"uniform", "front_loaded", "back_loaded", "random"}`; (e) `SPEEDSTER.tier_offset == 1`; (f) schema serialises with camelCase aliases (`accuracyRate` present, `accuracy_rate` absent in `.model_dump(by_alias=True)`)
+- [x] T014 [P] [US3] Create `backend/tests/unit/opponents/test_personalities.py` — unit tests (no DB, no HTTP): (a) `len(PERSONALITIES) == 5`; (b) all `id` values are unique; (c) all `accuracy_rate` values are in `[0.0, 1.0]`; (d) all `speed_profile` values are one of `{"uniform", "front_loaded", "back_loaded", "random"}`; (e) `SPEEDSTER.tier_offset == 1`; (f) schema serialises with camelCase aliases (`accuracyRate` present, `accuracy_rate` absent in `.model_dump(by_alias=True)`)
 
-- [ ] T015 [US3] Create `backend/tests/integration/opponents/test_api_opponents.py` — integration tests: (a) `GET /api/v1/opponents/personalities` returns `200` without `Authorization` header; (b) response is a JSON array of length 5; (c) each item has `id`, `name`, `accuracyRate`, `baseResponseTimeMs`, `responseTimeVarianceMs`, `speedProfile`, `tierOffset`; (d) `speedProfile` values are all in the valid enum set
+- [x] T015 [US3] Create `backend/tests/integration/opponents/test_api_opponents.py` — integration tests: (a) `GET /api/v1/opponents/personalities` returns `200` without `Authorization` header; (b) response is a JSON array of length 5; (c) each item has `id`, `name`, `accuracyRate`, `baseResponseTimeMs`, `responseTimeVarianceMs`, `speedProfile`, `tierOffset`; (d) `speedProfile` values are all in the valid enum set
 
 **Checkpoint**: US3 complete. Backend endpoint live; frontend fetch function ready.
 
@@ -104,7 +104,7 @@
 
 **Purpose**: Verify the full suite passes end-to-end and confirm type safety.
 
-- [ ] T016 Run `pnpm tsc --noEmit` in `frontend/` and fix any TypeScript errors from the updated `AiPersonality` interface or `simulateAiObstacle` signature; run `pnpm vitest run` to confirm all frontend tests pass; run `pytest -m unit` in `backend/` to confirm all backend unit tests pass
+- [x] T016 Run `pnpm tsc --noEmit` in `frontend/` and fix any TypeScript errors from the updated `AiPersonality` interface or `simulateAiObstacle` signature; run `pnpm vitest run` to confirm all frontend tests pass; run `pytest -m unit` in `backend/` to confirm all backend unit tests pass
 
 ---
 
