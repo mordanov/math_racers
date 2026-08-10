@@ -76,7 +76,6 @@ class SQLAlchemyChampionshipRepository:
                 finishing_position=p["finishing_position"],
                 points_earned=p["points_earned"],
             )
-            self._session.add(row)
             championship.championship_races.append(row)
 
         championship.races_completed += 1
