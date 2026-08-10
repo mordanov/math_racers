@@ -7,6 +7,7 @@ Run with: pytest -m integration
 from __future__ import annotations
 
 import os
+import time
 import uuid
 
 import httpx
@@ -37,6 +38,7 @@ def _register_and_get_id(email: str, admin_token: str) -> str:
         json={"email": email, "password": "testpassword123"},
         timeout=10.0,
     )
+    time.sleep(0.2)
     list_resp = httpx.get(
         f"{BASE_URL}/api/v1/admin/accounts",
         params={"status": "pending"},
@@ -131,6 +133,7 @@ class TestApproveAccount:
             headers={"Authorization": f"Bearer {token}"},
             timeout=10.0,
         )
+        time.sleep(0.2)
         response = httpx.post(
             f"{BASE_URL}/api/v1/admin/accounts/{account_id}/approve",
             headers={"Authorization": f"Bearer {token}"},

@@ -7,6 +7,7 @@ Run with: pytest -m integration
 from __future__ import annotations
 
 import os
+import time
 import uuid
 
 import httpx
@@ -77,6 +78,7 @@ class TestFullAuthCycle:
         # Step 2: register a new parent
         email = f"parent-{uuid.uuid4().hex[:8]}@example.com"
         _register(email, "parentpassword123")
+        time.sleep(0.2)
 
         # Step 3: pending login blocked
         resp = _login(email, "parentpassword123")
@@ -99,6 +101,7 @@ class TestFullAuthCycle:
         approve_resp = _approve(account_id, admin_token)
         assert approve_resp.status_code == 200
         assert approve_resp.json()["approval_status"] == "approved"
+        time.sleep(0.2)
 
         # Step 6: parent can now log in
         with httpx.Client(timeout=10.0) as client:

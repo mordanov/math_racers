@@ -6,6 +6,7 @@ Requires the full stack running (docker compose up).
 from __future__ import annotations
 
 import os
+import time
 import uuid
 
 import httpx
@@ -38,6 +39,7 @@ def parent_token() -> str:
         timeout=10.0,
     )
     assert reg.status_code == 201, f"Register failed: {reg.text}"
+    time.sleep(0.2)
 
     list_resp = httpx.get(
         f"{BASE_URL}/api/v1/admin/accounts",
@@ -56,6 +58,7 @@ def parent_token() -> str:
         timeout=10.0,
     )
     assert approve.status_code == 200, f"Approve failed: {approve.text}"
+    time.sleep(0.2)
 
     return _login(email, "parentpassword123")
 
