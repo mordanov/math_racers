@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import uuid
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from app.avatars.schemas import (
     AvatarCreationResponse,
@@ -79,7 +79,7 @@ def _to_detail(avatar: Avatar) -> AvatarDetailResponse:
 def _enqueue_job(redis_url: str, job_id: uuid.UUID, avatar_id: uuid.UUID) -> None:
     import redis as _redis
 
-    client = _redis.from_url(redis_url)
+    client = _redis.from_url(redis_url)  # type: ignore[no-untyped-call]
     payload = json.dumps(
         {"job_type": "avatar_generation", "job_id": str(job_id), "avatar_id": str(avatar_id)}
     )

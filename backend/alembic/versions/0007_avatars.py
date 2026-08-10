@@ -37,7 +37,9 @@ def upgrade() -> None:
         sa.Column("fur_color", sa.String(7), nullable=False),
         sa.Column("eye_color", sa.String(7), nullable=False),
         sa.Column("hairstyle", sa.String(), nullable=False),
-        sa.Column("accessories", postgresql.JSONB(), nullable=False, server_default="'[]'"),
+        sa.Column(
+            "accessories", postgresql.JSONB(), nullable=False, server_default=sa.text("'[]'")
+        ),
         sa.Column("clothes_top_color", sa.String(7), nullable=False),
         sa.Column("clothes_bottom_color", sa.String(7), nullable=False),
         sa.Column("name", sa.String(), nullable=True),
@@ -46,7 +48,7 @@ def upgrade() -> None:
         sa.Column("appearance_summary", sa.Text(), nullable=True),
         sa.Column("favorite_subject", sa.String(), nullable=True),
         sa.Column("running_style", sa.String(), nullable=True),
-        sa.Column("status", sa.String(), nullable=False, server_default="'pending'"),
+        sa.Column("status", sa.String(), nullable=False, server_default=sa.text("'pending'")),
         sa.Column("is_favourite", sa.Boolean(), nullable=False, server_default="false"),
         sa.Column("active_portrait_id", postgresql.UUID(as_uuid=True), nullable=True),
         sa.Column(
@@ -129,7 +131,7 @@ def upgrade() -> None:
             sa.ForeignKey("avatar_portraits.id", ondelete="SET NULL"),
             nullable=True,
         ),
-        sa.Column("status", sa.String(), nullable=False, server_default="'queued'"),
+        sa.Column("status", sa.String(), nullable=False, server_default=sa.text("'queued'")),
         sa.Column("attempt", sa.Integer(), nullable=False, server_default="1"),
         sa.Column("prompt_version", sa.String(), nullable=True),
         sa.Column("model_version", sa.String(), nullable=True),

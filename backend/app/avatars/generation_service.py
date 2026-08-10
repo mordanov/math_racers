@@ -152,8 +152,6 @@ async def run_generation_job(job_id: uuid.UUID) -> None:
     """Execute the full avatar generation pipeline for a queued job."""
     from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
-    from app.avatars.models import Avatar, AvatarPortrait, GenerationJob
-    from app.avatars.prompt_builder import build_character_prompt
     from app.avatars.repository import SQLAlchemyAvatarRepository
 
     cfg = get_config()
@@ -175,7 +173,12 @@ async def run_generation_job(job_id: uuid.UUID) -> None:
 
             avatar = await repo.get(job.avatar_id)
 
-        await _run_pipeline(job_id=job_id, avatar=avatar, repo_factory=lambda s: SQLAlchemyAvatarRepository(s), engine=engine)
+        await _run_pipeline(
+            job_id=job_id,
+            avatar=avatar,
+            repo_factory=lambda s: SQLAlchemyAvatarRepository(s),
+            engine=engine,
+        )
 
     await engine.dispose()
 
@@ -186,8 +189,9 @@ async def _run_pipeline(
     repo_factory: Any,
     engine: Any,
 ) -> None:
-    from app.avatars.prompt_builder import build_character_prompt
     from sqlalchemy.ext.asyncio import AsyncSession
+
+    from app.avatars.prompt_builder import build_character_prompt
 
     start = datetime.now(UTC)
     error_msg: str | None = None
@@ -306,6 +310,7 @@ async def _run_pipeline(
                     )
 
                     from sqlalchemy import select
+
                     result = await session.execute(
                         select(type(avatar)).where(type(avatar).id == avatar.id)
                     )
@@ -358,6 +363,7 @@ async def _run_pipeline(
     async with AsyncSession(engine, expire_on_commit=False) as session:
         async with session.begin():
             from sqlalchemy import select as _select
+
             from app.avatars.models import Avatar as _Avatar
 
             repo = repo_factory(session)
@@ -368,9 +374,7 @@ async def _run_pipeline(
                 job.completed_at = datetime.now(UTC)
                 await repo.update_job(job)
 
-            result = await session.execute(
-                _select(_Avatar).where(_Avatar.id == avatar.id)
-            )
+            result = await session.execute(_select(_Avatar).where(_Avatar.id == avatar.id))
             db_avatar = result.scalar_one_or_none()
             if db_avatar and db_avatar.status == "pending":
                 db_avatar.status = "failed"

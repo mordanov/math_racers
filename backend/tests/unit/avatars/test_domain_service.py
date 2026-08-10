@@ -1,4 +1,5 @@
 """Unit tests for AvatarDomainService create path (mocked repository and Redis)."""
+
 from __future__ import annotations
 
 import uuid
@@ -64,7 +65,7 @@ _REQUEST = CreateAvatarRequest(
 
 
 @pytest.mark.asyncio
-async def test_create_returns_response():
+async def test_create_returns_response() -> None:
     avatar = _make_avatar()
     job = _make_job(avatar.id)
     repo = _make_repo(avatar, job)
@@ -79,7 +80,7 @@ async def test_create_returns_response():
 
 
 @pytest.mark.asyncio
-async def test_create_enqueues_job():
+async def test_create_enqueues_job() -> None:
     avatar = _make_avatar()
     job = _make_job(avatar.id)
     repo = _make_repo(avatar, job)
@@ -92,7 +93,7 @@ async def test_create_enqueues_job():
 
 
 @pytest.mark.asyncio
-async def test_create_raises_when_avatar_limit_reached():
+async def test_create_raises_when_avatar_limit_reached() -> None:
     avatar = _make_avatar()
     job = _make_job(avatar.id)
     repo = _make_repo(avatar, job)
@@ -106,7 +107,7 @@ async def test_create_raises_when_avatar_limit_reached():
 
 
 @pytest.mark.asyncio
-async def test_create_raises_when_concurrency_limit_reached():
+async def test_create_raises_when_concurrency_limit_reached() -> None:
     avatar = _make_avatar()
     job = _make_job(avatar.id)
     repo = _make_repo(avatar, job)
@@ -120,7 +121,7 @@ async def test_create_raises_when_concurrency_limit_reached():
 
 
 @pytest.mark.asyncio
-async def test_create_raises_when_rate_limit_exceeded():
+async def test_create_raises_when_rate_limit_exceeded() -> None:
     avatar = _make_avatar()
     job = _make_job(avatar.id)
     repo = _make_repo(avatar, job)

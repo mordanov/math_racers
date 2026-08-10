@@ -9,10 +9,15 @@ import type {
 
 const BASE = '/api/v1/avatars';
 
+interface ApiError {
+  message?: string;
+  error_code?: string;
+}
+
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
   const resp = await fetch(url, { credentials: 'include', ...init });
   if (!resp.ok) {
-    const body = await resp.json().catch(() => ({}));
+    const body = (await resp.json().catch(() => ({}))) as ApiError;
     throw Object.assign(new Error(body.message ?? `HTTP ${resp.status}`), {
       status: resp.status,
       error_code: body.error_code,

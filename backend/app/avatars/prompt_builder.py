@@ -63,9 +63,7 @@ def build_character_prompt(metadata: dict[str, Any], attempt: int = 1) -> Versio
     personality = metadata.get("personality", "friendly and curious")
     appearance_summary = metadata.get("appearance_summary", "")
 
-    accessories_part = (
-        f", accessories: {', '.join(accessories)}" if accessories else ""
-    )
+    accessories_part = f", accessories: {', '.join(accessories)}" if accessories else ""
 
     if attempt == 2:
         prompt_text = _SIMPLIFIED_TEMPLATE.format(

@@ -44,7 +44,7 @@ class CreateAvatarRequest(BaseModel):
     @classmethod
     def validate_hairstyle(cls, v: str) -> str:
         if not v or len(v) > 50:
-            raise ValueError("hairstyle must be 1–50 characters")
+            raise ValueError("hairstyle must be 1-50 characters")
         return v
 
     @field_validator("accessories")

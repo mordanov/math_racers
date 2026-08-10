@@ -75,7 +75,8 @@ def _register_and_approve() -> str:
 
 # ── Scenario 1: Create avatar ──────────────────────────────────────────────────
 
-def test_create_avatar_returns_201():
+
+def test_create_avatar_returns_201() -> None:
     token = _register_and_approve()
     resp = httpx.post(
         f"{BASE_URL}/api/v1/avatars",
@@ -92,7 +93,8 @@ def test_create_avatar_returns_201():
 
 # ── Scenario 2: Poll job status ────────────────────────────────────────────────
 
-def test_poll_job_status():
+
+def test_poll_job_status() -> None:
     token = _register_and_approve()
     create_resp = httpx.post(
         f"{BASE_URL}/api/v1/avatars",
@@ -114,14 +116,21 @@ def test_poll_job_status():
     assert data["job_id"] == job_id
     assert data["avatar_id"] == avatar_id
     assert data["status"] in (
-        "queued", "llm_running", "prompt_building", "generating",
-        "validating", "storing", "complete", "failed",
+        "queued",
+        "llm_running",
+        "prompt_building",
+        "generating",
+        "validating",
+        "storing",
+        "complete",
+        "failed",
     )
 
 
 # ── Scenario 4: List avatars ───────────────────────────────────────────────────
 
-def test_list_avatars_includes_created():
+
+def test_list_avatars_includes_created() -> None:
     token = _register_and_approve()
     create_resp = httpx.post(
         f"{BASE_URL}/api/v1/avatars",
@@ -144,7 +153,8 @@ def test_list_avatars_includes_created():
 
 # ── Scenario 5: Get avatar detail ─────────────────────────────────────────────
 
-def test_get_avatar_detail():
+
+def test_get_avatar_detail() -> None:
     token = _register_and_approve()
     create_resp = httpx.post(
         f"{BASE_URL}/api/v1/avatars",
@@ -169,7 +179,8 @@ def test_get_avatar_detail():
 
 # ── Scenario 6: Avatar not found ──────────────────────────────────────────────
 
-def test_get_nonexistent_avatar_returns_404():
+
+def test_get_nonexistent_avatar_returns_404() -> None:
     token = _register_and_approve()
     fake_id = str(uuid.uuid4())
 
@@ -184,7 +195,8 @@ def test_get_nonexistent_avatar_returns_404():
 
 # ── Scenario 10: Validation error ─────────────────────────────────────────────
 
-def test_create_avatar_invalid_species_returns_422():
+
+def test_create_avatar_invalid_species_returns_422() -> None:
     token = _register_and_approve()
     body = {**_CREATE_BODY, "species": "dragon"}
     resp = httpx.post(
@@ -196,7 +208,7 @@ def test_create_avatar_invalid_species_returns_422():
     assert resp.status_code == 422
 
 
-def test_create_avatar_invalid_hex_color_returns_422():
+def test_create_avatar_invalid_hex_color_returns_422() -> None:
     token = _register_and_approve()
     body = {**_CREATE_BODY, "fur_color": "orange"}
     resp = httpx.post(
@@ -210,7 +222,8 @@ def test_create_avatar_invalid_hex_color_returns_422():
 
 # ── Scenario 3: Regenerate portrait ───────────────────────────────────────────
 
-def test_regenerate_portrait():
+
+def test_regenerate_portrait() -> None:
     token = _register_and_approve()
     create_resp = httpx.post(
         f"{BASE_URL}/api/v1/avatars",
@@ -232,7 +245,8 @@ def test_regenerate_portrait():
 
 # ── Scenario 7: Patch avatar ───────────────────────────────────────────────────
 
-def test_patch_avatar_name():
+
+def test_patch_avatar_name() -> None:
     token = _register_and_approve()
     create_resp = httpx.post(
         f"{BASE_URL}/api/v1/avatars",
@@ -255,7 +269,8 @@ def test_patch_avatar_name():
 
 # ── Scenario 8: Delete avatar ──────────────────────────────────────────────────
 
-def test_delete_avatar():
+
+def test_delete_avatar() -> None:
     token = _register_and_approve()
     create_resp = httpx.post(
         f"{BASE_URL}/api/v1/avatars",
