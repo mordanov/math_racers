@@ -77,10 +77,11 @@ class SQLAlchemyChampionshipRepository:
                 points_earned=p["points_earned"],
             )
             self._session.add(row)
+            championship.championship_races.append(row)
 
         championship.races_completed += 1
         if championship.races_completed >= championship.total_races:
             championship.status = "completed"
 
         await self._session.flush()
-        return await self.get(championship.id)
+        return championship
