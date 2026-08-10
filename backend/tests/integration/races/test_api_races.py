@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import os
 import uuid
-from datetime import datetime, timezone
 
 import httpx
 import pytest
@@ -29,7 +28,7 @@ def _auth_token() -> str:
     return str(resp.json()["access_token"])
 
 
-def _valid_payload(race_id: str | None = None) -> dict:
+def _valid_payload(race_id: str | None = None) -> dict[str, object]:
     return {
         "race_id": race_id or str(uuid.uuid4()),
         "seed": "42",

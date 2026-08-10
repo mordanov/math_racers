@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -14,13 +14,13 @@ from app.shared.exceptions import ConflictError, ValidationError
 
 
 def _make_request(**overrides: object) -> RaceSummaryRequest:
-    defaults: dict = {
+    defaults: dict[str, object] = {
         "race_id": uuid.uuid4(),
         "seed": "42",
         "difficulty_tier": 3,
         "mode": "quick",
-        "started_at": datetime(2026, 8, 10, 12, 0, 0, tzinfo=timezone.utc),
-        "completed_at": datetime(2026, 8, 10, 12, 5, 0, tzinfo=timezone.utc),
+        "started_at": datetime(2026, 8, 10, 12, 0, 0, tzinfo=UTC),
+        "completed_at": datetime(2026, 8, 10, 12, 5, 0, tzinfo=UTC),
         "participants": [
             ParticipantSummaryRequest(
                 avatar_id="avatar-1",
@@ -40,7 +40,7 @@ def _make_request(**overrides: object) -> RaceSummaryRequest:
 async def test_persist_race_calls_repository() -> None:
     mock_repo = MagicMock()
     expected = RaceSummaryResponse(
-        race_id=uuid.uuid4(), created_at=datetime(2026, 8, 10, tzinfo=timezone.utc)
+        race_id=uuid.uuid4(), created_at=datetime(2026, 8, 10, tzinfo=UTC)
     )
     mock_repo.create = AsyncMock(return_value=expected)
 
@@ -69,12 +69,20 @@ async def test_non_unique_positions_raise_validation_error() -> None:
     request = _make_request(
         participants=[
             ParticipantSummaryRequest(
-                avatar_id="a1", position=1, problems_correct=4,
-                average_response_ms=2000, total_distance=72, xp_earned=50,
+                avatar_id="a1",
+                position=1,
+                problems_correct=4,
+                average_response_ms=2000,
+                total_distance=72,
+                xp_earned=50,
             ),
             ParticipantSummaryRequest(
-                avatar_id="a2", position=1, problems_correct=6,
-                average_response_ms=1800, total_distance=90, xp_earned=60,
+                avatar_id="a2",
+                position=1,
+                problems_correct=6,
+                average_response_ms=1800,
+                total_distance=90,
+                xp_earned=60,
             ),
         ]
     )
@@ -89,19 +97,27 @@ async def test_valid_multi_participant_race_passes_validation() -> None:
     request = _make_request(
         participants=[
             ParticipantSummaryRequest(
-                avatar_id="a1", position=1, problems_correct=8,
-                average_response_ms=1500, total_distance=144, xp_earned=100,
+                avatar_id="a1",
+                position=1,
+                problems_correct=8,
+                average_response_ms=1500,
+                total_distance=144,
+                xp_earned=100,
             ),
             ParticipantSummaryRequest(
-                avatar_id="a2", position=2, problems_correct=6,
-                average_response_ms=2500, total_distance=108, xp_earned=70,
+                avatar_id="a2",
+                position=2,
+                problems_correct=6,
+                average_response_ms=2500,
+                total_distance=108,
+                xp_earned=70,
             ),
         ]
     )
     mock_repo = MagicMock()
     expected = RaceSummaryResponse(
         race_id=request.race_id,
-        created_at=datetime(2026, 8, 10, tzinfo=timezone.utc),
+        created_at=datetime(2026, 8, 10, tzinfo=UTC),
     )
     mock_repo.create = AsyncMock(return_value=expected)
 

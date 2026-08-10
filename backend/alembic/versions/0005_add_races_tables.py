@@ -64,9 +64,7 @@ def upgrade() -> None:
         sa.Column("average_response_ms", sa.Integer(), nullable=False),
         sa.Column("total_distance", sa.Integer(), nullable=False),
         sa.Column("xp_earned", sa.Integer(), nullable=False),
-        sa.CheckConstraint(
-            "position BETWEEN 1 AND 5", name="ck_race_participants_position"
-        ),
+        sa.CheckConstraint("position BETWEEN 1 AND 5", name="ck_race_participants_position"),
         sa.CheckConstraint(
             "problems_correct BETWEEN 0 AND 8",
             name="ck_race_participants_problems_correct",
