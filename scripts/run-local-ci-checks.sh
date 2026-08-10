@@ -20,6 +20,7 @@ cleanup() {
   docker rm -f "$NGINX_CONTAINER" >/dev/null 2>&1 || true
   docker rm -f "$PG_CONTAINER" >/dev/null 2>&1 || true
   docker rm -f "$REDIS_CONTAINER" >/dev/null 2>&1 || true
+  rm -rf "$ROOT_DIR/.tmp-ci"
 }
 trap cleanup EXIT
 
@@ -300,8 +301,8 @@ step "Check for hardcoded secrets"
 )
 
 step "Smoke test: HSTS header"
-TMP_CERT_DIR="/tmp/math-racers-ci-nginx-certs"
-TMP_CONF_DIR="/tmp/math-racers-ci-nginx-conf"
+TMP_CERT_DIR="$ROOT_DIR/.tmp-ci/nginx-certs"
+TMP_CONF_DIR="$ROOT_DIR/.tmp-ci/nginx-conf"
 mkdir -p "$TMP_CERT_DIR" "$TMP_CONF_DIR"
 openssl req -x509 -nodes -newkey rsa:2048 -days 1 \
   -keyout "$TMP_CERT_DIR/privkey.pem" \
@@ -324,7 +325,7 @@ docker rm -f "$NGINX_CONTAINER" >/dev/null 2>&1 || true
 docker run -d --name "$NGINX_CONTAINER" \
   -p 443:443 \
   -v "$TMP_CERT_DIR:/etc/nginx/certs:ro" \
-  -v "$TMP_CONF_DIR/hsts-check.conf:/etc/nginx/conf.d/default.conf:ro" \
+  -v "$TMP_CONF_DIR/hsts-check.conf:/etc/nginx/conf.d/hsts-check.conf:ro" \
   nginx:1.27-alpine >/dev/null
 
 sleep 3
