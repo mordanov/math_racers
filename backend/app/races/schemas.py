@@ -4,12 +4,12 @@ import uuid
 from datetime import datetime
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class ParticipantSummaryRequest(BaseModel):
     avatar_id: str
-    position: Annotated[int, Field(ge=1, le=5)]
+    position: Annotated[int, Field(ge=1, le=5)] | None = None
     problems_correct: Annotated[int, Field(ge=0, le=8)]
     average_response_ms: Annotated[int, Field(ge=0)]
     total_distance: Annotated[int, Field(ge=0, le=144)]
@@ -24,6 +24,17 @@ class RaceSummaryRequest(BaseModel):
     started_at: datetime
     completed_at: datetime
     participants: Annotated[list[ParticipantSummaryRequest], Field(min_length=1, max_length=5)]
+
+    @model_validator(mode="after")
+    def validate_positions(self) -> RaceSummaryRequest:
+        for p in self.participants:
+            if self.mode == "training":
+                if p.position is not None:
+                    raise ValueError("position must be null for training mode")
+            else:
+                if p.position is None:
+                    raise ValueError("position is required for non-training modes")
+        return self
 
 
 class RaceSummaryResponse(BaseModel):

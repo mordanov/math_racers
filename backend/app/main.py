@@ -124,6 +124,7 @@ def create_app() -> FastAPI:
 
     from app.presentation.api.v1.admin import router as admin_router
     from app.presentation.api.v1.auth import router as auth_router
+    from app.presentation.api.v1.championships import router as championships_router
     from app.presentation.api.v1.difficulty import router as difficulty_router
     from app.presentation.api.v1.opponents import router as opponents_router
     from app.presentation.api.v1.problems import router as problems_router
@@ -135,6 +136,7 @@ def create_app() -> FastAPI:
     app.include_router(difficulty_router)
     app.include_router(opponents_router)
     app.include_router(races_router)
+    app.include_router(championships_router)
 
     @app.exception_handler(DomainError)
     async def domain_error_handler(request: Request, exc: DomainError) -> JSONResponse:

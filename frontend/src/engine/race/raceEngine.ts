@@ -15,6 +15,14 @@ import type {
   RunnerState,
 } from './types';
 
+const CHAMPIONSHIP_POINTS = [10, 6, 3, 1, 0] as const;
+
+function calcXp(mode: RaceConfig['mode'], posIdx: number, correct: number): number {
+  if (mode === 'training') return correct * 5;
+  if (mode === 'championship') return (CHAMPIONSHIP_POINTS[posIdx] ?? 0) * 10 + correct * 5;
+  return correct * 10;
+}
+
 export class RaceSummaryError extends Error {
   constructor() {
     super('Race summary is only available in RESULTS state');
@@ -39,6 +47,7 @@ export interface RaceEngine {
   pause(): void;
   resume(): void;
   submitAnswer(input: { isCorrect: boolean }): ObstacleResult;
+  forceComplete(): void;
   getState(): RaceEngineState;
   getSummary(): RaceSummary;
 }
@@ -148,17 +157,28 @@ export function createRaceEngine(config: RaceConfig): RaceEngine {
     };
   }
 
+  function forceComplete(): void {
+    if (state === 'RACING') {
+      completedAt = new Date();
+      state = 'RESULTS';
+    }
+  }
+
   function getSummary(): RaceSummary {
     if (state !== 'RESULTS') {
       throw new RaceSummaryError();
     }
 
-    const sorted = [...runners].sort((a, b) => {
-      if (b.totalDistanceMetres !== a.totalDistanceMetres) {
-        return b.totalDistanceMetres - a.totalDistanceMetres;
-      }
-      return a.runnerId < b.runnerId ? -1 : 1;
-    });
+    const isTraining = config.mode === 'training';
+
+    const sorted = isTraining
+      ? [...runners]
+      : [...runners].sort((a, b) => {
+          if (b.totalDistanceMetres !== a.totalDistanceMetres) {
+            return b.totalDistanceMetres - a.totalDistanceMetres;
+          }
+          return a.runnerId < b.runnerId ? -1 : 1;
+        });
 
     const participants: ParticipantSummary[] = sorted.map((runner, posIdx) => {
       const cfg = config.participants.find((p) => p.runnerId === runner.runnerId)!;
@@ -172,11 +192,11 @@ export function createRaceEngine(config: RaceConfig): RaceEngine {
           : 0;
       return {
         avatar_id: cfg.avatarId,
-        position: posIdx + 1,
+        position: isTraining ? null : posIdx + 1,
         problems_correct: correct,
         average_response_ms: avgMs,
         total_distance: runner.totalDistanceMetres,
-        xp_earned: 0,
+        xp_earned: calcXp(config.mode, posIdx, correct),
       };
     });
 
@@ -203,6 +223,7 @@ export function createRaceEngine(config: RaceConfig): RaceEngine {
       clock.resume();
     },
     submitAnswer,
+    forceComplete,
     getState,
     getSummary,
   };
