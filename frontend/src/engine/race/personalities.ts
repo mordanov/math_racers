@@ -3,7 +3,7 @@ import type { AiPersonality } from './types';
 export const STEADY: AiPersonality = {
   id: 'steady',
   name: 'Steady',
-  accuracyRate: 0.80,
+  accuracyRate: 0.8,
   baseResponseTimeMs: 3500,
   responseTimeVarianceMs: 175,
   speedProfile: 'uniform',
@@ -13,7 +13,7 @@ export const STEADY: AiPersonality = {
 export const SPEEDSTER: AiPersonality = {
   id: 'speedster',
   name: 'Speedster',
-  accuracyRate: 0.70,
+  accuracyRate: 0.7,
   baseResponseTimeMs: 3500,
   responseTimeVarianceMs: 350,
   speedProfile: 'front_loaded',
@@ -50,7 +50,13 @@ export const BALANCED: AiPersonality = {
   tierOffset: 0,
 };
 
-export const PERSONALITIES: AiPersonality[] = [STEADY, SPEEDSTER, SLOW_STARTER, UNPREDICTABLE, BALANCED];
+export const PERSONALITIES: AiPersonality[] = [
+  STEADY,
+  SPEEDSTER,
+  SLOW_STARTER,
+  UNPREDICTABLE,
+  BALANCED,
+];
 
 export async function fetchPersonalities(): Promise<AiPersonality[]> {
   const resp = await fetch('/api/v1/opponents/personalities');

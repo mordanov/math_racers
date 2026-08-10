@@ -54,7 +54,9 @@ export function createRaceEngine(config: RaceConfig): RaceEngine {
 
   const humanIdx = runners.findIndex((r) => r.isHuman);
   // Per-opponent RNG — offset by participant index + 1 to avoid colliding with problem seed
-  const aiRngs = config.participants.map((p, i) => (p.isHuman ? null : createRng(config.seed + i + 1)));
+  const aiRngs = config.participants.map((p, i) =>
+    p.isHuman ? null : createRng(config.seed + i + 1),
+  );
 
   function doTransition(toState: RaceState): void {
     transition(state, toState);
@@ -94,7 +96,7 @@ export function createRaceEngine(config: RaceConfig): RaceEngine {
     for (const aiRunner of runners) {
       if (aiRunner.isHuman) continue;
       const pIdx = config.participants.findIndex((p) => p.runnerId === aiRunner.runnerId);
-      const cfg = config.participants[pIdx]!;
+      const cfg = config.participants[pIdx];
       if (!cfg.personality) continue;
       const rng = aiRngs[pIdx]!;
       const { isCorrect: aiCorrect, responseTimeMs: aiTime } = simulateAiObstacle(

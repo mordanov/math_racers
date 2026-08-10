@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-import httpx
 import os
+
+import httpx
 import pytest
 
 BASE_URL = os.getenv("API_URL", "http://localhost:8000")
@@ -45,6 +46,6 @@ def test_get_personalities_speed_profiles_are_valid() -> None:
     resp = httpx.get(f"{BASE_URL}/api/v1/opponents/personalities", timeout=10.0)
     data = resp.json()
     for item in data:
-        assert item["speedProfile"] in VALID_SPEED_PROFILES, (
-            f"{item['id']} has invalid speedProfile: {item['speedProfile']}"
-        )
+        assert (
+            item["speedProfile"] in VALID_SPEED_PROFILES
+        ), f"{item['id']} has invalid speedProfile: {item['speedProfile']}"
