@@ -18,10 +18,10 @@
 
 **Purpose**: Create the directory skeletons and shared constants that all subsequent tasks depend on.
 
-- [ ] T001 Create `frontend/src/engine/race/` directory structure: `index.ts`, `types.ts`, `constants.ts`, `stateMachine.ts`, `movement.ts`, `clock.ts`, `aiRunner.ts`, `raceEngine.ts`, and `hooks/useRaceEngine.ts` (empty stubs only)
-- [ ] T002 Create `frontend/tests/engine/race/` directory with placeholder `__init__` markers so Vitest discovers the suite
-- [ ] T003 Create `backend/app/races/` bounded-context directory with `__init__.py`, `models.py`, `schemas.py`, `repository.py`, `domain_service.py` (empty stubs only)
-- [ ] T004 [P] Create `backend/tests/unit/races/` and `backend/tests/integration/races/` directories with `__init__.py` stubs
+- [x] T001 Create `frontend/src/engine/race/` directory structure: `index.ts`, `types.ts`, `constants.ts`, `stateMachine.ts`, `movement.ts`, `clock.ts`, `aiRunner.ts`, `raceEngine.ts`, and `hooks/useRaceEngine.ts` (empty stubs only)
+- [x] T002 Create `frontend/tests/engine/race/` directory with placeholder `__init__` markers so Vitest discovers the suite
+- [x] T003 Create `backend/app/races/` bounded-context directory with `__init__.py`, `models.py`, `schemas.py`, `repository.py`, `domain_service.py` (empty stubs only)
+- [x] T004 [P] Create `backend/tests/unit/races/` and `backend/tests/integration/races/` directories with `__init__.py` stubs
 
 **Checkpoint**: Directory structure matches plan.md — all empty stubs in place.
 
@@ -31,11 +31,11 @@
 
 **Purpose**: Core shared types, constants, and database migration that every user story builds on.
 
-- [ ] T005 Define all TypeScript types in `frontend/src/engine/race/types.ts`: `RaceState`, `RaceMode`, `MovementTier`, `TierResult`, `ObstacleResult`, `RunnerState`, `AiPersonality`, `RaceConfig`, `ParticipantConfig`, `RaceEngineState`, `RaceSummary`, `ParticipantSummary` — exactly as specified in `data-model.md`
-- [ ] T006 Define all named constants in `frontend/src/engine/race/constants.ts`: `OBSTACLE_COUNT = 8`, `MAX_TRACK_DISTANCE = 144`, `PERFECT_THRESHOLD_MS = 2000`, `EXCELLENT_THRESHOLD_MS = 4000`, `GOOD_THRESHOLD_MS = 6000`, `FRAME_DELTA_CAP_MS = 100`
-- [ ] T007 Write Alembic migration in `backend/alembic/versions/<timestamp>_add_races_tables.py` creating `races` and `race_participants` tables per `data-model.md` (columns, constraints, FK, audit timestamps)
-- [ ] T008 [P] Define `RaceSummaryRequest` and `RaceSummaryResponse` Pydantic schemas in `backend/app/races/schemas.py` matching the contract in `contracts/race-summary-api.md`
-- [ ] T009 [P] Define `Race` and `RaceParticipant` SQLAlchemy models in `backend/app/races/models.py` matching the `races` and `race_participants` table spec in `data-model.md`
+- [x] T005 Define all TypeScript types in `frontend/src/engine/race/types.ts`: `RaceState`, `RaceMode`, `MovementTier`, `TierResult`, `ObstacleResult`, `RunnerState`, `AiPersonality`, `RaceConfig`, `ParticipantConfig`, `RaceEngineState`, `RaceSummary`, `ParticipantSummary` — exactly as specified in `data-model.md`
+- [x] T006 Define all named constants in `frontend/src/engine/race/constants.ts`: `OBSTACLE_COUNT = 8`, `MAX_TRACK_DISTANCE = 144`, `PERFECT_THRESHOLD_MS = 2000`, `EXCELLENT_THRESHOLD_MS = 4000`, `GOOD_THRESHOLD_MS = 6000`, `FRAME_DELTA_CAP_MS = 100`
+- [x] T007 Write Alembic migration in `backend/alembic/versions/<timestamp>_add_races_tables.py` creating `races` and `race_participants` tables per `data-model.md` (columns, constraints, FK, audit timestamps)
+- [x] T008 [P] Define `RaceSummaryRequest` and `RaceSummaryResponse` Pydantic schemas in `backend/app/races/schemas.py` matching the contract in `contracts/race-summary-api.md`
+- [x] T009 [P] Define `Race` and `RaceParticipant` SQLAlchemy models in `backend/app/races/models.py` matching the `races` and `race_participants` table spec in `data-model.md`
 
 **Checkpoint**: Types compile, constants are importable, migration runs cleanly — US phases can begin.
 
@@ -49,16 +49,16 @@
 
 ### Implementation
 
-- [ ] T010 [US1] Implement `calculateMovement(isCorrect, responseTimeMs)` in `frontend/src/engine/race/movement.ts` — pure function returning `TierResult`; uses constants from T006; returns `{ tier: 'incorrect', distanceMetres: 0 }` for wrong answers
-- [ ] T011 [P] [US1] Implement unit tests for `calculateMovement` covering all 5 tier branches (including boundary values at 2000, 4000, 6000 ms and incorrect=false) in `frontend/tests/engine/race/movement.test.ts`
-- [ ] T012 [US1] Implement the state machine in `frontend/src/engine/race/stateMachine.ts`: define `LEGAL_TRANSITIONS` record, implement `transition(from, to)` that throws `RaceStateError` on illegal transitions; export `RaceStateError`
-- [ ] T013 [P] [US1] Implement unit tests for all legal and illegal transitions in `frontend/tests/engine/race/stateMachine.test.ts` (6 legal paths + at least 3 illegal paths from spec edge cases)
-- [ ] T014 [US1] Implement `GameClock` class in `frontend/src/engine/race/clock.ts`: `tick(timestamp)` accumulates delta clamped to `FRAME_DELTA_CAP_MS`; `pause()`, `resume()`, `reset()`, `getMs()` methods; no side effects outside class
-- [ ] T015 [P] [US1] Implement unit tests for `GameClock` in `frontend/tests/engine/race/clock.test.ts`: verify accumulation, delta clamping, pause/resume correctness (paused duration not counted), and reset
-- [ ] T016 [US1] Implement `createRaceEngine(config)` factory in `frontend/src/engine/race/raceEngine.ts` wiring `stateMachine`, `GameClock`, and `calculateMovement`; implement `transition()`, `tick(timestamp)`, `submitAnswer({ isCorrect })`, `getState()`, `getSummary()` (throws if not in RESULTS)
-- [ ] T017 [US1] Implement `useRaceEngine(config)` hook in `frontend/src/engine/race/hooks/useRaceEngine.ts`: wraps `createRaceEngine` in `useRef`; drives `engine.tick()` via `requestAnimationFrame`; registers/deregisters `visibilitychange` for clock pause/resume; exposes derived React state
-- [ ] T018 [US1] Wire public exports in `frontend/src/engine/race/index.ts`: re-export `createRaceEngine`, `useRaceEngine`, all types from `types.ts`, `RaceStateError`
-- [ ] T019 [US1] Implement integration test for a full 8-obstacle Quick Race (human only, no AI) in `frontend/tests/engine/race/raceEngine.integration.test.ts`: verify state sequence, movement accumulation per tier, and `getSummary()` output after RESULTS
+- [x] T010 [US1] Implement `calculateMovement(isCorrect, responseTimeMs)` in `frontend/src/engine/race/movement.ts` — pure function returning `TierResult`; uses constants from T006; returns `{ tier: 'incorrect', distanceMetres: 0 }` for wrong answers
+- [x] T011 [P] [US1] Implement unit tests for `calculateMovement` covering all 5 tier branches (including boundary values at 2000, 4000, 6000 ms and incorrect=false) in `frontend/tests/engine/race/movement.test.ts`
+- [x] T012 [US1] Implement the state machine in `frontend/src/engine/race/stateMachine.ts`: define `LEGAL_TRANSITIONS` record, implement `transition(from, to)` that throws `RaceStateError` on illegal transitions; export `RaceStateError`
+- [x] T013 [P] [US1] Implement unit tests for all legal and illegal transitions in `frontend/tests/engine/race/stateMachine.test.ts` (6 legal paths + at least 3 illegal paths from spec edge cases)
+- [x] T014 [US1] Implement `GameClock` class in `frontend/src/engine/race/clock.ts`: `tick(timestamp)` accumulates delta clamped to `FRAME_DELTA_CAP_MS`; `pause()`, `resume()`, `reset()`, `getMs()` methods; no side effects outside class
+- [x] T015 [P] [US1] Implement unit tests for `GameClock` in `frontend/tests/engine/race/clock.test.ts`: verify accumulation, delta clamping, pause/resume correctness (paused duration not counted), and reset
+- [x] T016 [US1] Implement `createRaceEngine(config)` factory in `frontend/src/engine/race/raceEngine.ts` wiring `stateMachine`, `GameClock`, and `calculateMovement`; implement `transition()`, `tick(timestamp)`, `submitAnswer({ isCorrect })`, `getState()`, `getSummary()` (throws if not in RESULTS)
+- [x] T017 [US1] Implement `useRaceEngine(config)` hook in `frontend/src/engine/race/hooks/useRaceEngine.ts`: wraps `createRaceEngine` in `useRef`; drives `engine.tick()` via `requestAnimationFrame`; registers/deregisters `visibilitychange` for clock pause/resume; exposes derived React state
+- [x] T018 [US1] Wire public exports in `frontend/src/engine/race/index.ts`: re-export `createRaceEngine`, `useRaceEngine`, all types from `types.ts`, `RaceStateError`
+- [x] T019 [US1] Implement integration test for a full 8-obstacle Quick Race (human only, no AI) in `frontend/tests/engine/race/raceEngine.integration.test.ts`: verify state sequence, movement accumulation per tier, and `getSummary()` output after RESULTS
 
 **Checkpoint**: `pnpm test src/engine/race` passes; `calculateMovement`, state machine, clock, and engine all covered; a full race loop completes correctly in the integration test.
 
@@ -72,10 +72,10 @@
 
 ### Implementation
 
-- [ ] T020 [US2] Implement `gaussianNoise(rng)` (Box-Muller) and `simulateAiObstacle(personality, tier, rng)` in `frontend/src/engine/race/aiRunner.ts`; `simulateAiObstacle` returns `{ isCorrect, responseTimeMs }` with response time clipped to `[0, ∞)` and `isCorrect` drawn as Bernoulli with `personality.accuracyRate`
-- [ ] T021 [P] [US2] Implement unit tests for `simulateAiObstacle` in `frontend/tests/engine/race/aiRunner.test.ts`: same seed + personality produces identical results across 10 calls; non-negative response times; `accuracyRate=1.0` always returns `isCorrect=true`; `accuracyRate=0.0` always returns `isCorrect=false`
-- [ ] T022 [US2] Extend `createRaceEngine` in `frontend/src/engine/race/raceEngine.ts` to initialise two independent RNG instances from `config.seed` and `config.seed + 1`; after player submits each obstacle, iterate AI runners sequentially (one per tick) calling `simulateAiObstacle` then `calculateMovement`; update `RunnerState` accordingly
-- [ ] T023 [US2] Extend integration test in `frontend/tests/engine/race/raceEngine.integration.test.ts` with a determinism test: run a 4-AI race twice with the same seed and assert all `RunnerState` outcomes are identical
+- [x] T020 [US2] Implement `gaussianNoise(rng)` (Box-Muller) and `simulateAiObstacle(personality, tier, rng)` in `frontend/src/engine/race/aiRunner.ts`; `simulateAiObstacle` returns `{ isCorrect, responseTimeMs }` with response time clipped to `[0, ∞)` and `isCorrect` drawn as Bernoulli with `personality.accuracyRate`
+- [x] T021 [P] [US2] Implement unit tests for `simulateAiObstacle` in `frontend/tests/engine/race/aiRunner.test.ts`: same seed + personality produces identical results across 10 calls; non-negative response times; `accuracyRate=1.0` always returns `isCorrect=true`; `accuracyRate=0.0` always returns `isCorrect=false`
+- [x] T022 [US2] Extend `createRaceEngine` in `frontend/src/engine/race/raceEngine.ts` to initialise two independent RNG instances from `config.seed` and `config.seed + 1`; after player submits each obstacle, iterate AI runners sequentially (one per tick) calling `simulateAiObstacle` then `calculateMovement`; update `RunnerState` accordingly
+- [x] T023 [US2] Extend integration test in `frontend/tests/engine/race/raceEngine.integration.test.ts` with a determinism test: run a 4-AI race twice with the same seed and assert all `RunnerState` outcomes are identical
 
 **Checkpoint**: AI runners move each obstacle; determinism test passes; sequential update order verified.
 
@@ -89,8 +89,8 @@
 
 ### Implementation
 
-- [ ] T024 [US3] Extend unit tests in `frontend/tests/engine/race/stateMachine.test.ts` to cover all spec-listed illegal transitions: IDLE→RACING, RESULTS→RACING, COUNTDOWN→IDLE — assert `RaceStateError` is thrown and current state is unmodified after the attempt
-- [ ] T025 [US3] Extend integration test in `frontend/tests/engine/race/raceEngine.integration.test.ts` with a state-guard test: attempt each illegal transition on a live engine instance; assert engine `state` field is unchanged; assert calling `submitAnswer` before RACING throws
+- [x] T024 [US3] Extend unit tests in `frontend/tests/engine/race/stateMachine.test.ts` to cover all spec-listed illegal transitions: IDLE→RACING, RESULTS→RACING, COUNTDOWN→IDLE — assert `RaceStateError` is thrown and current state is unmodified after the attempt
+- [x] T025 [US3] Extend integration test in `frontend/tests/engine/race/raceEngine.integration.test.ts` with a state-guard test: attempt each illegal transition on a live engine instance; assert engine `state` field is unchanged; assert calling `submitAnswer` before RACING throws
 
 **Checkpoint**: Zero undefined-state transitions possible; all error paths exercised.
 
@@ -104,9 +104,9 @@
 
 ### Implementation
 
-- [ ] T026 [US4] Extend `GameClock` in `frontend/src/engine/race/clock.ts` to expose `startObstacleClock()` and `getObstacleMs()` for per-obstacle timing (called by `raceEngine.ts` when each new problem becomes visible)
-- [ ] T027 [US4] Extend clock unit tests in `frontend/tests/engine/race/clock.test.ts`: simulate a visibility change mid-obstacle (pause → resume) and assert the returned `getObstacleMs()` excludes the hidden duration; verify two independent timers (game clock vs obstacle clock) advance independently
-- [ ] T028 [US4] Update `raceEngine.ts` `submitAnswer()` to read `obstacleClockMs` from `GameClock.getObstacleMs()` (not from an external argument) so timing is always sourced from the engine clock
+- [x] T026 [US4] Extend `GameClock` in `frontend/src/engine/race/clock.ts` to expose `startObstacleClock()` and `getObstacleMs()` for per-obstacle timing (called by `raceEngine.ts` when each new problem becomes visible)
+- [x] T027 [US4] Extend clock unit tests in `frontend/tests/engine/race/clock.test.ts`: simulate a visibility change mid-obstacle (pause → resume) and assert the returned `getObstacleMs()` excludes the hidden duration; verify two independent timers (game clock vs obstacle clock) advance independently
+- [x] T028 [US4] Update `raceEngine.ts` `submitAnswer()` to read `obstacleClockMs` from `GameClock.getObstacleMs()` (not from an external argument) so timing is always sourced from the engine clock
 
 **Checkpoint**: Tier assignment is driven entirely by the engine clock; visibility-change test passes.
 
@@ -120,17 +120,17 @@
 
 ### Backend Implementation
 
-- [ ] T029 [US5] Implement `RaceRepository` in `backend/app/races/repository.py`: async `create(summary)` method using SQLAlchemy; raises `RaceAlreadyExistsError` (defined in `backend/app/races/domain_service.py`) when `race_id` already exists
-- [ ] T030 [P] [US5] Implement `RaceDomainService` in `backend/app/races/domain_service.py`: `persist_race(summary)` validates that positions are unique within the request (1–5, no duplicates), then delegates to `RaceRepository.create()`; raises `ValidationError` on invalid positions
-- [ ] T031 [US5] Implement POST `/api/v1/races/` endpoint in `backend/app/races/presentation/api/v1/races.py`: receives `RaceSummaryRequest`, calls `RaceDomainService.persist_race()`, returns 201 `RaceSummaryResponse` on success; maps `RaceAlreadyExistsError` → 409, Pydantic `ValidationError` → 400
-- [ ] T032 [US5] Register the `races` router in `backend/app/main.py` under `/api/v1/`
-- [ ] T033 [P] [US5] Implement unit tests for `RaceDomainService` in `backend/tests/unit/races/test_domain_service.py`: valid summary persists; duplicate `race_id` raises `RaceAlreadyExistsError`; non-unique positions raise `ValidationError`; `problems_correct > 8` raises `ValidationError`
-- [ ] T034 [P] [US5] Implement API integration tests for `POST /api/v1/races/` in `backend/tests/integration/races/test_api_races.py`: 201 on valid payload; 409 on duplicate `race_id`; 400 on invalid `difficulty_tier`; 401 on missing JWT
+- [x] T029 [US5] Implement `RaceRepository` in `backend/app/races/repository.py`: async `create(summary)` method using SQLAlchemy; raises `RaceAlreadyExistsError` (defined in `backend/app/races/domain_service.py`) when `race_id` already exists
+- [x] T030 [P] [US5] Implement `RaceDomainService` in `backend/app/races/domain_service.py`: `persist_race(summary)` validates that positions are unique within the request (1–5, no duplicates), then delegates to `RaceRepository.create()`; raises `ValidationError` on invalid positions
+- [x] T031 [US5] Implement POST `/api/v1/races/` endpoint in `backend/app/races/presentation/api/v1/races.py`: receives `RaceSummaryRequest`, calls `RaceDomainService.persist_race()`, returns 201 `RaceSummaryResponse` on success; maps `RaceAlreadyExistsError` → 409, Pydantic `ValidationError` → 400
+- [x] T032 [US5] Register the `races` router in `backend/app/main.py` under `/api/v1/`
+- [x] T033 [P] [US5] Implement unit tests for `RaceDomainService` in `backend/tests/unit/races/test_domain_service.py`: valid summary persists; duplicate `race_id` raises `RaceAlreadyExistsError`; non-unique positions raise `ValidationError`; `problems_correct > 8` raises `ValidationError`
+- [x] T034 [P] [US5] Implement API integration tests for `POST /api/v1/races/` in `backend/tests/integration/races/test_api_races.py`: 201 on valid payload; 409 on duplicate `race_id`; 400 on invalid `difficulty_tier`; 401 on missing JWT
 
 ### Frontend Integration
 
-- [ ] T035 [US5] Implement `postRaceSummary(summary: RaceSummary)` in `frontend/src/engine/race/raceApi.ts`: POSTs to `/api/v1/races/`; retries once on network error; does not retry on 409 (logs and swallows)
-- [ ] T036 [US5] Extend `useRaceEngine` hook in `frontend/src/engine/race/hooks/useRaceEngine.ts` to call `postRaceSummary` automatically when state transitions to RESULTS; expose `summaryStatus: 'idle' | 'pending' | 'saved' | 'error'` to consuming components
+- [x] T035 [US5] Implement `postRaceSummary(summary: RaceSummary)` in `frontend/src/engine/race/raceApi.ts`: POSTs to `/api/v1/races/`; retries once on network error; does not retry on 409 (logs and swallows)
+- [x] T036 [US5] Extend `useRaceEngine` hook in `frontend/src/engine/race/hooks/useRaceEngine.ts` to call `postRaceSummary` automatically when state transitions to RESULTS; expose `summaryStatus: 'idle' | 'pending' | 'saved' | 'error'` to consuming components
 
 **Checkpoint**: `backend/tests/integration/races/test_api_races.py` passes; completing a race in the running frontend app triggers a successful 201 to the backend; 409 handled gracefully.
 
@@ -140,11 +140,11 @@
 
 **Purpose**: Accessibility, documentation sync, final validation.
 
-- [ ] T037 [P] Update `docs/gameplay/spec-race-engine.md` with any implementation notes that deviate from or clarify the spec (per Constitution § XX — docs updated when public behaviour changes)
-- [ ] T038 [P] Verify `frontend/src/engine/race/index.ts` exports are tree-shakeable (no side-effect imports); run `pnpm typecheck` with zero errors
-- [ ] T039 [P] Run `pnpm lint && pnpm fmt:check` and fix any violations in new frontend files
-- [ ] T040 [P] Run `ruff check backend/app/races/ && mypy backend/app/races/` and fix any violations
-- [ ] T041 Follow manual verification steps from `docs/gameplay/spec-race-engine.md` §Manual Verification Steps (7 steps) and confirm all pass against the running app
+- [x] T037 [P] Update `docs/gameplay/spec-race-engine.md` with any implementation notes that deviate from or clarify the spec (per Constitution § XX — docs updated when public behaviour changes)
+- [x] T038 [P] Verify `frontend/src/engine/race/index.ts` exports are tree-shakeable (no side-effect imports); run `pnpm typecheck` with zero errors
+- [x] T039 [P] Run `pnpm lint && pnpm fmt:check` and fix any violations in new frontend files
+- [x] T040 [P] Run `ruff check backend/app/races/ && mypy backend/app/races/` and fix any violations
+- [x] T041 Follow manual verification steps from `docs/gameplay/spec-race-engine.md` §Manual Verification Steps (7 steps) and confirm all pass against the running app
 
 **Checkpoint**: `pnpm test`, `pnpm typecheck`, `pnpm lint` all green; backend `pytest` green; manual verification checklist complete.
 
