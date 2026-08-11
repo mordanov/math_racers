@@ -230,6 +230,7 @@ def test_patch_race_returns_409_on_duplicate_race_id() -> None:
         headers={"Authorization": f"Bearer {token}"},
         timeout=10.0,
     )
+    assert create_resp.status_code == 201, create_resp.text
     champ_id = create_resp.json()["championship_id"]
     race_id = _post_race(token)
 
@@ -243,7 +244,7 @@ def test_patch_race_returns_409_on_duplicate_race_id() -> None:
         headers={"Authorization": f"Bearer {token}"},
         timeout=10.0,
     )
-    assert first.status_code == 200
+    assert first.status_code == 200, first.text
 
     second = httpx.patch(
         f"{BASE_URL}/api/v1/championships/{champ_id}/races/{race_id}",
