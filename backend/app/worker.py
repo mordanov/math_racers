@@ -22,11 +22,18 @@ def _handle_signal(signum: int, frame: object) -> None:
 
 async def process_job(job: dict[str, object]) -> None:
     """Dispatch a job to the appropriate handler. Idempotent."""
+    import uuid as _uuid
+
     job_id = job.get("job_id", "unknown")
     job_type = job.get("job_type", "unknown")
     logger.info("Processing job", extra={"context": {"job_id": job_id, "job_type": job_type}})
-    # Handlers for each job_type will be registered here as domain modules are built.
-    # For now, log unknown job types without failing.
+
+    if job_type == "avatar_generation":
+        from app.avatars.generation_service import run_generation_job
+
+        await run_generation_job(_uuid.UUID(str(job_id)))
+        return
+
     logger.warning(
         "No handler registered for job type",
         extra={"context": {"job_id": job_id, "job_type": job_type}},
