@@ -278,7 +278,7 @@ def test_delete_avatar() -> None:
         headers={"Authorization": f"Bearer {token}"},
         timeout=10.0,
     )
-    assert create_resp.status_code == 201
+    assert create_resp.status_code == 201, create_resp.text
     avatar_id = create_resp.json()["avatar_id"]
 
     del_resp = httpx.delete(
@@ -286,7 +286,7 @@ def test_delete_avatar() -> None:
         headers={"Authorization": f"Bearer {token}"},
         timeout=10.0,
     )
-    assert del_resp.status_code == 204
+    assert del_resp.status_code == 204, del_resp.text
 
     get_resp = httpx.get(
         f"{BASE_URL}/api/v1/avatars/{avatar_id}",
