@@ -9,7 +9,11 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 from app.races.domain_service import RaceDomainService
-from app.races.schemas import ParticipantSummaryRequest, RaceSummaryRequest, RaceSummaryResponse
+from app.races.schemas import (
+    ParticipantSummaryRequest,
+    RaceSummaryRequest,
+    RaceSummaryResponse,
+)
 from app.shared.exceptions import ConflictError, ValidationError
 
 
@@ -26,6 +30,7 @@ def _make_request(**overrides: object) -> RaceSummaryRequest:
                 avatar_id="avatar-1",
                 position=1,
                 problems_correct=8,
+                longest_streak=0,
                 average_response_ms=1500,
                 total_distance=144,
                 xp_earned=100,
@@ -72,6 +77,7 @@ async def test_non_unique_positions_raise_validation_error() -> None:
                 avatar_id="a1",
                 position=1,
                 problems_correct=4,
+                longest_streak=0,
                 average_response_ms=2000,
                 total_distance=72,
                 xp_earned=50,
@@ -80,6 +86,7 @@ async def test_non_unique_positions_raise_validation_error() -> None:
                 avatar_id="a2",
                 position=1,
                 problems_correct=6,
+                longest_streak=0,
                 average_response_ms=1800,
                 total_distance=90,
                 xp_earned=60,
@@ -103,6 +110,7 @@ def test_training_participant_requires_null_position() -> None:
                     avatar_id="a1",
                     position=1,  # must be null for training
                     problems_correct=5,
+                    longest_streak=0,
                     average_response_ms=1500,
                     total_distance=90,
                     xp_earned=25,
@@ -119,6 +127,7 @@ def test_training_participant_with_null_position_is_valid() -> None:
                 avatar_id="a1",
                 position=None,
                 problems_correct=5,
+                longest_streak=0,
                 average_response_ms=1500,
                 total_distance=90,
                 xp_earned=25,
@@ -139,6 +148,7 @@ def test_non_training_participant_requires_non_null_position() -> None:
                     avatar_id="a1",
                     position=None,  # must not be null for non-training
                     problems_correct=5,
+                    longest_streak=0,
                     average_response_ms=1500,
                     total_distance=90,
                     xp_earned=25,
@@ -155,6 +165,7 @@ async def test_valid_multi_participant_race_passes_validation() -> None:
                 avatar_id="a1",
                 position=1,
                 problems_correct=8,
+                longest_streak=0,
                 average_response_ms=1500,
                 total_distance=144,
                 xp_earned=100,
@@ -163,6 +174,7 @@ async def test_valid_multi_participant_race_passes_validation() -> None:
                 avatar_id="a2",
                 position=2,
                 problems_correct=6,
+                longest_streak=0,
                 average_response_ms=2500,
                 total_distance=108,
                 xp_earned=70,

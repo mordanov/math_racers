@@ -38,7 +38,10 @@ def upgrade() -> None:
         sa.Column("eye_color", sa.String(7), nullable=False),
         sa.Column("hairstyle", sa.String(), nullable=False),
         sa.Column(
-            "accessories", postgresql.JSONB(), nullable=False, server_default=sa.text("'[]'")
+            "accessories",
+            postgresql.JSONB(),
+            nullable=False,
+            server_default=sa.text("'[]'"),
         ),
         sa.Column("clothes_top_color", sa.String(7), nullable=False),
         sa.Column("clothes_bottom_color", sa.String(7), nullable=False),

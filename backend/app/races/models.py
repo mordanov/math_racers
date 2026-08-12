@@ -43,15 +43,18 @@ class RaceParticipant(Base):
             name="ck_race_participants_position",
         ),
         CheckConstraint(
-            "problems_correct BETWEEN 0 AND 8", name="ck_race_participants_problems_correct"
+            "problems_correct BETWEEN 0 AND 8",
+            name="ck_race_participants_problems_correct",
         ),
         CheckConstraint(
-            "total_distance BETWEEN 0 AND 144", name="ck_race_participants_total_distance"
+            "total_distance BETWEEN 0 AND 144",
+            name="ck_race_participants_total_distance",
         ),
         CheckConstraint("xp_earned >= 0", name="ck_race_participants_xp_earned"),
         CheckConstraint(
             "average_response_ms >= 0", name="ck_race_participants_average_response_ms"
         ),
+        CheckConstraint("longest_streak >= 0", name="ck_race_participants_longest_streak"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -66,5 +69,6 @@ class RaceParticipant(Base):
     average_response_ms: Mapped[int] = mapped_column(Integer, nullable=False)
     total_distance: Mapped[int] = mapped_column(Integer, nullable=False)
     xp_earned: Mapped[int] = mapped_column(Integer, nullable=False)
+    longest_streak: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
     race: Mapped[Race] = relationship("Race", back_populates="participants")

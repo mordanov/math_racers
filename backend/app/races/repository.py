@@ -43,6 +43,7 @@ class SQLAlchemyRaceRepository:
                 avatar_id=p.avatar_id,
                 position=p.position,
                 problems_correct=p.problems_correct,
+                longest_streak=p.longest_streak,
                 average_response_ms=p.average_response_ms,
                 total_distance=p.total_distance,
                 xp_earned=p.xp_earned,

@@ -123,12 +123,17 @@ step "Install frontend dependencies"
 )
 
 step "Start Postgres test service"
+PG_PORT="${PG_PORT:-5432}"
+if port_is_listening "$PG_PORT"; then
+  PG_PORT="$(find_free_port)"
+  echo "Default Postgres port in use, using free port $PG_PORT"
+fi
 docker rm -f "$PG_CONTAINER" >/dev/null 2>&1 || true
 docker run -d --name "$PG_CONTAINER" \
   -e POSTGRES_DB=mathracers_test \
   -e POSTGRES_USER=mathracers \
   -e POSTGRES_PASSWORD=testpass \
-  -p 5432:5432 \
+  -p "${PG_PORT}:5432" \
   postgres:16-alpine >/dev/null
 
 step "Wait for Postgres"
@@ -144,8 +149,13 @@ docker exec "$PG_CONTAINER" pg_isready >/dev/null 2>&1 || {
 }
 
 step "Start Redis test service"
+REDIS_PORT="${REDIS_PORT:-6379}"
+if port_is_listening "$REDIS_PORT"; then
+  REDIS_PORT="$(find_free_port)"
+  echo "Default Redis port in use, using free port $REDIS_PORT"
+fi
 docker rm -f "$REDIS_CONTAINER" >/dev/null 2>&1 || true
-docker run -d --name "$REDIS_CONTAINER" -p 6379:6379 redis:7-alpine >/dev/null
+docker run -d --name "$REDIS_CONTAINER" -p "${REDIS_PORT}:6379" redis:7-alpine >/dev/null
 
 step "Wait for Redis"
 for _ in {1..30}; do
@@ -202,8 +212,8 @@ step "Unit tests"
 step "Integration tests"
 (
   cd "$BACKEND_DIR"
-  export DATABASE_URL="postgresql+asyncpg://mathracers:testpass@localhost:5432/mathracers_test"
-  export REDIS_URL="redis://localhost:6379/0"
+  export DATABASE_URL="postgresql+asyncpg://mathracers:testpass@localhost:${PG_PORT}/mathracers_test"
+  export REDIS_URL="redis://localhost:${REDIS_PORT}/0"
   export JWT_SECRET="ci-test-secret-32-bytes-minimum-xx"
   export OPENAI_API_KEY="sk-test-placeholder"
   export STORAGE_ENDPOINT="https://CHANGE_ME"

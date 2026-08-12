@@ -41,6 +41,7 @@ def _valid_payload(race_id: str | None = None) -> dict[str, object]:
                 "avatar_id": "avatar-1",
                 "position": 1,
                 "problems_correct": 8,
+                "longest_streak": 5,
                 "average_response_ms": 1500,
                 "total_distance": 144,
                 "xp_earned": 100,
