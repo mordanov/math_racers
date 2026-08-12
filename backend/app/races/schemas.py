@@ -6,6 +6,7 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, Field, model_validator
 
+from app.achievements.schemas import AchievementResponse
 from app.progression.schemas import ProgressionResponse
 
 
@@ -44,3 +45,4 @@ class RaceSummaryResponse(BaseModel):
     race_id: uuid.UUID
     created_at: datetime
     progression: ProgressionResponse | None = None
+    new_achievements: list[AchievementResponse] = []

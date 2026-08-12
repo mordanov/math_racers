@@ -122,6 +122,9 @@ def create_app() -> FastAPI:
     app.add_middleware(CorrelationIdMiddleware)
     app.include_router(health_router)
 
+    from app.achievements.presentation.api.v1.achievements import (
+        router as achievements_router,
+    )
     from app.avatars.presentation.api.v1.avatars import router as avatars_router
     from app.presentation.api.v1.admin import router as admin_router
     from app.presentation.api.v1.auth import router as auth_router
@@ -134,6 +137,7 @@ def create_app() -> FastAPI:
     )
     from app.races.presentation.api.v1.races import router as races_router
 
+    app.include_router(achievements_router)
     app.include_router(auth_router)
     app.include_router(admin_router)
     app.include_router(problems_router)

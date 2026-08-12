@@ -1,7 +1,12 @@
+import type { Achievement } from '../achievements/types';
 import type { RaceSummary } from './types';
 
-export async function postRaceSummary(summary: RaceSummary): Promise<void> {
-  const attempt = async () => {
+export interface RaceSummaryResult {
+  new_achievements: Achievement[];
+}
+
+export async function postRaceSummary(summary: RaceSummary): Promise<RaceSummaryResult> {
+  const attempt = async (): Promise<RaceSummaryResult> => {
     const resp = await fetch('/api/v1/races', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -10,17 +15,19 @@ export async function postRaceSummary(summary: RaceSummary): Promise<void> {
     });
     if (resp.status === 409) {
       // Duplicate — not an error worth surfacing
-      return;
+      return { new_achievements: [] };
     }
     if (!resp.ok) {
       throw new Error(`POST /api/v1/races failed: ${resp.status}`);
     }
+    const data = await resp.json();
+    return { new_achievements: (data.new_achievements as Achievement[]) ?? [] };
   };
 
   try {
-    await attempt();
+    return await attempt();
   } catch {
     // Retry once on network error
-    await attempt();
+    return await attempt();
   }
 }
