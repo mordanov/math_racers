@@ -98,9 +98,7 @@ async def test_perfect_race_fires_only_with_8_correct() -> None:
         results = await service.evaluate_race_completed(
             account_id, {"problems_correct": correct, "position": 1}, session
         )
-        assert not any(
-            r.key == "perfect_race" for r in results
-        ), f"Should not fire for {correct}"
+        assert not any(r.key == "perfect_race" for r in results), f"Should not fire for {correct}"
 
     # Exactly 8 should fire
     record = _make_achievement("perfect_race")

@@ -22,9 +22,7 @@ class PlayerProgression(Base):
     __tablename__ = "player_progressions"
     __table_args__ = (
         CheckConstraint("total_xp >= 0", name="ck_player_progressions_total_xp"),
-        CheckConstraint(
-            "current_level >= 0", name="ck_player_progressions_current_level"
-        ),
+        CheckConstraint("current_level >= 0", name="ck_player_progressions_current_level"),
     )
 
     account_id: Mapped[uuid.UUID] = mapped_column(
@@ -51,9 +49,7 @@ class XPEvent(Base):
         Index("idx_xp_events_race_id", "race_id"),
     )
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     account_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("accounts.id", ondelete="CASCADE"),

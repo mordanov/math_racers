@@ -48,9 +48,7 @@ async def login(
     refresh_token_repo = SQLAlchemyRefreshTokenRepository(session)
     use_case = LoginUseCase(account_repo, refresh_token_repo, AccountDomainService())
 
-    access_token, raw_refresh = await use_case.execute(
-        body.email, body.password, settings
-    )
+    access_token, raw_refresh = await use_case.execute(body.email, body.password, settings)
 
     ttl_seconds = settings.JWT_REFRESH_TTL_DAYS * 86400
     response.set_cookie(
@@ -78,9 +76,7 @@ async def refresh_tokens(
 
     account_repo = SQLAlchemyAccountRepository(session)
     refresh_token_repo = SQLAlchemyRefreshTokenRepository(session)
-    use_case = RefreshTokenUseCase(
-        account_repo, refresh_token_repo, AccountDomainService()
-    )
+    use_case = RefreshTokenUseCase(account_repo, refresh_token_repo, AccountDomainService())
 
     new_access, new_raw = await use_case.execute(raw_refresh, settings)
 

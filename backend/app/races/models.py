@@ -13,27 +13,19 @@ from infrastructure.database.base import Base
 class Race(Base):
     __tablename__ = "races"
     __table_args__ = (
-        CheckConstraint(
-            "difficulty_tier BETWEEN 1 AND 6", name="ck_races_difficulty_tier"
-        ),
+        CheckConstraint("difficulty_tier BETWEEN 1 AND 6", name="ck_races_difficulty_tier"),
         CheckConstraint(
             "mode IN ('quick', 'championship', 'duel', 'training')",
             name="ck_races_mode",
         ),
     )
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     seed: Mapped[str] = mapped_column(String, nullable=False)
     difficulty_tier: Mapped[int] = mapped_column(Integer, nullable=False)
     mode: Mapped[str] = mapped_column(String, nullable=False)
-    started_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), nullable=False
-    )
-    completed_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), nullable=False
-    )
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    completed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=text("now()")
     )
@@ -62,14 +54,10 @@ class RaceParticipant(Base):
         CheckConstraint(
             "average_response_ms >= 0", name="ck_race_participants_average_response_ms"
         ),
-        CheckConstraint(
-            "longest_streak >= 0", name="ck_race_participants_longest_streak"
-        ),
+        CheckConstraint("longest_streak >= 0", name="ck_race_participants_longest_streak"),
     )
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     race_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("races.id", ondelete="CASCADE"),

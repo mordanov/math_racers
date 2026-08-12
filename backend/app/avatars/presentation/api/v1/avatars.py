@@ -74,9 +74,7 @@ async def patch_avatar(
     return await _service(session).update(account.id, avatar_id, body)
 
 
-@router.post(
-    "/{avatar_id}/regenerate", response_model=AvatarCreationResponse, status_code=201
-)
+@router.post("/{avatar_id}/regenerate", response_model=AvatarCreationResponse, status_code=201)
 async def regenerate_avatar(
     avatar_id: uuid.UUID,
     account: Account = Depends(get_current_account),

@@ -37,9 +37,7 @@ class RefreshTokenUseCase:
             raise PermissionError("INVALID_REFRESH_TOKEN", "Refresh token has expired.")
 
         if stored.revoked_at is not None:
-            raise PermissionError(
-                "INVALID_REFRESH_TOKEN", "Refresh token has been revoked."
-            )
+            raise PermissionError("INVALID_REFRESH_TOKEN", "Refresh token has been revoked.")
 
         account = await self._account_repo.get_by_id(stored.account_id)
         if account is None:

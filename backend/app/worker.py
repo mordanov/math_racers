@@ -16,9 +16,7 @@ SHUTDOWN = False
 
 def _handle_signal(signum: int, frame: object) -> None:
     global SHUTDOWN
-    logger.info(
-        "Worker received shutdown signal", extra={"context": {"signal": signum}}
-    )
+    logger.info("Worker received shutdown signal", extra={"context": {"signal": signum}})
     SHUTDOWN = True
 
 
@@ -28,9 +26,7 @@ async def process_job(job: dict[str, object]) -> None:
 
     job_id = job.get("job_id", "unknown")
     job_type = job.get("job_type", "unknown")
-    logger.info(
-        "Processing job", extra={"context": {"job_id": job_id, "job_type": job_type}}
-    )
+    logger.info("Processing job", extra={"context": {"job_id": job_id, "job_type": job_type}})
 
     if job_type == "avatar_generation":
         from app.avatars.generation_service import run_generation_job

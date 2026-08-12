@@ -33,9 +33,7 @@ def _build_standings(championship: Any) -> list[StandingEntry]:
         if cr.finishing_position <= 3:
             totals[cr.avatar_id]["podiums"] += 1
 
-    sorted_entries = sorted(
-        totals.values(), key=lambda e: (-e["points"], -e["podiums"])
-    )
+    sorted_entries = sorted(totals.values(), key=lambda e: (-e["points"], -e["podiums"]))
     return [
         StandingEntry(
             avatar_id=e["avatar_id"],
@@ -69,9 +67,7 @@ class ChampionshipDomainService:
         championship = await self._repository.create(account_id, request.total_races)
         return _to_response(championship)
 
-    async def get(
-        self, account_id: uuid.UUID, championship_id: uuid.UUID
-    ) -> ChampionshipResponse:
+    async def get(self, account_id: uuid.UUID, championship_id: uuid.UUID) -> ChampionshipResponse:
         championship = await self._repository.get(championship_id)
         if championship.account_id != account_id:
             raise PermissionError(
@@ -98,9 +94,7 @@ class ChampionshipDomainService:
 
         player_entries = [p for p in request.participants if p.is_player]
         if len(player_entries) != 1:
-            raise ValidationError(
-                message="Exactly one participant must have is_player=true."
-            )
+            raise ValidationError(message="Exactly one participant must have is_player=true.")
 
         participants = [
             {

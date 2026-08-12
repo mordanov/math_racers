@@ -168,9 +168,7 @@ async def run_generation_job(job_id: uuid.UUID) -> None:
             repo = SQLAlchemyAvatarRepository(session)
             job = await repo.get_job(job_id)
             if job is None:
-                logger.warning(
-                    "Job not found", extra={"context": {"job_id": str(job_id)}}
-                )
+                logger.warning("Job not found", extra={"context": {"job_id": str(job_id)}})
                 return
             if job.status not in ("queued", "generating"):
                 logger.info(
@@ -292,15 +290,9 @@ async def _run_pipeline(
             s3 = _s3_client()
             base_key = f"characters/{avatar.account_id}/{avatar.id}/v{attempt}"
             full_url = _upload_png(s3, f"{base_key}/portrait.png", image_bytes)
-            medium_url = _upload_png(
-                s3, f"{base_key}/portrait_512.png", thumbnails["medium"]
-            )
-            small_url = _upload_png(
-                s3, f"{base_key}/portrait_256.png", thumbnails["small"]
-            )
-            thumb_url = _upload_png(
-                s3, f"{base_key}/portrait_128.png", thumbnails["thumb"]
-            )
+            medium_url = _upload_png(s3, f"{base_key}/portrait_512.png", thumbnails["medium"])
+            small_url = _upload_png(s3, f"{base_key}/portrait_256.png", thumbnails["small"])
+            thumb_url = _upload_png(s3, f"{base_key}/portrait_128.png", thumbnails["thumb"])
 
             # Determine OpenAI model version from API response (use constant for now)
             model_version = "dall-e-3"
@@ -354,9 +346,7 @@ async def _run_pipeline(
                         "job_id": str(job_id),
                         "avatar_id": str(avatar.id),
                         "attempt": attempt,
-                        "duration_ms": int(
-                            (datetime.now(UTC) - start).total_seconds() * 1000
-                        ),
+                        "duration_ms": int((datetime.now(UTC) - start).total_seconds() * 1000),
                     }
                 },
             )
@@ -390,9 +380,7 @@ async def _run_pipeline(
                 job.completed_at = datetime.now(UTC)
                 await repo.update_job(job)
 
-            result = await session.execute(
-                _select(_Avatar).where(_Avatar.id == avatar.id)
-            )
+            result = await session.execute(_select(_Avatar).where(_Avatar.id == avatar.id))
             db_avatar = result.scalar_one_or_none()
             if db_avatar and db_avatar.status == "pending":
                 db_avatar.status = "failed"

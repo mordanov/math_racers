@@ -113,9 +113,7 @@ class AvatarDomainService:
                 message=f"At most {_MAX_CONCURRENT_JOBS} generation jobs may run at once.",
             )
 
-        jobs_last_hour = await self._repository.count_jobs_last_hour_by_account(
-            account_id
-        )
+        jobs_last_hour = await self._repository.count_jobs_last_hour_by_account(account_id)
         if jobs_last_hour >= _MAX_JOBS_PER_HOUR:
             raise ValidationError(
                 error_code="RATE_LIMIT_EXCEEDED",
@@ -169,9 +167,7 @@ class AvatarDomainService:
             completed_at=job.completed_at,
         )
 
-    async def get(
-        self, account_id: uuid.UUID, avatar_id: uuid.UUID
-    ) -> AvatarDetailResponse:
+    async def get(self, account_id: uuid.UUID, avatar_id: uuid.UUID) -> AvatarDetailResponse:
         avatar = await self._repository.get(avatar_id)
         if avatar.account_id != account_id:
             raise PermissionError(
@@ -201,9 +197,7 @@ class AvatarDomainService:
                 message=f"At most {_MAX_CONCURRENT_JOBS} generation jobs may run at once.",
             )
 
-        jobs_last_hour = await self._repository.count_jobs_last_hour_by_account(
-            account_id
-        )
+        jobs_last_hour = await self._repository.count_jobs_last_hour_by_account(account_id)
         if jobs_last_hour >= _MAX_JOBS_PER_HOUR:
             raise ValidationError(
                 error_code="RATE_LIMIT_EXCEEDED",

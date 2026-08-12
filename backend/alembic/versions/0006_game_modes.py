@@ -56,12 +56,8 @@ def upgrade() -> None:
             nullable=False,
             server_default=sa.text("now()"),
         ),
-        sa.CheckConstraint(
-            "total_races BETWEEN 3 AND 7", name="ck_championships_total_races"
-        ),
-        sa.CheckConstraint(
-            "status IN ('active', 'completed')", name="ck_championships_status"
-        ),
+        sa.CheckConstraint("total_races BETWEEN 3 AND 7", name="ck_championships_total_races"),
+        sa.CheckConstraint("status IN ('active', 'completed')", name="ck_championships_status"),
     )
 
     op.create_table(
@@ -89,9 +85,7 @@ def upgrade() -> None:
         sa.Column("is_player", sa.Boolean(), nullable=False),
         sa.Column("finishing_position", sa.Integer(), nullable=False),
         sa.Column("points_earned", sa.Integer(), nullable=False),
-        sa.UniqueConstraint(
-            "race_id", "avatar_id", name="uq_championship_races_race_avatar"
-        ),
+        sa.UniqueConstraint("race_id", "avatar_id", name="uq_championship_races_race_avatar"),
         sa.CheckConstraint(
             "finishing_position BETWEEN 1 AND 5",
             name="ck_championship_races_finishing_position",
@@ -109,9 +103,7 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.drop_index(
-        "ix_championship_races_championship_id", table_name="championship_races"
-    )
+    op.drop_index("ix_championship_races_championship_id", table_name="championship_races")
     op.drop_table("championship_races")
     op.drop_table("championships")
 

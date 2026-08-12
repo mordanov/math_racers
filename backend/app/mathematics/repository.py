@@ -10,9 +10,7 @@ from app.mathematics.models import PlayerDifficulty
 
 
 class PlayerDifficultyRepository(Protocol):
-    async def get_by_player_id(
-        self, player_id: uuid.UUID
-    ) -> PlayerDifficulty | None: ...
+    async def get_by_player_id(self, player_id: uuid.UUID) -> PlayerDifficulty | None: ...
     async def upsert(self, record: PlayerDifficulty) -> PlayerDifficulty: ...
 
 

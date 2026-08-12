@@ -21,9 +21,7 @@ from infrastructure.database.session import get_session
 router = APIRouter(tags=["achievements"])
 
 
-@router.get(
-    "/api/v1/achievements", response_model=AchievementListResponse, status_code=200
-)
+@router.get("/api/v1/achievements", response_model=AchievementListResponse, status_code=200)
 async def get_achievements(
     account_id: uuid.UUID | None = Query(default=None),
     session: AsyncSession = Depends(get_session),
@@ -44,10 +42,7 @@ async def get_player_achievements(
     current_account: Account = Depends(get_current_account),
     session: AsyncSession = Depends(get_session),
 ) -> PlayerAchievementListResponse:
-    if (
-        current_account.id != account_id
-        and current_account.role != AccountRole.administrator
-    ):
+    if current_account.id != account_id and current_account.role != AccountRole.administrator:
         raise PermissionError(message="You may only view your own achievements.")
 
     repo = SQLAlchemyAchievementRepository(session)
@@ -71,6 +66,4 @@ async def get_player_achievements(
             )
         )
 
-    return PlayerAchievementListResponse(
-        account_id=account_id, achievements=achievements
-    )
+    return PlayerAchievementListResponse(account_id=account_id, achievements=achievements)

@@ -19,9 +19,7 @@ class RaceParticipantEntry(BaseModel):
 
 class RecordRaceRequest(BaseModel):
     race_index: Annotated[int, Field(ge=0)]
-    participants: Annotated[
-        list[RaceParticipantEntry], Field(min_length=1, max_length=5)
-    ]
+    participants: Annotated[list[RaceParticipantEntry], Field(min_length=1, max_length=5)]
 
 
 class StandingEntry(BaseModel):

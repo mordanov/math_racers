@@ -83,9 +83,7 @@ class SQLAlchemyAvatarRepository:
 
     async def count_by_account(self, account_id: uuid.UUID) -> int:
         result = await self._session.execute(
-            select(func.count())
-            .select_from(Avatar)
-            .where(Avatar.account_id == account_id)
+            select(func.count()).select_from(Avatar).where(Avatar.account_id == account_id)
         )
         return int(result.scalar_one())
 
@@ -113,9 +111,7 @@ class SQLAlchemyAvatarRepository:
 
     async def next_portrait_version(self, avatar_id: uuid.UUID) -> int:
         result = await self._session.execute(
-            select(func.max(AvatarPortrait.version)).where(
-                AvatarPortrait.avatar_id == avatar_id
-            )
+            select(func.max(AvatarPortrait.version)).where(AvatarPortrait.avatar_id == avatar_id)
         )
         current_max = result.scalar_one_or_none()
         return (current_max or 0) + 1

@@ -144,9 +144,7 @@ def test_duplicate_race_no_duplicate_achievement() -> None:
         timeout=10.0,
     )
     assert list_resp.status_code == 200
-    first_race_entries = [
-        a for a in list_resp.json()["achievements"] if a["key"] == "first_race"
-    ]
+    first_race_entries = [a for a in list_resp.json()["achievements"] if a["key"] == "first_race"]
     assert len(first_race_entries) == 1
 
 

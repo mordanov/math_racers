@@ -31,9 +31,7 @@ class CreateAvatarRequest(BaseModel):
             raise ValueError(f"species must be one of {_SPECIES}")
         return v
 
-    @field_validator(
-        "fur_color", "eye_color", "clothes_top_color", "clothes_bottom_color"
-    )
+    @field_validator("fur_color", "eye_color", "clothes_top_color", "clothes_bottom_color")
     @classmethod
     def validate_hex_colour(cls, v: str) -> str:
         import re

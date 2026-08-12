@@ -52,9 +52,7 @@ class ProgressionDomainService:
         new_level = _compute_level(new_total)
 
         await self._repository.upsert(account_id, new_total, new_level)
-        await self._repository.insert_event(
-            account_id, "race_completion", xp_delta, race_id
-        )
+        await self._repository.insert_event(account_id, "race_completion", xp_delta, race_id)
 
         level_up: LevelUpEvent | None = None
         if new_level > old_level:
@@ -96,7 +94,5 @@ class ProgressionDomainService:
         return ProgressionResponse(
             total_xp=existing.total_xp,
             current_level=existing.current_level,
-            xp_to_next_level=_xp_to_next_level(
-                existing.total_xp, existing.current_level
-            ),
+            xp_to_next_level=_xp_to_next_level(existing.total_xp, existing.current_level),
         )

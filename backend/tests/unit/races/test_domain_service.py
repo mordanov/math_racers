@@ -61,9 +61,7 @@ async def test_persist_race_calls_repository() -> None:
 async def test_duplicate_race_id_raises_conflict() -> None:
     mock_repo = MagicMock()
     mock_repo.create = AsyncMock(
-        side_effect=ConflictError(
-            error_code="RACE_ALREADY_EXISTS", message="already exists"
-        )
+        side_effect=ConflictError(error_code="RACE_ALREADY_EXISTS", message="already exists")
     )
 
     service = RaceDomainService(mock_repo)

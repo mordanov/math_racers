@@ -73,7 +73,4 @@ def test_all_attempts_return_prompt_version() -> None:
 
 def test_attempt2_uses_simplified_template() -> None:
     result = build_character_prompt(_BASE_METADATA, attempt=2)
-    assert (
-        "personality" not in result.text.lower()
-        or "curious and energetic" not in result.text
-    )
+    assert "personality" not in result.text.lower() or "curious and energetic" not in result.text

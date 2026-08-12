@@ -13,15 +13,11 @@ from infrastructure.database.base import Base
 class PlayerAchievement(Base):
     __tablename__ = "player_achievements"
     __table_args__ = (
-        UniqueConstraint(
-            "account_id", "achievement_key", name="uq_player_achievements"
-        ),
+        UniqueConstraint("account_id", "achievement_key", name="uq_player_achievements"),
         Index("idx_player_achievements_account_id", "account_id"),
     )
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     account_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("accounts.id", ondelete="CASCADE"),

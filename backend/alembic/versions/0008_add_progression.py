@@ -50,9 +50,7 @@ def upgrade() -> None:
             server_default=sa.text("now()"),
         ),
         sa.CheckConstraint("total_xp >= 0", name="ck_player_progressions_total_xp"),
-        sa.CheckConstraint(
-            "current_level >= 0", name="ck_player_progressions_current_level"
-        ),
+        sa.CheckConstraint("current_level >= 0", name="ck_player_progressions_current_level"),
     )
 
     op.create_table(
@@ -98,7 +96,5 @@ def downgrade() -> None:
     op.drop_index("idx_xp_events_account_id", table_name="xp_events")
     op.drop_table("xp_events")
     op.drop_table("player_progressions")
-    op.drop_constraint(
-        "ck_race_participants_longest_streak", "race_participants", type_="check"
-    )
+    op.drop_constraint("ck_race_participants_longest_streak", "race_participants", type_="check")
     op.drop_column("race_participants", "longest_streak")
