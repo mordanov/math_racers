@@ -20,8 +20,8 @@ export async function postRaceSummary(summary: RaceSummary): Promise<RaceSummary
     if (!resp.ok) {
       throw new Error(`POST /api/v1/races failed: ${resp.status}`);
     }
-    const data = await resp.json();
-    return { new_achievements: (data.new_achievements as Achievement[]) ?? [] };
+    const data = (await resp.json()) as { new_achievements?: Achievement[] };
+    return { new_achievements: data.new_achievements ?? [] };
   };
 
   try {
