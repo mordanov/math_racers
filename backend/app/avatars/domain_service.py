@@ -81,7 +81,11 @@ def _enqueue_job(redis_url: str, job_id: uuid.UUID, avatar_id: uuid.UUID) -> Non
 
     client = _redis.from_url(redis_url)  # type: ignore[no-untyped-call]
     payload = json.dumps(
-        {"job_type": "avatar_generation", "job_id": str(job_id), "avatar_id": str(avatar_id)}
+        {
+            "job_type": "avatar_generation",
+            "job_id": str(job_id),
+            "avatar_id": str(avatar_id),
+        }
     )
     client.rpush("job_queue", payload)
     client.close()

@@ -9,7 +9,11 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 from app.races.domain_service import RaceDomainService
-from app.races.schemas import ParticipantSummaryRequest, RaceSummaryRequest, RaceSummaryResponse
+from app.races.schemas import (
+    ParticipantSummaryRequest,
+    RaceSummaryRequest,
+    RaceSummaryResponse,
+)
 from app.shared.exceptions import ConflictError, ValidationError
 
 

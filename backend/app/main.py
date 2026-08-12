@@ -129,7 +129,9 @@ def create_app() -> FastAPI:
     from app.presentation.api.v1.difficulty import router as difficulty_router
     from app.presentation.api.v1.opponents import router as opponents_router
     from app.presentation.api.v1.problems import router as problems_router
-    from app.progression.presentation.api.v1.progression import router as progression_router
+    from app.progression.presentation.api.v1.progression import (
+        router as progression_router,
+    )
     from app.races.presentation.api.v1.races import router as races_router
 
     app.include_router(auth_router)

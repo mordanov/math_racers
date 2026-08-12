@@ -1,4 +1,8 @@
-from app.avatars.prompt_builder import PROMPT_VERSION, VersionedPrompt, build_character_prompt
+from app.avatars.prompt_builder import (
+    PROMPT_VERSION,
+    VersionedPrompt,
+    build_character_prompt,
+)
 
 _BASE_METADATA = {
     "species": "fox",

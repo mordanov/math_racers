@@ -39,7 +39,9 @@ class UnauthorizedError(DomainError):
     """Missing or invalid credentials — HTTP 401."""
 
     def __init__(
-        self, error_code: str = "UNAUTHORIZED", message: str = "Authentication required."
+        self,
+        error_code: str = "UNAUTHORIZED",
+        message: str = "Authentication required.",
     ) -> None:
         super().__init__(error_code, message)
 

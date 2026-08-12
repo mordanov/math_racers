@@ -43,10 +43,12 @@ class RaceParticipant(Base):
             name="ck_race_participants_position",
         ),
         CheckConstraint(
-            "problems_correct BETWEEN 0 AND 8", name="ck_race_participants_problems_correct"
+            "problems_correct BETWEEN 0 AND 8",
+            name="ck_race_participants_problems_correct",
         ),
         CheckConstraint(
-            "total_distance BETWEEN 0 AND 144", name="ck_race_participants_total_distance"
+            "total_distance BETWEEN 0 AND 144",
+            name="ck_race_participants_total_distance",
         ),
         CheckConstraint("xp_earned >= 0", name="ck_race_participants_xp_earned"),
         CheckConstraint(

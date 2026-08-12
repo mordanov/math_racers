@@ -60,7 +60,12 @@ def _validate_image(image_bytes: bytes) -> dict[str, bool]:
         }
     except Exception as exc:
         logger.warning("Image validation error", extra={"context": {"error": str(exc)}})
-        return {"dimensions": False, "has_alpha": False, "file_size": False, "not_empty": False}
+        return {
+            "dimensions": False,
+            "has_alpha": False,
+            "file_size": False,
+            "not_empty": False,
+        }
 
 
 def _generate_thumbnails(image_bytes: bytes) -> dict[str, bytes]:

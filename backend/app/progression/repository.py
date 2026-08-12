@@ -57,7 +57,11 @@ class SQLAlchemyProgressionRepository:
                     updated_at = now()
                 """
             ),
-            {"account_id": str(account_id), "total_xp": new_total, "current_level": new_level},
+            {
+                "account_id": str(account_id),
+                "total_xp": new_total,
+                "current_level": new_level,
+            },
         )
         row = await self.get(account_id)
         assert row is not None
