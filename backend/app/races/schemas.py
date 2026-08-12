@@ -6,11 +6,14 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, Field, model_validator
 
+from app.progression.schemas import ProgressionResponse
+
 
 class ParticipantSummaryRequest(BaseModel):
     avatar_id: str
     position: Annotated[int, Field(ge=1, le=5)] | None = None
     problems_correct: Annotated[int, Field(ge=0, le=8)]
+    longest_streak: Annotated[int, Field(ge=0)]
     average_response_ms: Annotated[int, Field(ge=0)]
     total_distance: Annotated[int, Field(ge=0, le=144)]
     xp_earned: Annotated[int, Field(ge=0)]
@@ -40,3 +43,4 @@ class RaceSummaryRequest(BaseModel):
 class RaceSummaryResponse(BaseModel):
     race_id: uuid.UUID
     created_at: datetime
+    progression: ProgressionResponse | None = None

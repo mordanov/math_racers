@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.accounts.models import Account
 from app.presentation.api.middleware.auth import get_current_account
+from app.progression.repository import SQLAlchemyProgressionRepository
 from app.races.domain_service import RaceDomainService
 from app.races.repository import SQLAlchemyRaceRepository
 from app.races.schemas import RaceSummaryRequest, RaceSummaryResponse
@@ -19,6 +20,7 @@ async def create_race(
     account: Account = Depends(get_current_account),
     session: AsyncSession = Depends(get_session),
 ) -> RaceSummaryResponse:
-    repo = SQLAlchemyRaceRepository(session)
-    service = RaceDomainService(repo)
-    return await service.persist_race(body)
+    race_repo = SQLAlchemyRaceRepository(session)
+    progression_repo = SQLAlchemyProgressionRepository(session)
+    service = RaceDomainService(race_repo, progression_repo)
+    return await service.persist_race(body, account_id=account.id)
