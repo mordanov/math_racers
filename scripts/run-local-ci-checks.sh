@@ -287,7 +287,7 @@ trivy image --exit-code 1 --severity CRITICAL --ignore-unfixed "math-racers/fron
 step "Security scan: Python dependencies"
 (
   cd "$BACKEND_DIR"
-  pip-audit --requirement <(uv pip compile pyproject.toml)
+  PIP_INDEX_URL="https://pypi.org/simple" pip-audit --requirement <(uv pip compile pyproject.toml)
 )
 
 step "Security scan: Node dependencies"
