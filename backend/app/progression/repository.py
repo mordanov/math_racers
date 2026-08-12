@@ -47,16 +47,14 @@ class SQLAlchemyProgressionRepository:
         new_level: int,
     ) -> PlayerProgression:
         await self._session.execute(
-            text(
-                """
+            text("""
                 INSERT INTO player_progressions (account_id, total_xp, current_level, updated_at)
                 VALUES (:account_id, :total_xp, :current_level, now())
                 ON CONFLICT (account_id) DO UPDATE
                 SET total_xp = :total_xp,
                     current_level = :current_level,
                     updated_at = now()
-                """
-            ),
+                """),
             {
                 "account_id": str(account_id),
                 "total_xp": new_total,
