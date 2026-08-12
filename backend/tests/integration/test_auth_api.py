@@ -94,7 +94,9 @@ class TestFullAuthCycle:
         )
         assert list_resp.status_code == 200
         items = list_resp.json()["items"]
-        account_id = next((item["id"] for item in items if item["email"] == email), None)
+        account_id = next(
+            (item["id"] for item in items if item["email"] == email), None
+        )
         assert account_id is not None, f"Account {email} not found in pending list"
 
         # Step 5: admin approves

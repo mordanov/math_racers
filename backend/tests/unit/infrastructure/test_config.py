@@ -32,7 +32,9 @@ class TestConfigValidation:
 
         env = self._make_valid_env()
         env["DATABASE_URL"] = "mysql://user:pass@localhost/db"
-        with pytest.raises(ValidationError, match="DATABASE_URL must be a PostgreSQL DSN"):
+        with pytest.raises(
+            ValidationError, match="DATABASE_URL must be a PostgreSQL DSN"
+        ):
             Config.model_validate(env)
 
     def test_invalid_environment_raises(self) -> None:

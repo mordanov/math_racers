@@ -238,7 +238,9 @@ def test_patch_race_returns_409_on_duplicate_race_id() -> None:
 
     patch_body = {
         "race_index": 0,
-        "participants": [{"avatar_id": "a1", "is_player": True, "finishing_position": 1}],
+        "participants": [
+            {"avatar_id": "a1", "is_player": True, "finishing_position": 1}
+        ],
     }
     first = httpx.patch(
         f"{BASE_URL}/api/v1/championships/{champ_id}/races/{race_id}",

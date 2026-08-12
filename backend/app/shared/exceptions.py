@@ -22,7 +22,9 @@ class ValidationError(DomainError):
 class NotFoundError(DomainError):
     """The requested entity does not exist."""
 
-    def __init__(self, error_code: str = "NOT_FOUND", message: str = "Resource not found.") -> None:
+    def __init__(
+        self, error_code: str = "NOT_FOUND", message: str = "Resource not found."
+    ) -> None:
         super().__init__(error_code, message)
 
 
@@ -49,7 +51,9 @@ class UnauthorizedError(DomainError):
 class PermissionError(DomainError):
     """Authenticated but insufficient permissions — HTTP 403."""
 
-    def __init__(self, error_code: str = "FORBIDDEN", message: str = "Permission denied.") -> None:
+    def __init__(
+        self, error_code: str = "FORBIDDEN", message: str = "Permission denied."
+    ) -> None:
         super().__init__(error_code, message)
 
 

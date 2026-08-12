@@ -20,7 +20,9 @@ class LoginUseCase:
         self._refresh_token_repo = refresh_token_repo
         self._domain_service = domain_service
 
-    async def execute(self, email: str, password: str, settings: Config) -> tuple[str, str]:
+    async def execute(
+        self, email: str, password: str, settings: Config
+    ) -> tuple[str, str]:
         normalised_email = email.strip().lower()
 
         account = await self._account_repo.get_by_email(normalised_email)
@@ -41,13 +43,16 @@ class LoginUseCase:
                 "Your account has been rejected.",
             )
 
-        access_token = self._domain_service.create_access_token(account.id, account.role, settings)
+        access_token = self._domain_service.create_access_token(
+            account.id, account.role, settings
+        )
         raw_refresh, token_hash = self._domain_service.generate_refresh_token()
 
         refresh_token = RefreshToken(
             account_id=account.id,
             token_hash=token_hash,
-            expires_at=datetime.now(tz=UTC) + timedelta(days=settings.JWT_REFRESH_TTL_DAYS),
+            expires_at=datetime.now(tz=UTC)
+            + timedelta(days=settings.JWT_REFRESH_TTL_DAYS),
         )
         await self._refresh_token_repo.save(refresh_token)
 

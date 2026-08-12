@@ -29,7 +29,9 @@ def test_valid_request_returns_200() -> None:
 
 @pytest.mark.integration
 def test_count_zero_returns_empty_set() -> None:
-    response = httpx.get(f"{BASE_URL}/api/v1/problems", params={"tier": 1, "seed": 1, "count": 0})
+    response = httpx.get(
+        f"{BASE_URL}/api/v1/problems", params={"tier": 1, "seed": 1, "count": 0}
+    )
     assert response.status_code == 200
     assert response.json()["problems"] == []
 
@@ -45,7 +47,9 @@ def test_tier_out_of_range_returns_422() -> None:
 
 @pytest.mark.integration
 def test_count_out_of_range_returns_422() -> None:
-    response = httpx.get(f"{BASE_URL}/api/v1/problems", params={"tier": 1, "seed": 1, "count": 101})
+    response = httpx.get(
+        f"{BASE_URL}/api/v1/problems", params={"tier": 1, "seed": 1, "count": 101}
+    )
     assert response.status_code == 422
 
 

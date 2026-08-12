@@ -21,11 +21,17 @@ from infrastructure.database.base import Base
 class Championship(Base):
     __tablename__ = "championships"
     __table_args__ = (
-        CheckConstraint("total_races BETWEEN 3 AND 7", name="ck_championships_total_races"),
-        CheckConstraint("status IN ('active', 'completed')", name="ck_championships_status"),
+        CheckConstraint(
+            "total_races BETWEEN 3 AND 7", name="ck_championships_total_races"
+        ),
+        CheckConstraint(
+            "status IN ('active', 'completed')", name="ck_championships_status"
+        ),
     )
 
-    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
     account_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("accounts.id", ondelete="CASCADE"),
@@ -61,7 +67,9 @@ class ChampionshipRace(Base):
         ),
     )
 
-    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
     championship_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("championships.id", ondelete="CASCADE"),

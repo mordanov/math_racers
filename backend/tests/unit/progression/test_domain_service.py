@@ -24,7 +24,9 @@ def _mock_repo(total_xp: int | None = None) -> AsyncMock:
         progression.total_xp = total_xp
         progression.current_level = _compute_level(total_xp)
         repo.get.return_value = progression
-    repo.upsert.return_value = MagicMock(spec=PlayerProgression, total_xp=0, current_level=0)
+    repo.upsert.return_value = MagicMock(
+        spec=PlayerProgression, total_xp=0, current_level=0
+    )
     return repo
 
 

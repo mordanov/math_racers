@@ -19,7 +19,9 @@ class SQLAlchemyRaceRepository:
         self._session = session
 
     async def create(self, request: RaceSummaryRequest) -> RaceSummaryResponse:
-        existing = await self._session.execute(select(Race).where(Race.id == request.race_id))
+        existing = await self._session.execute(
+            select(Race).where(Race.id == request.race_id)
+        )
         if existing.scalar_one_or_none() is not None:
             raise ConflictError(
                 error_code="RACE_ALREADY_EXISTS",

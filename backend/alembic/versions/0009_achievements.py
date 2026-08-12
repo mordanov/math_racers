@@ -46,11 +46,17 @@ def upgrade() -> None:
             nullable=False,
             server_default=sa.text("now()"),
         ),
-        sa.UniqueConstraint("account_id", "achievement_key", name="uq_player_achievements"),
+        sa.UniqueConstraint(
+            "account_id", "achievement_key", name="uq_player_achievements"
+        ),
     )
-    op.create_index("idx_player_achievements_account_id", "player_achievements", ["account_id"])
+    op.create_index(
+        "idx_player_achievements_account_id", "player_achievements", ["account_id"]
+    )
 
 
 def downgrade() -> None:
-    op.drop_index("idx_player_achievements_account_id", table_name="player_achievements")
+    op.drop_index(
+        "idx_player_achievements_account_id", table_name="player_achievements"
+    )
     op.drop_table("player_achievements")

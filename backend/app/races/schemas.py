@@ -27,7 +27,9 @@ class RaceSummaryRequest(BaseModel):
     mode: Literal["quick", "championship", "duel", "training"]
     started_at: datetime
     completed_at: datetime
-    participants: Annotated[list[ParticipantSummaryRequest], Field(min_length=1, max_length=5)]
+    participants: Annotated[
+        list[ParticipantSummaryRequest], Field(min_length=1, max_length=5)
+    ]
 
     @model_validator(mode="after")
     def validate_positions(self) -> RaceSummaryRequest:

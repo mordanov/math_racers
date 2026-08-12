@@ -33,7 +33,9 @@ class RaceDomainService:
     ) -> RaceSummaryResponse:
         positions = [p.position for p in request.participants]
         if len(positions) != len(set(positions)):
-            raise ValidationError(message="Participant positions must be unique within a race.")
+            raise ValidationError(
+                message="Participant positions must be unique within a race."
+            )
 
         response = await self._repository.create(request)
 

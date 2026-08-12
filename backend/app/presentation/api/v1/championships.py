@@ -49,4 +49,6 @@ async def record_championship_race(
     account: Account = Depends(get_current_account),
     session: AsyncSession = Depends(get_session),
 ) -> ChampionshipResponse:
-    return await _service(session).record_race(account.id, championship_id, race_id, body)
+    return await _service(session).record_race(
+        account.id, championship_id, race_id, body
+    )

@@ -39,7 +39,9 @@ def _make_championship(race_rows: list[tuple[Any, ...]]) -> SimpleNamespace:
             finishing_position=finishing_position,
             points_earned=points_earned,
         )
-        for i, (avatar_id, is_player, finishing_position, points_earned) in enumerate(race_rows)
+        for i, (avatar_id, is_player, finishing_position, points_earned) in enumerate(
+            race_rows
+        )
     ]
     return SimpleNamespace(
         id=uuid.uuid4(),

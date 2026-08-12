@@ -150,7 +150,9 @@ class AchievementDomainService:
         event_data: dict[str, Any],
         session: AsyncSession,
     ) -> list[AchievementResponse]:
-        return await self._evaluate_keys(_RACE_COMPLETED_KEYS, account_id, event_data, session)
+        return await self._evaluate_keys(
+            _RACE_COMPLETED_KEYS, account_id, event_data, session
+        )
 
     async def evaluate_level_up(
         self,

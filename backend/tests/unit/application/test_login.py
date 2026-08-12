@@ -86,7 +86,9 @@ class TestLoginUseCase:
         cfg: Config,
     ) -> None:
         account_repo.get_by_email.return_value = _make_account()
-        access_token, raw_refresh = await use_case.execute("user@example.com", "correct", cfg)
+        access_token, raw_refresh = await use_case.execute(
+            "user@example.com", "correct", cfg
+        )
         assert access_token
         assert raw_refresh
 

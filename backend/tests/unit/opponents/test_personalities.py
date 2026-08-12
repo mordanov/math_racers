@@ -25,7 +25,9 @@ def test_accuracy_rates_in_range() -> None:
 
 def test_speed_profiles_are_valid() -> None:
     for p in PERSONALITIES:
-        assert p.speed_profile in VALID_SPEED_PROFILES, f"{p.id} has invalid speed_profile"
+        assert (
+            p.speed_profile in VALID_SPEED_PROFILES
+        ), f"{p.id} has invalid speed_profile"
 
 
 def test_speedster_tier_offset() -> None:

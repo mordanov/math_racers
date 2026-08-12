@@ -46,7 +46,9 @@ class VersionedPrompt:
     attempt: int
 
 
-def build_character_prompt(metadata: dict[str, Any], attempt: int = 1) -> VersionedPrompt:
+def build_character_prompt(
+    metadata: dict[str, Any], attempt: int = 1
+) -> VersionedPrompt:
     """Build a deterministic image generation prompt from avatar metadata.
 
     attempt=1: full prompt with all variables
@@ -105,4 +107,6 @@ def build_character_prompt(metadata: dict[str, Any], attempt: int = 1) -> Versio
             negative=_GLOBAL_NEGATIVE,
         )
 
-    return VersionedPrompt(text=prompt_text, prompt_version=PROMPT_VERSION, attempt=attempt)
+    return VersionedPrompt(
+        text=prompt_text, prompt_version=PROMPT_VERSION, attempt=attempt
+    )

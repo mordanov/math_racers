@@ -51,7 +51,9 @@ def upgrade() -> None:
         sa.Column("appearance_summary", sa.Text(), nullable=True),
         sa.Column("favorite_subject", sa.String(), nullable=True),
         sa.Column("running_style", sa.String(), nullable=True),
-        sa.Column("status", sa.String(), nullable=False, server_default=sa.text("'pending'")),
+        sa.Column(
+            "status", sa.String(), nullable=False, server_default=sa.text("'pending'")
+        ),
         sa.Column("is_favourite", sa.Boolean(), nullable=False, server_default="false"),
         sa.Column("active_portrait_id", postgresql.UUID(as_uuid=True), nullable=True),
         sa.Column(
@@ -99,7 +101,9 @@ def upgrade() -> None:
             nullable=False,
             server_default=sa.text("now()"),
         ),
-        sa.UniqueConstraint("avatar_id", "version", name="uq_avatar_portraits_avatar_version"),
+        sa.UniqueConstraint(
+            "avatar_id", "version", name="uq_avatar_portraits_avatar_version"
+        ),
     )
     op.create_index("idx_avatar_portraits_avatar_id", "avatar_portraits", ["avatar_id"])
 
@@ -134,7 +138,9 @@ def upgrade() -> None:
             sa.ForeignKey("avatar_portraits.id", ondelete="SET NULL"),
             nullable=True,
         ),
-        sa.Column("status", sa.String(), nullable=False, server_default=sa.text("'queued'")),
+        sa.Column(
+            "status", sa.String(), nullable=False, server_default=sa.text("'queued'")
+        ),
         sa.Column("attempt", sa.Integer(), nullable=False, server_default="1"),
         sa.Column("prompt_version", sa.String(), nullable=True),
         sa.Column("model_version", sa.String(), nullable=True),

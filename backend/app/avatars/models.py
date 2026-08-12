@@ -34,7 +34,9 @@ class Avatar(Base):
         ),
     )
 
-    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
     account_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("accounts.id", ondelete="CASCADE"),
@@ -87,10 +89,14 @@ class Avatar(Base):
 class AvatarPortrait(Base):
     __tablename__ = "avatar_portraits"
     __table_args__ = (
-        UniqueConstraint("avatar_id", "version", name="uq_avatar_portraits_avatar_version"),
+        UniqueConstraint(
+            "avatar_id", "version", name="uq_avatar_portraits_avatar_version"
+        ),
     )
 
-    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
     avatar_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("avatars.id", ondelete="CASCADE"),
@@ -129,7 +135,9 @@ class GenerationJob(Base):
         ),
     )
 
-    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
     avatar_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("avatars.id", ondelete="CASCADE"),
@@ -149,7 +157,9 @@ class GenerationJob(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=text("now()")
     )
-    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    completed_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
 
     avatar: Mapped[Avatar] = relationship("Avatar", back_populates="generation_jobs")
     portrait: Mapped[AvatarPortrait | None] = relationship(
