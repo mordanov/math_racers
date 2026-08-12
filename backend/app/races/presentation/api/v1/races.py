@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.accounts.models import Account
+from app.achievements.repository import SQLAlchemyAchievementRepository
 from app.presentation.api.middleware.auth import get_current_account
 from app.progression.repository import SQLAlchemyProgressionRepository
 from app.races.domain_service import RaceDomainService
@@ -22,5 +23,6 @@ async def create_race(
 ) -> RaceSummaryResponse:
     race_repo = SQLAlchemyRaceRepository(session)
     progression_repo = SQLAlchemyProgressionRepository(session)
-    service = RaceDomainService(race_repo, progression_repo)
-    return await service.persist_race(body, account_id=account.id)
+    achievement_repo = SQLAlchemyAchievementRepository(session)
+    service = RaceDomainService(race_repo, progression_repo, achievement_repo)
+    return await service.persist_race(body, account_id=account.id, session=session)

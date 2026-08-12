@@ -190,10 +190,22 @@ export function createRaceEngine(config: RaceConfig): RaceEngine {
                 runner.obstacleResults.length,
             )
           : 0;
+      let longestStreak = 0;
+      let currentStreak = 0;
+      for (const r of runner.obstacleResults) {
+        if (r.isCorrect) {
+          currentStreak++;
+          if (currentStreak > longestStreak) longestStreak = currentStreak;
+        } else {
+          currentStreak = 0;
+        }
+      }
+
       return {
         avatar_id: cfg.avatarId,
         position: isTraining ? null : posIdx + 1,
         problems_correct: correct,
+        longest_streak: longestStreak,
         average_response_ms: avgMs,
         total_distance: runner.totalDistanceMetres,
         xp_earned: calcXp(config.mode, posIdx, correct),

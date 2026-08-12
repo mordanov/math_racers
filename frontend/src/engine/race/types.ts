@@ -67,6 +67,7 @@ export interface ParticipantSummary {
   avatar_id: string;
   position: number | null;
   problems_correct: number;
+  longest_streak: number;
   average_response_ms: number;
   total_distance: number;
   xp_earned: number;
