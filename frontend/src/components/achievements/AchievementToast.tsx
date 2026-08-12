@@ -90,15 +90,11 @@ export function AchievementToast({ achievements, raceState }: Props): React.Reac
       aria-live="polite"
       className={`achievement-toast${animating && !reducedMotion ? ' achievement-toast--animating' : ''}`}
     >
-      <div className={`achievement-badge${animating && !reducedMotion ? ' achievement-badge--bounce' : ''}`}>
-        {animating && !reducedMotion && (
-          <span className="achievement-sparkle" aria-hidden="true" />
-        )}
-        <img
-          src={`/${current.icon_path}`}
-          alt={current.title}
-          className="achievement-icon"
-        />
+      <div
+        className={`achievement-badge${animating && !reducedMotion ? ' achievement-badge--bounce' : ''}`}
+      >
+        {animating && !reducedMotion && <span className="achievement-sparkle" aria-hidden="true" />}
+        <img src={`/${current.icon_path}`} alt={current.title} className="achievement-icon" />
         <div className="achievement-text">
           <span className="achievement-title">{current.title}</span>
           <span className="achievement-description">{current.description}</span>
