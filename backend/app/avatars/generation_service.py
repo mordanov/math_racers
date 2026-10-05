@@ -320,7 +320,7 @@ async def _run_pipeline(
                     result = await session.execute(
                         select(type(avatar)).where(type(avatar).id == avatar.id)
                     )
-                    db_avatar = result.scalar_one()
+                    db_avatar: Any = result.scalar_one()
                     db_avatar.name = metadata.get("name")
                     db_avatar.personality = metadata.get("personality")
                     db_avatar.biography = metadata.get("biography")
