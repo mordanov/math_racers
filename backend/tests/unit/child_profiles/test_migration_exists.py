@@ -1,4 +1,5 @@
 """Unit tests verifying migration 0010_child_profiles.py exists and is valid."""
+
 from __future__ import annotations
 
 import importlib.util
@@ -11,9 +12,7 @@ def test_migration_file_exists():
 
 
 def test_migration_has_upgrade_and_downgrade():
-    spec = importlib.util.spec_from_file_location(
-        "m", "alembic/versions/0010_child_profiles.py"
-    )
+    spec = importlib.util.spec_from_file_location("m", "alembic/versions/0010_child_profiles.py")
     assert spec is not None
     module = importlib.util.module_from_spec(spec)
     assert spec.loader is not None

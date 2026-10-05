@@ -1,4 +1,5 @@
 """Unit tests for ChildProfileRepository protocol."""
+
 from __future__ import annotations
 
 from app.child_profiles.repository import ChildProfileRepository, SQLAlchemyChildProfileRepository

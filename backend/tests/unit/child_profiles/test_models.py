@@ -1,4 +1,5 @@
 """Unit tests for ChildProfile ORM model."""
+
 from __future__ import annotations
 
 import uuid

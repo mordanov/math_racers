@@ -4,6 +4,7 @@ Revision ID: 0010
 Revises: 0009
 Create Date: 2026-10-05
 """
+
 from __future__ import annotations
 
 import sqlalchemy as sa
@@ -39,9 +40,7 @@ def upgrade() -> None:
             server_default=sa.text("now()"),
         ),
     )
-    op.create_index(
-        "idx_child_profiles_account_id", "child_profiles", ["account_id"]
-    )
+    op.create_index("idx_child_profiles_account_id", "child_profiles", ["account_id"])
 
 
 def downgrade() -> None:

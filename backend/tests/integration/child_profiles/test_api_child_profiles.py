@@ -3,6 +3,7 @@
 Requires the full stack running (docker compose up).
 Run with: pytest -m integration
 """
+
 from __future__ import annotations
 
 import os

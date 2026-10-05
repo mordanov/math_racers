@@ -1,4 +1,5 @@
 """Unit tests for child profile ownership middleware."""
+
 from __future__ import annotations
 
 import uuid
