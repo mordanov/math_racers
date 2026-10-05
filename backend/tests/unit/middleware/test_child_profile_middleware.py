@@ -7,7 +7,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from app.accounts.models import Account, AccountRole, ApprovalStatus
+from app.accounts.models import Account, ApprovalStatus
 from app.child_profiles.models import ChildProfile
 from app.presentation.api.middleware.child_profile import get_child_profile_dependency
 from app.shared.exceptions import NotFoundError, PermissionError
