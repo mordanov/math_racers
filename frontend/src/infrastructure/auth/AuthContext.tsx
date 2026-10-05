@@ -21,8 +21,14 @@ interface AuthState {
   selectChild: (childId: string) => void;
 }
 
+interface JwtPayload {
+  sub: string;
+  email: string;
+  role: 'parent' | 'administrator';
+}
+
 function decodeToken(token: string): Account {
-  const payload = JSON.parse(atob(token.split('.')[1]));
+  const payload = JSON.parse(atob(token.split('.')[1])) as JwtPayload;
   return { id: payload.sub, email: payload.email, role: payload.role };
 }
 
@@ -40,14 +46,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Schedule silent refresh 2 min before 15-min TTL
     if (refreshTimer.current) clearTimeout(refreshTimer.current);
     refreshTimer.current = setTimeout(
-      async () => {
-        try {
-          const { access_token } = await refreshToken();
-          applyToken(access_token);
-        } catch {
-          setAccount(null);
-          apiClient.setAuthToken(null);
-        }
+      () => {
+        void refreshToken()
+          .then(({ access_token }) => {
+            applyToken(access_token);
+          })
+          .catch(() => {
+            setAccount(null);
+            apiClient.setAuthToken(null);
+          });
       },
       13 * 60 * 1000,
     );

@@ -14,7 +14,7 @@ export default function LoginPage() {
     setError(null);
     try {
       await login(email, password);
-      navigate('/child-profiles');
+      void navigate('/child-profiles');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
     }
@@ -23,7 +23,7 @@ export default function LoginPage() {
   return (
     <div>
       <h1>Log In</h1>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={(e) => { void handleSubmit(e); }}>
         <div>
           <label htmlFor="email">Email</label>
           <input

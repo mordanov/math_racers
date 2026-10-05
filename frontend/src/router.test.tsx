@@ -1,6 +1,20 @@
 import { render, screen } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
+import { vi } from 'vitest';
 import { routeConfig } from './router';
+
+vi.mock('./infrastructure/auth/AuthContext', () => ({
+  useAuth: () => ({
+    isAuthenticated: true,
+    isLoading: false,
+    account: { id: 'u1', email: 'a@b.com', role: 'parent' },
+    activeChildId: null,
+    login: vi.fn(),
+    logout: vi.fn(),
+    selectChild: vi.fn(),
+  }),
+  AuthProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
 
 function go(path: string) {
   const r = createMemoryRouter(routeConfig, { initialEntries: [path] });

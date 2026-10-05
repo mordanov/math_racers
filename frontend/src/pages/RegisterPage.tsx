@@ -31,7 +31,7 @@ export default function RegisterPage() {
   return (
     <div>
       <h1>Register</h1>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={(e) => { void handleSubmit(e); }}>
         <div>
           <label htmlFor="email">Email</label>
           <input

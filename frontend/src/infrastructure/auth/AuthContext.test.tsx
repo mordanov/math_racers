@@ -27,8 +27,8 @@ function TestConsumer() {
       <span data-testid="email">{auth.account?.email ?? 'none'}</span>
       <span data-testid="child">{auth.activeChildId ?? 'none'}</span>
       <span data-testid="loading">{String(auth.isLoading)}</span>
-      <button onClick={() => auth.login('a@b.com', 'pass')}>login</button>
-      <button onClick={() => auth.logout()}>logout</button>
+      <button onClick={() => { void auth.login('a@b.com', 'pass'); }}>login</button>
+      <button onClick={() => { void auth.logout(); }}>logout</button>
       <button onClick={() => auth.selectChild('child-1')}>select</button>
     </div>
   );
