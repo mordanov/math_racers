@@ -12,7 +12,11 @@ describe('Button', () => {
   it('calls onClick when clicked', async () => {
     const user = userEvent.setup();
     const onClick = vi.fn();
-    render(<Button variant="primary" onClick={onClick}>Go</Button>);
+    render(
+      <Button variant="primary" onClick={onClick}>
+        Go
+      </Button>,
+    );
     await user.click(screen.getByRole('button'));
     expect(onClick).toHaveBeenCalledOnce();
   });
@@ -20,7 +24,11 @@ describe('Button', () => {
   it('does not call onClick when disabled', async () => {
     const user = userEvent.setup();
     const onClick = vi.fn();
-    render(<Button variant="primary" disabled onClick={onClick}>Go</Button>);
+    render(
+      <Button variant="primary" disabled onClick={onClick}>
+        Go
+      </Button>,
+    );
     await user.click(screen.getByRole('button'));
     expect(onClick).not.toHaveBeenCalled();
   });
@@ -28,7 +36,11 @@ describe('Button', () => {
   it('does not call onClick when loading', async () => {
     const user = userEvent.setup();
     const onClick = vi.fn();
-    render(<Button variant="primary" loading onClick={onClick}>Go</Button>);
+    render(
+      <Button variant="primary" loading onClick={onClick}>
+        Go
+      </Button>,
+    );
     await user.click(screen.getByRole('button'));
     expect(onClick).not.toHaveBeenCalled();
   });

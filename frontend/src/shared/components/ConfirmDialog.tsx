@@ -35,7 +35,10 @@ export function ConfirmDialog({
     focusable[0]?.focus();
 
     const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') { onClose(); return; }
+      if (e.key === 'Escape') {
+        onClose();
+        return;
+      }
       if (e.key !== 'Tab' || !focusable.length) return;
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
@@ -60,8 +63,12 @@ export function ConfirmDialog({
   return (
     <div
       style={{
-        position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        position: 'fixed',
+        inset: 0,
+        background: 'rgba(0,0,0,0.4)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
         zIndex: 1000,
       }}
       onClick={onClose}
@@ -83,7 +90,11 @@ export function ConfirmDialog({
       >
         <h2
           id="confirm-title"
-          style={{ margin: `0 0 ${tokens.spacing.md}px`, fontSize: 20, color: tokens.color.textPrimary }}
+          style={{
+            margin: `0 0 ${tokens.spacing.md}px`,
+            fontSize: 20,
+            color: tokens.color.textPrimary,
+          }}
         >
           {title}
         </h2>
@@ -91,8 +102,12 @@ export function ConfirmDialog({
           {message}
         </p>
         <div style={{ display: 'flex', gap: tokens.spacing.sm, justifyContent: 'flex-end' }}>
-          <Button variant="ghost" onClick={onClose}>{cancelLabel}</Button>
-          <Button variant="primary" onClick={onConfirm}>{confirmLabel}</Button>
+          <Button variant="ghost" onClick={onClose}>
+            {cancelLabel}
+          </Button>
+          <Button variant="primary" onClick={onConfirm}>
+            {confirmLabel}
+          </Button>
         </div>
       </div>
     </div>

@@ -56,9 +56,7 @@ describe('ConfirmDialog', () => {
     trigger.focus();
 
     const onClose = vi.fn();
-    render(
-      <ConfirmDialog open title="T" message="M" onConfirm={vi.fn()} onClose={onClose} />,
-    );
+    render(<ConfirmDialog open title="T" message="M" onConfirm={vi.fn()} onClose={onClose} />);
     // Focus should have moved into the dialog
     expect(document.activeElement).not.toBe(trigger);
 

@@ -8,7 +8,7 @@ export function getChildFriendlyMessage(error: Error): string {
     if (error.status === 401 || error.status === 403) return 'Please log in again.';
     return "Something went wrong. Let's try again!";
   }
-  return "Oops! Check your internet connection and try again.";
+  return 'Oops! Check your internet connection and try again.';
 }
 
 interface ErrorStateProps {
@@ -17,7 +17,7 @@ interface ErrorStateProps {
 }
 
 export function ErrorState({ error, onRetry }: ErrorStateProps) {
-  const message = error ? getChildFriendlyMessage(error) : "Something went wrong.";
+  const message = error ? getChildFriendlyMessage(error) : 'Something went wrong.';
 
   return (
     <div
@@ -32,7 +32,9 @@ export function ErrorState({ error, onRetry }: ErrorStateProps) {
         textAlign: 'center',
       }}
     >
-      <span style={{ fontSize: 32 }} aria-hidden="true">😕</span>
+      <span style={{ fontSize: 32 }} aria-hidden="true">
+        😕
+      </span>
       <p style={{ fontSize: 18, margin: 0 }}>{message}</p>
       {onRetry && (
         <Button variant="primary" onClick={onRetry}>

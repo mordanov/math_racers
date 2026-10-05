@@ -36,8 +36,8 @@ export async function recordChampionshipRace(
   raceIndex: number,
   participants: RecordRaceParticipant[],
 ): Promise<ChampionshipState> {
-  return apiClient.patch<ChampionshipState>(
-    `/championships/${championshipId}/races/${raceId}`,
-    { race_index: raceIndex, participants },
-  );
+  return apiClient.patch<ChampionshipState>(`/championships/${championshipId}/races/${raceId}`, {
+    race_index: raceIndex,
+    participants,
+  });
 }

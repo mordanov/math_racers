@@ -4,11 +4,14 @@ import { postRaceSummary } from './raceApi';
 afterEach(() => vi.unstubAllGlobals());
 
 it('returns empty achievements on 409 without throwing', async () => {
-  vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-    status: 409,
-    ok: false,
-    json: vi.fn().mockResolvedValue({}),
-  }));
+  vi.stubGlobal(
+    'fetch',
+    vi.fn().mockResolvedValue({
+      status: 409,
+      ok: false,
+      json: vi.fn().mockResolvedValue({}),
+    }),
+  );
   const result = await postRaceSummary({
     session_id: 'test',
     avatar_id: 'a1',

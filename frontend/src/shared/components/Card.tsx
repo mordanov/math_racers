@@ -22,10 +22,19 @@ export function Card({ children, onClick, 'data-testid': testId }: CardProps) {
         data-testid={testId}
         style={{ ...style, cursor: 'pointer', border: 'none', textAlign: 'left', width: '100%' }}
         onClick={onClick}
-        onFocus={(e) => { (e.target as HTMLElement).style.outline = `2px solid ${tokens.color.focus}`; (e.target as HTMLElement).style.outlineOffset = '2px'; }}
-        onBlur={(e) => { (e.target as HTMLElement).style.outline = 'none'; }}
-        onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.boxShadow = tokens.shadow.cardHover; }}
-        onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.boxShadow = tokens.shadow.card; }}
+        onFocus={(e) => {
+          (e.target as HTMLElement).style.outline = `2px solid ${tokens.color.focus}`;
+          (e.target as HTMLElement).style.outlineOffset = '2px';
+        }}
+        onBlur={(e) => {
+          (e.target as HTMLElement).style.outline = 'none';
+        }}
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLElement).style.boxShadow = tokens.shadow.cardHover;
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLElement).style.boxShadow = tokens.shadow.card;
+        }}
       >
         {children}
       </button>

@@ -13,7 +13,12 @@ export function LoadingSpinner({ message, size = 40 }: LoadingSpinnerProps) {
     <div
       role="status"
       aria-label={message ?? 'Loading…'}
-      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: tokens.spacing.sm }}
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: tokens.spacing.sm,
+      }}
     >
       <div
         className={reduced ? 'pulse' : 'spin'}
@@ -23,9 +28,7 @@ export function LoadingSpinner({ message, size = 40 }: LoadingSpinnerProps) {
           borderRadius: '50%',
           border: `4px solid ${tokens.color.border}`,
           borderTopColor: tokens.color.primary,
-          animation: reduced
-            ? `pulse 1s ease-in-out infinite`
-            : `spin 0.8s linear infinite`,
+          animation: reduced ? `pulse 1s ease-in-out infinite` : `spin 0.8s linear infinite`,
         }}
         aria-hidden="true"
       />

@@ -30,12 +30,7 @@ export class APIClient {
     return this.request<T>('DELETE', path);
   }
 
-  private async request<T>(
-    method: string,
-    path: string,
-    body?: unknown,
-    attempt = 1,
-  ): Promise<T> {
+  private async request<T>(method: string, path: string, body?: unknown, attempt = 1): Promise<T> {
     const response = await fetch(this.baseURL + path, {
       method,
       headers: body !== undefined ? { 'Content-Type': 'application/json' } : {},

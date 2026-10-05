@@ -84,8 +84,11 @@ describe('APIClient', () => {
     const fake = mockFetch(200, { id: '1' });
     vi.stubGlobal('fetch', fake);
     await client.patch('/items/1', { name: 'updated' });
-    expect(fake).toHaveBeenCalledWith('/api/v1/items/1', expect.objectContaining({
-      method: 'PATCH',
-    }));
+    expect(fake).toHaveBeenCalledWith(
+      '/api/v1/items/1',
+      expect.objectContaining({
+        method: 'PATCH',
+      }),
+    );
   });
 });
