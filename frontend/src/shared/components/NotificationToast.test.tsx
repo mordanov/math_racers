@@ -18,7 +18,7 @@ describe('NotificationToast', () => {
   });
 
   // Review Focus #5: timer must be cleared on unmount
-  it('does NOT call onClose when unmounted before 3 seconds', async () => {
+  it('does NOT call onClose when unmounted before 3 seconds', () => {
     const onClose = vi.fn();
     const { unmount } = render(<NotificationToast message="Hi" onClose={onClose} />);
     unmount();
@@ -26,7 +26,7 @@ describe('NotificationToast', () => {
     expect(onClose).not.toHaveBeenCalled();
   });
 
-  it('calls onClose after 3 seconds', async () => {
+  it('calls onClose after 3 seconds', () => {
     const onClose = vi.fn();
     render(<NotificationToast message="Hi" onClose={onClose} />);
     vi.advanceTimersByTime(3000);
