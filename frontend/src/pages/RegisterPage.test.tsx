@@ -50,4 +50,18 @@ describe('RegisterPage', () => {
     await user.click(screen.getByRole('button', { name: /register/i }));
     expect(await screen.findByRole('alert')).toBeInTheDocument();
   });
+
+  it('disables submit button while register is in progress', async () => {
+    vi.mocked(authApiModule.register).mockReturnValue(new Promise(() => {})); // never resolves
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter>
+        <RegisterPage />
+      </MemoryRouter>,
+    );
+    await user.type(screen.getByLabelText(/email/i), 'a@b.com');
+    await user.type(screen.getByLabelText(/password/i), 'pass');
+    await user.click(screen.getByRole('button', { name: /register/i }));
+    expect(screen.getByRole('button', { name: '…' })).toBeDisabled();
+  });
 });

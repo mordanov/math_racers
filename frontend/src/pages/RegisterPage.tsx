@@ -1,20 +1,25 @@
 import { useState } from 'react';
 import { register } from '../infrastructure/auth/authApi';
+import { Button } from '../shared/components/Button';
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setLoading(true);
     try {
       await register(email, password);
       setSuccess(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed');
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -51,7 +56,7 @@ export default function RegisterPage() {
           />
         </div>
         {error && <p role="alert">{error}</p>}
-        <button type="submit">Register</button>
+        <Button type="submit" variant="primary" loading={loading} disabled={loading}>Register</Button>
       </form>
     </div>
   );

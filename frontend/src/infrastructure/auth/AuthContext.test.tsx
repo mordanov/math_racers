@@ -114,4 +114,38 @@ describe('AuthContext', () => {
     );
     expect(await screen.findByTestId('email')).toHaveTextContent('a@b.com');
   });
+
+  it('handles base64url tokens (production JWT format)', async () => {
+    // Real JWTs use base64url: '+' → '-', '/' → '_', no '=' padding.
+    // btoa(JSON.stringify({...extra:'>>>>'})) produces standard base64 with '+' in it.
+    const payloadObj = { sub: 'u1', email: 'a@b.com', role: 'parent', exp: 9999999999, extra: '>>>>' };
+    const b64url = btoa(JSON.stringify(payloadObj))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=/g, '');
+    const base64urlToken = `${HEADER}.${b64url}.sig`;
+    vi.mocked(authApi.login).mockResolvedValue({ access_token: base64urlToken });
+    const user = userEvent.setup();
+    render(
+      <AuthProvider>
+        <TestConsumer />
+      </AuthProvider>,
+    );
+    expect(await screen.findByTestId('loading')).toHaveTextContent('false');
+    await user.click(screen.getByText('login'));
+    expect(screen.getByTestId('email')).toHaveTextContent('a@b.com');
+  });
+
+  it('does not call setAuthToken for malformed JWT', async () => {
+    vi.mocked(authApi.login).mockResolvedValue({ access_token: 'header.INVALID!.sig' });
+    const user = userEvent.setup();
+    render(
+      <AuthProvider>
+        <TestConsumer />
+      </AuthProvider>,
+    );
+    expect(await screen.findByTestId('loading')).toHaveTextContent('false');
+    await user.click(screen.getByText('login'));
+    expect(mockSetAuthToken).not.toHaveBeenCalledWith('header.INVALID!.sig');
+  });
 });

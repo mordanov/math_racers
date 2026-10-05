@@ -1,22 +1,27 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../infrastructure/auth/AuthContext';
+import { Button } from '../shared/components/Button';
 
 export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setLoading(true);
     try {
       await login(email, password);
       void navigate('/child-profiles');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -43,7 +48,7 @@ export default function LoginPage() {
           />
         </div>
         {error && <p role="alert">{error}</p>}
-        <button type="submit">Log In</button>
+        <Button type="submit" variant="primary" loading={loading} disabled={loading}>Log In</Button>
       </form>
     </div>
   );

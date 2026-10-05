@@ -59,4 +59,18 @@ describe('LoginPage', () => {
     await user.click(screen.getByRole('button', { name: /log in/i }));
     expect(await screen.findByRole('alert')).toBeInTheDocument();
   });
+
+  it('disables submit button while login is in progress', async () => {
+    mockLogin.mockReturnValue(new Promise(() => {})); // never resolves
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter>
+        <LoginPage />
+      </MemoryRouter>,
+    );
+    await user.type(screen.getByLabelText(/email/i), 'a@b.com');
+    await user.type(screen.getByLabelText(/password/i), 'pass');
+    await user.click(screen.getByRole('button', { name: /log in/i }));
+    expect(screen.getByRole('button', { name: '…' })).toBeDisabled();
+  });
 });

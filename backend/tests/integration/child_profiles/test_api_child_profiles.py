@@ -156,3 +156,22 @@ def test_delete_other_accounts_profile_returns_403(
         timeout=10.0,
     )
     assert resp.status_code == 403
+
+
+@pytest.mark.integration
+def test_delete_own_profile(parent_token: str) -> None:
+    """Parent can delete their own child profile and it disappears from the list."""
+    with httpx.Client(
+        base_url=BASE_URL,
+        headers={"Authorization": f"Bearer {parent_token}"},
+        timeout=10.0,
+    ) as client:
+        created = client.post("/api/v1/child-profiles", json={"display_name": "ToDelete"})
+        assert created.status_code == 201
+        profile_id = created.json()["id"]
+
+        resp = client.delete(f"/api/v1/child-profiles/{profile_id}")
+        assert resp.status_code == 204
+
+        listed = client.get("/api/v1/child-profiles")
+        assert all(p["id"] != profile_id for p in listed.json()["profiles"])

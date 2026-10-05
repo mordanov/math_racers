@@ -28,7 +28,10 @@ interface JwtPayload {
 }
 
 function decodeToken(token: string): Account {
-  const payload = JSON.parse(atob(token.split('.')[1])) as JwtPayload;
+  const b64url = token.split('.')[1];
+  const b64 = b64url.replace(/-/g, '+').replace(/_/g, '/');
+  const padded = b64 + '=='.slice(0, (4 - (b64.length % 4)) % 4);
+  const payload = JSON.parse(atob(padded)) as JwtPayload;
   return { id: payload.sub, email: payload.email, role: payload.role };
 }
 
@@ -41,8 +44,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const refreshTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const applyToken = useCallback((token: string) => {
+    let decoded: Account;
+    try {
+      decoded = decodeToken(token);
+    } catch {
+      return;
+    }
     apiClient.setAuthToken(token);
-    setAccount(decodeToken(token));
+    setAccount(decoded);
     // Schedule silent refresh 2 min before 15-min TTL
     if (refreshTimer.current) clearTimeout(refreshTimer.current);
     refreshTimer.current = setTimeout(
