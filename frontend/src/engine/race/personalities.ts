@@ -1,4 +1,5 @@
 import type { AiPersonality } from './types';
+import { apiClient } from '../../infrastructure/api-client';
 
 export const STEADY: AiPersonality = {
   id: 'steady',
@@ -59,9 +60,5 @@ export const PERSONALITIES: AiPersonality[] = [
 ];
 
 export async function fetchPersonalities(): Promise<AiPersonality[]> {
-  const resp = await fetch('/api/v1/opponents/personalities');
-  if (!resp.ok) {
-    throw new Error(`GET /api/v1/opponents/personalities failed: ${resp.status}`);
-  }
-  return resp.json() as Promise<AiPersonality[]>;
+  return apiClient.get<AiPersonality[]>('/opponents/personalities');
 }
