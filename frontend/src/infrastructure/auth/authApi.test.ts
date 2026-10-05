@@ -40,10 +40,7 @@ describe('authApi', () => {
   });
 
   it('logout posts to /auth/logout', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue({ status: 204, ok: true, json: vi.fn() }),
-    );
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ status: 204, ok: true, json: vi.fn() }));
     await expect(logout()).resolves.not.toThrow();
     const [url] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
     expect(url).toContain('/auth/logout');

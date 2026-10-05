@@ -1,10 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../infrastructure/auth/AuthContext';
-import {
-  createChildProfile,
-  fetchChildProfiles,
-} from '../infrastructure/auth/childProfilesApi';
+import { createChildProfile, fetchChildProfiles } from '../infrastructure/auth/childProfilesApi';
 import type { ChildProfile } from '../infrastructure/auth/types';
 import { Button } from '../shared/components/Button';
 import { LoadingSpinner } from '../shared/components/LoadingSpinner';
@@ -65,7 +62,11 @@ export default function ChildProfileSelectPage() {
         </ul>
       )}
       {profiles.length < 5 && (
-        <form onSubmit={(e) => { void handleCreate(e); }}>
+        <form
+          onSubmit={(e) => {
+            void handleCreate(e);
+          }}
+        >
           <input
             type="text"
             value={newName}

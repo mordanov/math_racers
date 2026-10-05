@@ -27,15 +27,29 @@ function TestConsumer() {
       <span data-testid="email">{auth.account?.email ?? 'none'}</span>
       <span data-testid="child">{auth.activeChildId ?? 'none'}</span>
       <span data-testid="loading">{String(auth.isLoading)}</span>
-      <button onClick={() => { void auth.login('a@b.com', 'pass'); }}>login</button>
-      <button onClick={() => { void auth.logout(); }}>logout</button>
+      <button
+        onClick={() => {
+          void auth.login('a@b.com', 'pass');
+        }}
+      >
+        login
+      </button>
+      <button
+        onClick={() => {
+          void auth.logout();
+        }}
+      >
+        logout
+      </button>
       <button onClick={() => auth.selectChild('child-1')}>select</button>
     </div>
   );
 }
 
 // Minimal valid JWT with payload {"sub":"u1","email":"a@b.com","role":"parent","exp":9999999999}
-const PAYLOAD = btoa(JSON.stringify({ sub: 'u1', email: 'a@b.com', role: 'parent', exp: 9999999999 }));
+const PAYLOAD = btoa(
+  JSON.stringify({ sub: 'u1', email: 'a@b.com', role: 'parent', exp: 9999999999 }),
+);
 const HEADER = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
 const FAKE_TOKEN = `${HEADER}.${PAYLOAD}.sig`;
 
@@ -118,7 +132,13 @@ describe('AuthContext', () => {
   it('handles base64url tokens (production JWT format)', async () => {
     // Real JWTs use base64url: '+' → '-', '/' → '_', no '=' padding.
     // btoa(JSON.stringify({...extra:'>>>>'})) produces standard base64 with '+' in it.
-    const payloadObj = { sub: 'u1', email: 'a@b.com', role: 'parent', exp: 9999999999, extra: '>>>>' };
+    const payloadObj = {
+      sub: 'u1',
+      email: 'a@b.com',
+      role: 'parent',
+      exp: 9999999999,
+      extra: '>>>>',
+    };
     const b64url = btoa(JSON.stringify(payloadObj))
       .replace(/\+/g, '-')
       .replace(/\//g, '_')

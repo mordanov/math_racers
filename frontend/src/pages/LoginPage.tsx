@@ -28,15 +28,14 @@ export default function LoginPage() {
   return (
     <div>
       <h1>Log In</h1>
-      <form onSubmit={(e) => { void handleSubmit(e); }}>
+      <form
+        onSubmit={(e) => {
+          void handleSubmit(e);
+        }}
+      >
         <div>
           <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+          <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
         </div>
         <div>
           <label htmlFor="password">Password</label>
@@ -48,7 +47,9 @@ export default function LoginPage() {
           />
         </div>
         {error && <p role="alert">{error}</p>}
-        <Button type="submit" variant="primary" loading={loading} disabled={loading}>Log In</Button>
+        <Button type="submit" variant="primary" loading={loading} disabled={loading}>
+          Log In
+        </Button>
       </form>
     </div>
   );

@@ -36,15 +36,14 @@ export default function RegisterPage() {
   return (
     <div>
       <h1>Register</h1>
-      <form onSubmit={(e) => { void handleSubmit(e); }}>
+      <form
+        onSubmit={(e) => {
+          void handleSubmit(e);
+        }}
+      >
         <div>
           <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+          <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
         </div>
         <div>
           <label htmlFor="password">Password</label>
@@ -56,7 +55,9 @@ export default function RegisterPage() {
           />
         </div>
         {error && <p role="alert">{error}</p>}
-        <Button type="submit" variant="primary" loading={loading} disabled={loading}>Register</Button>
+        <Button type="submit" variant="primary" loading={loading} disabled={loading}>
+          Register
+        </Button>
       </form>
     </div>
   );
