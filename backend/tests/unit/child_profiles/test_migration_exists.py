@@ -6,12 +6,12 @@ import importlib.util
 from pathlib import Path
 
 
-def test_migration_file_exists():
+def test_migration_file_exists() -> None:
     path = Path("alembic/versions/0010_child_profiles.py")
     assert path.exists(), "Migration 0010_child_profiles.py not found"
 
 
-def test_migration_has_upgrade_and_downgrade():
+def test_migration_has_upgrade_and_downgrade() -> None:
     spec = importlib.util.spec_from_file_location("m", "alembic/versions/0010_child_profiles.py")
     assert spec is not None
     module = importlib.util.module_from_spec(spec)

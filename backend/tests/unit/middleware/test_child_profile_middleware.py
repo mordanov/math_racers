@@ -28,7 +28,7 @@ def _make_profile(account_id: uuid.UUID) -> ChildProfile:
 
 
 @pytest.mark.asyncio
-async def test_parent_can_access_own_profile():
+async def test_parent_can_access_own_profile() -> None:
     account = _make_account("parent")
     profile = _make_profile(account.id)
     repo = AsyncMock()
@@ -39,7 +39,7 @@ async def test_parent_can_access_own_profile():
 
 
 @pytest.mark.asyncio
-async def test_parent_cannot_access_other_profile():
+async def test_parent_cannot_access_other_profile() -> None:
     account = _make_account("parent")
     other_profile = _make_profile(uuid.uuid4())
     repo = AsyncMock()
@@ -50,7 +50,7 @@ async def test_parent_cannot_access_other_profile():
 
 
 @pytest.mark.asyncio
-async def test_administrator_can_access_any_profile():
+async def test_administrator_can_access_any_profile() -> None:
     admin = _make_account("administrator")
     profile = _make_profile(uuid.uuid4())
     repo = AsyncMock()
@@ -61,7 +61,7 @@ async def test_administrator_can_access_any_profile():
 
 
 @pytest.mark.asyncio
-async def test_profile_not_found_raises_not_found_error():
+async def test_profile_not_found_raises_not_found_error() -> None:
     account = _make_account("parent")
     repo = AsyncMock()
     repo.get.return_value = None

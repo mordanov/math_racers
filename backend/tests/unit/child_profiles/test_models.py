@@ -8,7 +8,7 @@ from datetime import UTC, datetime
 from app.child_profiles.models import ChildProfile
 
 
-def test_child_profile_model_has_required_fields():
+def test_child_profile_model_has_required_fields() -> None:
     profile = ChildProfile(
         id=uuid.uuid4(),
         account_id=uuid.uuid4(),

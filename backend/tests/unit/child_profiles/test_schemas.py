@@ -14,21 +14,21 @@ from app.child_profiles.schemas import (
 )
 
 
-def test_create_request_validates_max_length():
+def test_create_request_validates_max_length() -> None:
     from pydantic import ValidationError
 
     with pytest.raises(ValidationError):
         CreateChildProfileRequest(display_name="A" * 51)
 
 
-def test_create_request_rejects_empty():
+def test_create_request_rejects_empty() -> None:
     from pydantic import ValidationError
 
     with pytest.raises(ValidationError):
         CreateChildProfileRequest(display_name="")
 
 
-def test_child_profile_response_fields():
+def test_child_profile_response_fields() -> None:
     r = ChildProfileResponse(
         id=uuid.uuid4(),
         account_id=uuid.uuid4(),
@@ -38,6 +38,6 @@ def test_child_profile_response_fields():
     assert r.display_name == "Alice"
 
 
-def test_child_profile_list_response():
+def test_child_profile_list_response() -> None:
     r = ChildProfileListResponse(profiles=[])
     assert r.profiles == []
