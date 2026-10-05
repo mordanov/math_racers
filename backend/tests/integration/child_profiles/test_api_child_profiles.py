@@ -160,11 +160,13 @@ def test_delete_other_accounts_profile_returns_403(
 
 
 @pytest.mark.integration
-def test_delete_own_profile(parent_token: str) -> None:
+def test_delete_own_profile() -> None:
     """Parent can delete their own child profile and it disappears from the list."""
+    admin_token = _login(ADMIN_EMAIL, ADMIN_PASSWORD)
+    fresh_token = _register_and_approve(admin_token)
     with httpx.Client(
         base_url=BASE_URL,
-        headers={"Authorization": f"Bearer {parent_token}"},
+        headers={"Authorization": f"Bearer {fresh_token}"},
         timeout=10.0,
     ) as client:
         created = client.post("/api/v1/child-profiles", json={"display_name": "ToDelete"})
