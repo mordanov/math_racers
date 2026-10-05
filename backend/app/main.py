@@ -126,6 +126,9 @@ def create_app() -> FastAPI:
         router as achievements_router,
     )
     from app.avatars.presentation.api.v1.avatars import router as avatars_router
+    from app.child_profiles.presentation.api.v1.child_profiles import (
+        router as child_profiles_router,
+    )
     from app.presentation.api.v1.admin import router as admin_router
     from app.presentation.api.v1.auth import router as auth_router
     from app.presentation.api.v1.championships import router as championships_router
@@ -139,6 +142,7 @@ def create_app() -> FastAPI:
 
     app.include_router(achievements_router)
     app.include_router(auth_router)
+    app.include_router(child_profiles_router)
     app.include_router(admin_router)
     app.include_router(problems_router)
     app.include_router(difficulty_router)

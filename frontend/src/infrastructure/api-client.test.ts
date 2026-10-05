@@ -91,4 +91,35 @@ describe('APIClient', () => {
       }),
     );
   });
+
+  describe('auth token', () => {
+    it('sends Authorization header when token is set', async () => {
+      const fake = mockFetch(200, { ok: true });
+      vi.stubGlobal('fetch', fake);
+      client.setAuthToken('test-token');
+      await client.get('/test');
+      const [, options] = fake.mock.calls[0] as [string, RequestInit];
+      expect((options.headers as Record<string, string>)['Authorization']).toBe(
+        'Bearer test-token',
+      );
+    });
+
+    it('omits Authorization header when no token set', async () => {
+      const fake = mockFetch(200, { ok: true });
+      vi.stubGlobal('fetch', fake);
+      await client.get('/test');
+      const [, options] = fake.mock.calls[0] as [string, RequestInit];
+      expect((options.headers as Record<string, string>)['Authorization']).toBeUndefined();
+    });
+
+    it('clears Authorization header after setAuthToken(null)', async () => {
+      const fake = mockFetch(200, { ok: true });
+      vi.stubGlobal('fetch', fake);
+      client.setAuthToken('test-token');
+      client.setAuthToken(null);
+      await client.get('/test');
+      const [, options] = fake.mock.calls[0] as [string, RequestInit];
+      expect((options.headers as Record<string, string>)['Authorization']).toBeUndefined();
+    });
+  });
 });
