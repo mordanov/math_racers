@@ -157,15 +157,14 @@ function RaceScreen({
       data-testid="page-race-screen"
       style={{ maxWidth: 640, margin: '0 auto', padding: tokens.spacing.xl }}
     >
-      {blocker.state === 'blocked' && (
-        <ConfirmDialog
-          title="Leave Race?"
-          message="Your progress will be lost if you leave now."
-          confirmLabel="Leave"
-          onConfirm={() => blocker.proceed()}
-          onCancel={() => blocker.reset()}
-        />
-      )}
+      <ConfirmDialog
+        open={blocker.state === 'blocked'}
+        title="Leave Race?"
+        message="Your progress will be lost if you leave now."
+        confirmLabel="Leave"
+        onConfirm={() => blocker.proceed?.()}
+        onClose={() => blocker.reset?.()}
+      />
 
       {/* Runner track */}
       <div style={{ marginBottom: tokens.spacing.lg }} aria-label="Race track">
