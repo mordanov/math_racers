@@ -116,22 +116,24 @@ export default function AvatarCreatorPage() {
       };
       const { avatar_id, job_id } = await createAvatar(req);
 
-      pollRef.current = setInterval(async () => {
-        try {
-          const job = await pollGenerationJob(avatar_id, job_id);
-          if (job.status === 'complete') {
-            if (pollRef.current) clearInterval(pollRef.current);
-            void navigate('/avatars');
-          } else if (TERMINAL_STATUSES.has(job.status)) {
+      pollRef.current = setInterval(() => {
+        void (async () => {
+          try {
+            const job = await pollGenerationJob(avatar_id, job_id);
+            if (job.status === 'complete') {
+              if (pollRef.current) clearInterval(pollRef.current);
+              void navigate('/avatars');
+            } else if (TERMINAL_STATUSES.has(job.status)) {
+              if (pollRef.current) clearInterval(pollRef.current);
+              setIsGenerating(false);
+              setGenError("Hmm, something went wobbly. Let's try again!");
+            }
+          } catch {
             if (pollRef.current) clearInterval(pollRef.current);
             setIsGenerating(false);
-            setGenError("Hmm, something went wobbly. Let's try again!");
+            setGenError('Looks like we lost the signal. Check your connection!');
           }
-        } catch {
-          if (pollRef.current) clearInterval(pollRef.current);
-          setIsGenerating(false);
-          setGenError('Looks like we lost the signal. Check your connection!');
-        }
+        })();
       }, 3000);
     } catch {
       setIsGenerating(false);
@@ -146,7 +148,6 @@ export default function AvatarCreatorPage() {
     return () => {
       if (pollRef.current) clearInterval(pollRef.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wizard.step]);
 
   const containerStyle: React.CSSProperties = {
