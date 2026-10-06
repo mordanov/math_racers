@@ -15,7 +15,9 @@ export default function ChampionshipPage() {
     if (!id) return;
     getChampionship(id)
       .then(setChampionship)
-      .catch(() => { /* championship stays null → shows "not found" */ })
+      .catch(() => {
+        /* championship stays null → shows "not found" */
+      })
       .finally(() => setLoading(false));
   }, [id]);
 
@@ -58,9 +60,7 @@ export default function ChampionshipPage() {
         Race {championship.races_completed} of {championship.total_races} complete
       </p>
 
-      <table
-        style={{ width: '100%', borderCollapse: 'collapse', marginBottom: tokens.spacing.lg }}
-      >
+      <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: tokens.spacing.lg }}>
         <thead>
           <tr>
             {['Position', 'Runner', 'Points', 'Podiums'].map((h) => (
@@ -103,10 +103,14 @@ export default function ChampionshipPage() {
       {isCompleted ? (
         <div>
           <h2 style={{ color: tokens.color.success }}>Championship Complete!</h2>
-          <Button variant="primary" onClick={() => void navigate('/race/setup')}>Play Again</Button>
+          <Button variant="primary" onClick={() => void navigate('/race/setup')}>
+            Play Again
+          </Button>
         </div>
       ) : (
-        <Button variant="primary" onClick={handleStartNext}>Start Next Race</Button>
+        <Button variant="primary" onClick={handleStartNext}>
+          Start Next Race
+        </Button>
       )}
     </div>
   );

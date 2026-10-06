@@ -83,7 +83,9 @@ function RaceScreen({
   const blocker = useBlocker(state === 'RACING');
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { startCountdown(); }, []);
+  useEffect(() => {
+    startCountdown();
+  }, []);
 
   useEffect(() => {
     if (state !== 'COUNTDOWN') return;
@@ -129,7 +131,12 @@ function RaceScreen({
     return (
       <div
         data-testid="page-race-screen"
-        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '60vh',
+        }}
       >
         <div
           role="status"

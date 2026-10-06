@@ -104,161 +104,183 @@ export default function RaceSetupPage() {
       style={{ maxWidth: 480, margin: '0 auto', padding: tokens.spacing.xl }}
     >
       {loading && <LoadingSpinner message="Loading your avatars…" />}
-      {!loading && (<>
-      <h1 style={{ color: tokens.color.textPrimary, marginBottom: tokens.spacing.lg }}>
-        Race Setup
-      </h1>
+      {!loading && (
+        <>
+          <h1 style={{ color: tokens.color.textPrimary, marginBottom: tokens.spacing.lg }}>
+            Race Setup
+          </h1>
 
-      <section aria-labelledby="mode-heading" style={{ marginBottom: tokens.spacing.lg }}>
-        <h2
-          id="mode-heading"
-          style={{ fontSize: 18, color: tokens.color.textSecondary, marginBottom: tokens.spacing.sm }}
-        >
-          Mode
-        </h2>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: tokens.spacing.sm }}>
-          {MODES.map((m) => (
-            <button
-              key={m.mode}
-              type="button"
-              aria-pressed={mode === m.mode}
-              onClick={() => handleModeChange(m.mode)}
+          <section aria-labelledby="mode-heading" style={{ marginBottom: tokens.spacing.lg }}>
+            <h2
+              id="mode-heading"
               style={{
-                padding: `${tokens.spacing.sm}px ${tokens.spacing.md}px`,
-                borderRadius: tokens.radius.md,
-                border: `2px solid ${mode === m.mode ? tokens.color.primary : tokens.color.border}`,
-                background: mode === m.mode ? tokens.color.primary : tokens.color.surface,
-                color: mode === m.mode ? tokens.color.textOnPrimary : tokens.color.textPrimary,
-                cursor: 'pointer',
-                fontWeight: 600,
+                fontSize: 18,
+                color: tokens.color.textSecondary,
+                marginBottom: tokens.spacing.sm,
               }}
             >
-              {m.label}
-            </button>
-          ))}
-        </div>
-      </section>
+              Mode
+            </h2>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: tokens.spacing.sm }}>
+              {MODES.map((m) => (
+                <button
+                  key={m.mode}
+                  type="button"
+                  aria-pressed={mode === m.mode}
+                  onClick={() => handleModeChange(m.mode)}
+                  style={{
+                    padding: `${tokens.spacing.sm}px ${tokens.spacing.md}px`,
+                    borderRadius: tokens.radius.md,
+                    border: `2px solid ${mode === m.mode ? tokens.color.primary : tokens.color.border}`,
+                    background: mode === m.mode ? tokens.color.primary : tokens.color.surface,
+                    color: mode === m.mode ? tokens.color.textOnPrimary : tokens.color.textPrimary,
+                    cursor: 'pointer',
+                    fontWeight: 600,
+                  }}
+                >
+                  {m.label}
+                </button>
+              ))}
+            </div>
+          </section>
 
-      {mode === 'championship' && !continueChampionshipId && (
-        <section style={{ marginBottom: tokens.spacing.lg }}>
-          <label
-            htmlFor="champ-races"
-            style={{ display: 'block', color: tokens.color.textSecondary, marginBottom: tokens.spacing.xs }}
-          >
-            Number of Races
-          </label>
-          <select
-            id="champ-races"
-            value={champRaces}
-            onChange={(e) => setChampRaces(Number(e.target.value))}
-            style={{
-              padding: tokens.spacing.sm,
-              borderRadius: tokens.radius.sm,
-              border: `1px solid ${tokens.color.border}`,
-              fontSize: 16,
-            }}
-          >
-            {[3, 5, 7].map((n) => (
-              <option key={n} value={n}>
-                {n} races
-              </option>
-            ))}
-          </select>
-        </section>
+          {mode === 'championship' && !continueChampionshipId && (
+            <section style={{ marginBottom: tokens.spacing.lg }}>
+              <label
+                htmlFor="champ-races"
+                style={{
+                  display: 'block',
+                  color: tokens.color.textSecondary,
+                  marginBottom: tokens.spacing.xs,
+                }}
+              >
+                Number of Races
+              </label>
+              <select
+                id="champ-races"
+                value={champRaces}
+                onChange={(e) => setChampRaces(Number(e.target.value))}
+                style={{
+                  padding: tokens.spacing.sm,
+                  borderRadius: tokens.radius.sm,
+                  border: `1px solid ${tokens.color.border}`,
+                  fontSize: 16,
+                }}
+              >
+                {[3, 5, 7].map((n) => (
+                  <option key={n} value={n}>
+                    {n} races
+                  </option>
+                ))}
+              </select>
+            </section>
+          )}
+
+          {mode === 'quick' && (
+            <section style={{ marginBottom: tokens.spacing.lg }}>
+              <label
+                htmlFor="opponent-count"
+                style={{
+                  display: 'block',
+                  color: tokens.color.textSecondary,
+                  marginBottom: tokens.spacing.xs,
+                }}
+              >
+                Opponents
+              </label>
+              <select
+                id="opponent-count"
+                value={opponentCount}
+                onChange={(e) => setOpponentCount(Number(e.target.value))}
+                style={{
+                  padding: tokens.spacing.sm,
+                  borderRadius: tokens.radius.sm,
+                  border: `1px solid ${tokens.color.border}`,
+                  fontSize: 16,
+                }}
+              >
+                {[1, 2, 3, 4].map((n) => (
+                  <option key={n} value={n}>
+                    {n}
+                  </option>
+                ))}
+              </select>
+            </section>
+          )}
+
+          <section style={{ marginBottom: tokens.spacing.lg }}>
+            <label
+              htmlFor="tier-select"
+              style={{
+                display: 'block',
+                color: tokens.color.textSecondary,
+                marginBottom: tokens.spacing.xs,
+              }}
+            >
+              Difficulty (Tier 1 = easiest)
+            </label>
+            <select
+              id="tier-select"
+              value={tier}
+              onChange={(e) => setTier(Number(e.target.value) as Tier)}
+              style={{
+                padding: tokens.spacing.sm,
+                borderRadius: tokens.radius.sm,
+                border: `1px solid ${tokens.color.border}`,
+                fontSize: 16,
+              }}
+            >
+              {([1, 2, 3, 4, 5] as Tier[]).map((t) => (
+                <option key={t} value={t}>
+                  Tier {t}
+                </option>
+              ))}
+            </select>
+          </section>
+
+          {avatars.length > 1 && (
+            <section style={{ marginBottom: tokens.spacing.lg }}>
+              <label
+                htmlFor="avatar-select"
+                style={{
+                  display: 'block',
+                  color: tokens.color.textSecondary,
+                  marginBottom: tokens.spacing.xs,
+                }}
+              >
+                Racing as
+              </label>
+              <select
+                id="avatar-select"
+                value={selectedAvatarId ?? ''}
+                onChange={(e) => setSelectedAvatarId(e.target.value)}
+                style={{
+                  padding: tokens.spacing.sm,
+                  borderRadius: tokens.radius.sm,
+                  border: `1px solid ${tokens.color.border}`,
+                  fontSize: 16,
+                }}
+              >
+                {avatars.map((a) => (
+                  <option key={a.avatar_id} value={a.avatar_id}>
+                    {a.name ?? a.species}
+                  </option>
+                ))}
+              </select>
+            </section>
+          )}
+
+          <div style={{ width: '100%' }}>
+            <Button
+              variant="primary"
+              disabled={!selectedAvatarId || starting}
+              onClick={() => void handleStart()}
+            >
+              {starting ? 'Setting up…' : 'Start Race'}
+            </Button>
+          </div>
+        </>
       )}
-
-      {mode === 'quick' && (
-        <section style={{ marginBottom: tokens.spacing.lg }}>
-          <label
-            htmlFor="opponent-count"
-            style={{ display: 'block', color: tokens.color.textSecondary, marginBottom: tokens.spacing.xs }}
-          >
-            Opponents
-          </label>
-          <select
-            id="opponent-count"
-            value={opponentCount}
-            onChange={(e) => setOpponentCount(Number(e.target.value))}
-            style={{
-              padding: tokens.spacing.sm,
-              borderRadius: tokens.radius.sm,
-              border: `1px solid ${tokens.color.border}`,
-              fontSize: 16,
-            }}
-          >
-            {[1, 2, 3, 4].map((n) => (
-              <option key={n} value={n}>
-                {n}
-              </option>
-            ))}
-          </select>
-        </section>
-      )}
-
-      <section style={{ marginBottom: tokens.spacing.lg }}>
-        <label
-          htmlFor="tier-select"
-          style={{ display: 'block', color: tokens.color.textSecondary, marginBottom: tokens.spacing.xs }}
-        >
-          Difficulty (Tier 1 = easiest)
-        </label>
-        <select
-          id="tier-select"
-          value={tier}
-          onChange={(e) => setTier(Number(e.target.value) as Tier)}
-          style={{
-            padding: tokens.spacing.sm,
-            borderRadius: tokens.radius.sm,
-            border: `1px solid ${tokens.color.border}`,
-            fontSize: 16,
-          }}
-        >
-          {([1, 2, 3, 4, 5] as Tier[]).map((t) => (
-            <option key={t} value={t}>
-              Tier {t}
-            </option>
-          ))}
-        </select>
-      </section>
-
-      {avatars.length > 1 && (
-        <section style={{ marginBottom: tokens.spacing.lg }}>
-          <label
-            htmlFor="avatar-select"
-            style={{ display: 'block', color: tokens.color.textSecondary, marginBottom: tokens.spacing.xs }}
-          >
-            Racing as
-          </label>
-          <select
-            id="avatar-select"
-            value={selectedAvatarId ?? ''}
-            onChange={(e) => setSelectedAvatarId(e.target.value)}
-            style={{
-              padding: tokens.spacing.sm,
-              borderRadius: tokens.radius.sm,
-              border: `1px solid ${tokens.color.border}`,
-              fontSize: 16,
-            }}
-          >
-            {avatars.map((a) => (
-              <option key={a.avatar_id} value={a.avatar_id}>
-                {a.name ?? a.species}
-              </option>
-            ))}
-          </select>
-        </section>
-      )}
-
-      <div style={{ width: '100%' }}>
-        <Button
-          variant="primary"
-          disabled={!selectedAvatarId || starting}
-          onClick={() => void handleStart()}
-        >
-          {starting ? 'Setting up…' : 'Start Race'}
-        </Button>
-      </div>
-      </>)}
     </div>
   );
 }

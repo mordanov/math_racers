@@ -19,8 +19,24 @@ const makeSummary = (xpEarned = 80): RaceSummary => ({
   started_at: '',
   completed_at: '',
   participants: [
-    { avatar_id: 'av1', position: 1, problems_correct: 7, longest_streak: 5, average_response_ms: 1500, total_distance: 126, xp_earned: xpEarned },
-    { avatar_id: 'ai-1', position: 2, problems_correct: 5, longest_streak: 3, average_response_ms: 3000, total_distance: 90, xp_earned: 60 },
+    {
+      avatar_id: 'av1',
+      position: 1,
+      problems_correct: 7,
+      longest_streak: 5,
+      average_response_ms: 1500,
+      total_distance: 126,
+      xp_earned: xpEarned,
+    },
+    {
+      avatar_id: 'ai-1',
+      position: 2,
+      problems_correct: 5,
+      longest_streak: 3,
+      average_response_ms: 3000,
+      total_distance: 90,
+      xp_earned: 60,
+    },
   ],
 });
 
@@ -42,7 +58,10 @@ describe('ResultsScreenPage', () => {
     vi.clearAllMocks();
     vi.mocked(raceApiModule.postRaceSummary).mockResolvedValue({ new_achievements: [] });
     vi.mocked(progressionApiModule.fetchProgression).mockResolvedValue({
-      player_id: 'p1', total_xp: 200, current_level: 1, xp_to_next_level: 200,
+      player_id: 'p1',
+      total_xp: 200,
+      current_level: 1,
+      xp_to_next_level: 200,
     });
   });
 
@@ -70,7 +89,10 @@ describe('ResultsScreenPage', () => {
     // Player earned 80 XP. total_xp now = 400 (level 2). Before = 320 (still level 1).
     // level(400) = floor(sqrt(4)) = 2; level(320) = floor(sqrt(3.2)) = 1
     vi.mocked(progressionApiModule.fetchProgression).mockResolvedValue({
-      player_id: 'p1', total_xp: 400, current_level: 2, xp_to_next_level: 500,
+      player_id: 'p1',
+      total_xp: 400,
+      current_level: 2,
+      xp_to_next_level: 500,
     });
     renderPage({ summary: makeSummary(80), playerAvatarId: 'av1' });
     await waitFor(() => expect(screen.getByText(/level up/i)).toBeInTheDocument());
@@ -78,10 +100,17 @@ describe('ResultsScreenPage', () => {
 
   it('shows achievement toast for each new achievement', async () => {
     vi.mocked(raceApiModule.postRaceSummary).mockResolvedValue({
-      new_achievements: [{
-        key: 'first_race', title: 'First Steps', category: 'racing',
-        description: 'Complete your first race', hidden: false, icon_path: '', unlocked_at: '',
-      }],
+      new_achievements: [
+        {
+          key: 'first_race',
+          title: 'First Steps',
+          category: 'racing',
+          description: 'Complete your first race',
+          hidden: false,
+          icon_path: '',
+          unlocked_at: '',
+        },
+      ],
     });
     renderPage({ summary: makeSummary(), playerAvatarId: 'av1' });
     await waitFor(() => expect(screen.getByText(/achievement: first steps/i)).toBeInTheDocument());
@@ -96,13 +125,22 @@ describe('ResultsScreenPage', () => {
 
   it('shows View Championship button and calls recordChampionshipRace when mode is championship', async () => {
     vi.mocked(championshipApiModule.recordChampionshipRace).mockResolvedValue({
-      championship_id: 'ch1', total_races: 3, races_completed: 1, status: 'active', standings: [],
+      championship_id: 'ch1',
+      total_races: 3,
+      races_completed: 1,
+      status: 'active',
+      standings: [],
     });
     const summary: RaceSummary = { ...makeSummary(), mode: 'championship' };
     renderPage({ summary, playerAvatarId: 'av1', championshipId: 'ch1', raceIndex: 0 });
-    await waitFor(() => expect(championshipApiModule.recordChampionshipRace).toHaveBeenCalledWith(
-      'ch1', 'r1', 0, expect.any(Array),
-    ));
+    await waitFor(() =>
+      expect(championshipApiModule.recordChampionshipRace).toHaveBeenCalledWith(
+        'ch1',
+        'r1',
+        0,
+        expect.any(Array),
+      ),
+    );
     expect(screen.getByRole('button', { name: /view championship/i })).toBeInTheDocument();
   });
 });

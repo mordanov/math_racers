@@ -68,8 +68,12 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
 
   useEffect(() => {
     let cancelled = false;
-    doSync().catch(() => { if (!cancelled) setSyncStatus('error'); });
-    return () => { cancelled = true; };
+    doSync().catch(() => {
+      if (!cancelled) setSyncStatus('error');
+    });
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -115,9 +119,7 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
         {summary.mode === 'training' ? 'Training Complete' : 'Race Finished!'}
       </h1>
 
-      <table
-        style={{ width: '100%', borderCollapse: 'collapse', marginBottom: tokens.spacing.lg }}
-      >
+      <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: tokens.spacing.lg }}>
         <thead>
           <tr>
             {['Place', 'Runner', 'Distance', 'Correct', 'XP'].map((h) => (
@@ -152,9 +154,20 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
                 <td style={{ padding: tokens.spacing.sm, fontWeight: isPlayer ? 700 : 400 }}>
                   {isPlayer ? 'You' : `Runner ${i + 1}`}
                 </td>
-                <td style={{ padding: tokens.spacing.sm, textAlign: 'right' }}>{p.total_distance}m</td>
-                <td style={{ padding: tokens.spacing.sm, textAlign: 'right' }}>{p.problems_correct}/8</td>
-                <td style={{ padding: tokens.spacing.sm, textAlign: 'right', color: tokens.color.success, fontWeight: 700 }}>
+                <td style={{ padding: tokens.spacing.sm, textAlign: 'right' }}>
+                  {p.total_distance}m
+                </td>
+                <td style={{ padding: tokens.spacing.sm, textAlign: 'right' }}>
+                  {p.problems_correct}/8
+                </td>
+                <td
+                  style={{
+                    padding: tokens.spacing.sm,
+                    textAlign: 'right',
+                    color: tokens.color.success,
+                    fontWeight: 700,
+                  }}
+                >
                   +{p.xp_earned}
                 </td>
               </tr>
@@ -172,7 +185,14 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
           <button
             type="button"
             onClick={retry}
-            style={{ color: tokens.color.primary, background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', fontSize: 14 }}
+            style={{
+              color: tokens.color.primary,
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              textDecoration: 'underline',
+              fontSize: 14,
+            }}
           >
             Retry
           </button>
@@ -180,13 +200,20 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
       )}
 
       <div style={{ display: 'flex', gap: tokens.spacing.md, flexWrap: 'wrap' }}>
-        <Button variant="primary" onClick={() => void navigate('/race/setup')}>Race Again</Button>
+        <Button variant="primary" onClick={() => void navigate('/race/setup')}>
+          Race Again
+        </Button>
         {championshipId && (
-          <Button variant="secondary" onClick={() => void navigate(`/championship/${championshipId}`)}>
+          <Button
+            variant="secondary"
+            onClick={() => void navigate(`/championship/${championshipId}`)}
+          >
             View Championship
           </Button>
         )}
-        <Button variant="secondary" onClick={() => void navigate('/')}>Home</Button>
+        <Button variant="secondary" onClick={() => void navigate('/')}>
+          Home
+        </Button>
       </div>
     </div>
   );

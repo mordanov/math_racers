@@ -26,15 +26,21 @@ describe('useRaceEngine', () => {
 
   it('startCountdown() transitions engine to COUNTDOWN', async () => {
     const { result } = renderHook(() => useRaceEngine(config));
-    act(() => { result.current.startCountdown(); });
+    act(() => {
+      result.current.startCountdown();
+    });
     await waitFor(() => expect(result.current.state).toBe('COUNTDOWN'));
   });
 
   it('startRacing() transitions engine from COUNTDOWN to RACING', async () => {
     const { result } = renderHook(() => useRaceEngine(config));
-    act(() => { result.current.startCountdown(); });
+    act(() => {
+      result.current.startCountdown();
+    });
     await waitFor(() => expect(result.current.state).toBe('COUNTDOWN'));
-    act(() => { result.current.startRacing(); });
+    act(() => {
+      result.current.startRacing();
+    });
     await waitFor(() => expect(result.current.state).toBe('RACING'));
   });
 

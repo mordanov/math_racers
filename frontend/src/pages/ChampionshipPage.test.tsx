@@ -45,7 +45,9 @@ describe('ChampionshipPage', () => {
 
   it('shows Start Next Race button when championship is active', async () => {
     renderPage();
-    await waitFor(() => expect(screen.getByRole('button', { name: /start next race/i })).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: /start next race/i })).toBeInTheDocument(),
+    );
   });
 
   it('navigates to /race/setup with championship context when Start Next Race clicked', async () => {

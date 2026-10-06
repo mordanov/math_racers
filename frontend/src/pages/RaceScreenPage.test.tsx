@@ -94,7 +94,9 @@ describe('RaceScreenPage', () => {
 
   it('calls startCountdown on mount', () => {
     const startCountdown = vi.fn();
-    vi.mocked(useRaceEngineModule.useRaceEngine).mockReturnValue(makeEngineReturn({ startCountdown }));
+    vi.mocked(useRaceEngineModule.useRaceEngine).mockReturnValue(
+      makeEngineReturn({ startCountdown }),
+    );
     renderPage();
     expect(startCountdown).toHaveBeenCalledTimes(1);
   });
@@ -113,11 +115,17 @@ describe('RaceScreenPage', () => {
     );
     renderPage();
     expect(screen.getByRole('status')).toHaveTextContent('3');
-    act(() => { vi.advanceTimersByTime(1000); });
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
     expect(screen.getByRole('status')).toHaveTextContent('2');
-    act(() => { vi.advanceTimersByTime(1000); });
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
     expect(screen.getByRole('status')).toHaveTextContent('1');
-    act(() => { vi.advanceTimersByTime(1000); });
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
     expect(screen.getByRole('status')).toHaveTextContent('GO!');
   });
 
@@ -127,10 +135,18 @@ describe('RaceScreenPage', () => {
       makeEngineReturn({ state: 'COUNTDOWN', startRacing }),
     );
     renderPage();
-    act(() => { vi.advanceTimersByTime(1000); });
-    act(() => { vi.advanceTimersByTime(1000); });
-    act(() => { vi.advanceTimersByTime(1000); });
-    act(() => { vi.advanceTimersByTime(800); });
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+    act(() => {
+      vi.advanceTimersByTime(800);
+    });
     expect(startRacing).toHaveBeenCalledTimes(1);
   });
 

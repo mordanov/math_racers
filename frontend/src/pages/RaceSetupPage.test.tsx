@@ -25,7 +25,10 @@ describe('RaceSetupPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(avatarApiModule.listAvatars).mockResolvedValue([published]);
-    vi.mocked(raceSessionApiModule.createRaceSession).mockResolvedValue({ race_id: 'r1', seed: 42 });
+    vi.mocked(raceSessionApiModule.createRaceSession).mockResolvedValue({
+      race_id: 'r1',
+      seed: 42,
+    });
   });
 
   function renderPage(initialPath = '/race/setup', state?: unknown) {
@@ -48,7 +51,9 @@ describe('RaceSetupPage', () => {
 
   it('renders mode selector buttons', async () => {
     renderPage();
-    await waitFor(() => expect(screen.getByRole('button', { name: /quick race/i })).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: /quick race/i })).toBeInTheDocument(),
+    );
     expect(screen.getByRole('button', { name: /training/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /duel/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /championship/i })).toBeInTheDocument();
