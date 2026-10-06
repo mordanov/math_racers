@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import io
 import uuid
 from datetime import UTC, datetime
@@ -45,6 +46,13 @@ _MAX_ATTEMPTS = 3
 _IMAGE_SIZE = 1024
 _MAX_FILE_BYTES = 5 * 1024 * 1024
 _THUMBNAIL_SIZES = [("medium", 512), ("small", 256), ("thumb", 128)]
+_RETRY_BACKOFF_SECONDS = [30, 120, 480]
+
+
+def _backoff_seconds(attempt_just_failed: int) -> int:
+    """Return seconds to sleep before the next attempt. attempt_just_failed is 1-indexed."""
+    idx = attempt_just_failed - 1
+    return _RETRY_BACKOFF_SECONDS[min(idx, len(_RETRY_BACKOFF_SECONDS) - 1)]
 
 
 def _validate_image(image_bytes: bytes) -> dict[str, bool]:
@@ -170,7 +178,7 @@ async def run_generation_job(job_id: uuid.UUID) -> None:
             if job is None:
                 logger.warning("Job not found", extra={"context": {"job_id": str(job_id)}})
                 return
-            if job.status not in ("queued", "generating"):
+            if job.status not in ("queued", "generating", "retrying"):
                 logger.info(
                     "Job already processed",
                     extra={"context": {"job_id": str(job_id), "status": job.status}},
@@ -364,6 +372,17 @@ async def _run_pipeline(
                     }
                 },
             )
+            if attempt < _MAX_ATTEMPTS:
+                backoff = _backoff_seconds(attempt)
+                async with AsyncSession(engine, expire_on_commit=False) as session:
+                    async with session.begin():
+                        repo = repo_factory(session)
+                        job = await repo.get_job(job_id)
+                        if job is None:
+                            return
+                        job.status = "retrying"
+                        await repo.update_job(job)
+                await asyncio.sleep(backoff)
 
     # All attempts exhausted
     async with AsyncSession(engine, expire_on_commit=False) as session:
@@ -375,7 +394,7 @@ async def _run_pipeline(
             repo = repo_factory(session)
             job = await repo.get_job(job_id)
             if job:
-                job.status = "failed"
+                job.status = "permanent_failure"
                 job.error = error_msg
                 job.completed_at = datetime.now(UTC)
                 await repo.update_job(job)
