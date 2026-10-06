@@ -49,7 +49,7 @@ describe('useAvatarGallery', () => {
     const { result } = renderHook(() => useAvatarGallery());
     await waitFor(() => expect(result.current.loading).toBe(false));
     // Advance past poll interval — listAvatars should still only have been called once
-    await act(() => {
+    act(() => {
       vi.advanceTimersByTime(10000);
     });
     expect(avatarApiModule.listAvatars).toHaveBeenCalledTimes(1);
@@ -71,7 +71,7 @@ describe('useAvatarGallery', () => {
     const { result } = renderHook(() => useAvatarGallery());
     await waitFor(() => expect(result.current.loading).toBe(false));
 
-    await act(() => {
+    act(() => {
       vi.advanceTimersByTime(3000);
     });
     await waitFor(() =>
