@@ -1,44 +1,26 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { postRaceSummary } from '../raceApi';
 import { createRaceEngine } from '../raceEngine';
-import type { ObstacleResult, RaceConfig, RaceEngineState } from '../types';
-
-type SummaryStatus = 'idle' | 'pending' | 'saved' | 'error';
+import type { ObstacleResult, RaceConfig, RaceEngineState, RaceSummary } from '../types';
 
 export function useRaceEngine(config: RaceConfig) {
   const engineRef = useRef(createRaceEngine(config));
   const rafRef = useRef<number | null>(null);
   const [snapshot, setSnapshot] = useState<RaceEngineState>(() => engineRef.current.getState());
-  const [summaryStatus, setSummaryStatus] = useState<SummaryStatus>('idle');
-  const summaryPostedRef = useRef(false);
 
   useEffect(() => {
     const engine = engineRef.current;
 
     function loop(timestamp: number) {
       engine.tick(timestamp);
-      const state = engine.getState();
-      setSnapshot(state);
-
-      if (state.state === 'RESULTS' && !summaryPostedRef.current) {
-        summaryPostedRef.current = true;
-        setSummaryStatus('pending');
-        postRaceSummary(engine.getSummary())
-          .then(() => setSummaryStatus('saved'))
-          .catch(() => setSummaryStatus('error'));
-      }
-
+      setSnapshot(engine.getState());
       rafRef.current = requestAnimationFrame(loop);
     }
 
     rafRef.current = requestAnimationFrame(loop);
 
     function onVisibility() {
-      if (document.hidden) {
-        engine.pause();
-      } else {
-        engine.resume();
-      }
+      if (document.hidden) engine.pause();
+      else engine.resume();
     }
 
     document.addEventListener('visibilitychange', onVisibility);
@@ -49,6 +31,15 @@ export function useRaceEngine(config: RaceConfig) {
     };
   }, []);
 
+  const startCountdown = useCallback(() => {
+    engineRef.current.transition('LOBBY');
+    engineRef.current.transition('COUNTDOWN');
+  }, []);
+
+  const startRacing = useCallback(() => {
+    engineRef.current.transition('RACING');
+  }, []);
+
   const submitAnswer = useCallback(
     (input: { isCorrect: boolean }): ObstacleResult => engineRef.current.submitAnswer(input),
     [],
@@ -56,5 +47,7 @@ export function useRaceEngine(config: RaceConfig) {
 
   const forceComplete = useCallback(() => engineRef.current.forceComplete(), []);
 
-  return { ...snapshot, submitAnswer, forceComplete, summaryStatus };
+  const getSummary = useCallback((): RaceSummary => engineRef.current.getSummary(), []);
+
+  return { ...snapshot, startCountdown, startRacing, submitAnswer, forceComplete, getSummary };
 }
