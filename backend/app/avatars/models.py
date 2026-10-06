@@ -124,7 +124,7 @@ class GenerationJob(Base):
     __table_args__ = (
         CheckConstraint(
             "status IN ('queued','llm_running','prompt_building','generating','validating',"
-            "'storing','complete','failed')",
+            "'storing','complete','failed','retrying','permanent_failure')",
             name="ck_generation_jobs_status",
         ),
     )

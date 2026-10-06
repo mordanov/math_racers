@@ -8,7 +8,9 @@ export type JobStatus =
   | 'validating'
   | 'storing'
   | 'complete'
-  | 'failed';
+  | 'failed'
+  | 'retrying'
+  | 'permanent_failure';
 
 export interface PortraitSummary {
   id: string;

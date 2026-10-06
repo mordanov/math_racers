@@ -1,2 +1,5 @@
+overrides:
+  tinypool: ">=2.1.2"
+
 allowBuilds:
   esbuild: true
