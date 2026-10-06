@@ -74,8 +74,7 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, []); // doSync closes over stable props/state from mount
 
   function retry() {
     setSyncStatus('pending');

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useBlocker, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useRaceEngine } from '../engine/race/hooks/useRaceEngine';
 import { MAX_TRACK_DISTANCE, OBSTACLE_COUNT } from '../engine/race/constants';
@@ -82,10 +82,9 @@ function RaceScreen({
 
   const blocker = useBlocker(state === 'RACING');
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     startCountdown();
-  }, []);
+  }, []); // startCountdown is stable (useCallback with [] deps in useRaceEngine)
 
   useEffect(() => {
     if (state !== 'COUNTDOWN') return;
@@ -112,8 +111,7 @@ function RaceScreen({
       },
       replace: true,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state]);
+  }, [state]); // intentionally omits stable refs: navigate, getSummary, routeState
 
   function handleSubmit() {
     if (state !== 'RACING') return;

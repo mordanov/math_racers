@@ -166,7 +166,12 @@ describe('RaceScreenPage', () => {
             finishTime: null,
           },
         ],
-        problemSet: { seed: 1, tier: 1 as const, count: 8, problems: Array(8).fill(problem) },
+        problemSet: {
+          seed: 1,
+          tier: 1 as const,
+          count: 8,
+          problems: Array.from({ length: 8 }, () => problem),
+        },
       }),
     );
     renderPage();
@@ -192,7 +197,12 @@ describe('RaceScreenPage', () => {
             finishTime: null,
           },
         ],
-        problemSet: { seed: 1, tier: 1 as const, count: 8, problems: Array(8).fill(problem) },
+        problemSet: {
+          seed: 1,
+          tier: 1 as const,
+          count: 8,
+          problems: Array.from({ length: 8 }, () => problem),
+        },
         submitAnswer,
       }),
     );
