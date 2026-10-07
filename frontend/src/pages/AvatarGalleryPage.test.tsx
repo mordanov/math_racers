@@ -1,4 +1,5 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as avatarApiModule from '../engine/avatar/avatarApi';
@@ -87,5 +88,43 @@ describe('AvatarGalleryPage', () => {
       </MemoryRouter>,
     );
     expect(await screen.findByRole('alert')).toBeInTheDocument();
+  });
+});
+
+describe('AvatarGalleryPage — mutations', () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    vi.clearAllMocks();
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('shows mutation error banner when a mutation fails (Review Focus #4)', async () => {
+    vi.mocked(avatarApiModule.listAvatars).mockResolvedValue([published]);
+    vi.mocked(avatarApiModule.patchAvatar).mockRejectedValue(new Error('fail'));
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter>
+        <AvatarGalleryPage />
+      </MemoryRouter>,
+    );
+    await user.click(await screen.findByRole('button', { name: /add to favourites/i }));
+    expect(await screen.findByRole('alert', { name: /mutation error/i })).toBeInTheDocument();
+  });
+
+  it('mutation error banner has a dismiss button that clears it', async () => {
+    vi.mocked(avatarApiModule.listAvatars).mockResolvedValue([published]);
+    vi.mocked(avatarApiModule.patchAvatar).mockRejectedValue(new Error('fail'));
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter>
+        <AvatarGalleryPage />
+      </MemoryRouter>,
+    );
+    await user.click(await screen.findByRole('button', { name: /add to favourites/i }));
+    const banner = await screen.findByRole('alert', { name: /mutation error/i });
+    await user.click(within(banner).getByRole('button', { name: /dismiss/i }));
+    expect(screen.queryByRole('alert', { name: /mutation error/i })).toBeNull();
   });
 });

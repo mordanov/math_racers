@@ -3,8 +3,19 @@ import { AvatarCard } from '../features/avatar/AvatarCard';
 import { useAvatarGallery } from '../features/avatar/useAvatarGallery';
 import { LoadingSpinner } from '../shared/components/LoadingSpinner';
 import tokens from '../shared/tokens';
+
 export default function AvatarGalleryPage() {
-  const { avatars, loading, error } = useAvatarGallery();
+  const {
+    avatars,
+    loading,
+    error,
+    mutationError,
+    clearMutationError,
+    toggleFavourite,
+    renameAvatar,
+    startRegenerate,
+    removeAvatar,
+  } = useAvatarGallery();
 
   if (loading)
     return (
@@ -53,7 +64,7 @@ export default function AvatarGalleryPage() {
         <Link
           to="/avatars/new"
           style={{
-            padding: `${tokens.spacing.sm} ${tokens.spacing.lg}`,
+            padding: `${tokens.spacing.sm}px ${tokens.spacing.lg}px`,
             background: tokens.color.primary,
             color: '#fff',
             borderRadius: tokens.radius.md,
@@ -69,6 +80,44 @@ export default function AvatarGalleryPage() {
 
   return (
     <div style={{ padding: tokens.spacing.xl }}>
+      {mutationError && (
+        <div
+          role="alert"
+          aria-label="mutation error"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: tokens.spacing.md,
+            padding: `${tokens.spacing.sm}px ${tokens.spacing.md}px`,
+            background: '#FEF2F2',
+            border: `1px solid ${tokens.color.error}`,
+            borderRadius: tokens.radius.md,
+            color: tokens.color.error,
+            marginBottom: tokens.spacing.md,
+            fontSize: 14,
+          }}
+        >
+          <span>{mutationError}</span>
+          <button
+            type="button"
+            aria-label="Dismiss"
+            onClick={clearMutationError}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              color: tokens.color.error,
+              fontSize: 18,
+              lineHeight: 1,
+              padding: tokens.spacing.xs,
+            }}
+          >
+            ×
+          </button>
+        </div>
+      )}
+
       <div
         style={{
           display: 'flex',
@@ -81,7 +130,7 @@ export default function AvatarGalleryPage() {
         <Link
           to="/avatars/new"
           style={{
-            padding: `${tokens.spacing.sm} ${tokens.spacing.lg}`,
+            padding: `${tokens.spacing.sm}px ${tokens.spacing.lg}px`,
             background: tokens.color.primary,
             color: '#fff',
             borderRadius: tokens.radius.md,
@@ -102,7 +151,13 @@ export default function AvatarGalleryPage() {
       >
         {avatars.map((avatar) => (
           <div key={avatar.avatar_id} role="listitem">
-            <AvatarCard avatar={avatar} />
+            <AvatarCard
+              avatar={avatar}
+              onFavourite={(id, val) => void toggleFavourite(id, val)}
+              onRename={(id, name) => void renameAvatar(id, name)}
+              onRegenerate={(id) => void startRegenerate(id)}
+              onDelete={(id) => void removeAvatar(id)}
+            />
           </div>
         ))}
       </div>
