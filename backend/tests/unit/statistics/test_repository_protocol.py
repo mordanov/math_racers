@@ -55,3 +55,43 @@ def test_race_session_has_required_columns() -> None:
         "finished_at",
     ):
         assert hasattr(RaceSession, col), f"RaceSession missing: {col}"
+
+
+def test_statistics_repository_protocol_methods() -> None:
+    from app.statistics.repository import StatisticsRepository
+
+    for name in (
+        "get_player_stats",
+        "upsert_player_stats",
+        "get_avatar_stats",
+        "get_avatar_stats_for_player",
+        "upsert_avatar_stats",
+        "insert_session",
+        "get_history",
+        "get_sessions_since",
+        "get_all_sessions",
+        "get_best_race_accuracy",
+        "get_fastest_avg_response_ms",
+    ):
+        assert hasattr(StatisticsRepository, name), f"StatisticsRepository missing: {name}"
+
+
+def test_sqlalchemy_statistics_repository_implements_protocol() -> None:
+    from app.statistics.repository import SQLAlchemyStatisticsRepository
+
+    for name in (
+        "get_player_stats",
+        "upsert_player_stats",
+        "get_avatar_stats",
+        "get_avatar_stats_for_player",
+        "upsert_avatar_stats",
+        "insert_session",
+        "get_history",
+        "get_sessions_since",
+        "get_all_sessions",
+        "get_best_race_accuracy",
+        "get_fastest_avg_response_ms",
+    ):
+        assert hasattr(
+            SQLAlchemyStatisticsRepository, name
+        ), f"SQLAlchemyStatisticsRepository missing: {name}"
