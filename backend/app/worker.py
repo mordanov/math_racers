@@ -6,7 +6,7 @@ import signal
 from typing import Any
 
 from infrastructure.config import get_config
-from infrastructure.logging import get_logger, setup_logging
+from infrastructure.logging import get_logger, set_request_id, setup_logging
 
 logger = get_logger(__name__)
 
@@ -23,6 +23,8 @@ def _handle_signal(signum: int, frame: object) -> None:
 async def process_job(job: dict[str, object]) -> None:
     """Dispatch a job to the appropriate handler. Idempotent."""
     import uuid as _uuid
+
+    set_request_id(str(job.get("request_id") or "00000000-0000-0000-0000-000000000000"))
 
     job_id = job.get("job_id", "unknown")
     job_type = job.get("job_type", "unknown")
