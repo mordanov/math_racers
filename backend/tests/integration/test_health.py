@@ -65,3 +65,20 @@ def test_health_requires_no_auth() -> None:
     response = httpx.get(HEALTH_URL, timeout=10.0, headers={})
     assert response.status_code != 401
     assert response.status_code != 403
+
+
+@pytest.mark.integration
+def test_health_response_includes_x_request_id_header() -> None:
+    """Every /health response carries an X-Request-ID response header."""
+    response = httpx.get(HEALTH_URL, timeout=10.0)
+    assert "x-request-id" in {k.lower() for k in response.headers}
+
+
+@pytest.mark.integration
+def test_health_echoes_x_request_id_from_request() -> None:
+    """Health endpoint echoes back the caller's X-Request-ID header."""
+    import uuid as _uuid
+
+    custom_id = str(_uuid.uuid4())
+    response = httpx.get(HEALTH_URL, headers={"X-Request-ID": custom_id}, timeout=10.0)
+    assert response.headers.get("X-Request-ID") == custom_id
