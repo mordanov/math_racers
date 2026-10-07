@@ -12,7 +12,8 @@ const mockAudio = {
 };
 
 beforeEach(() => {
-  vi.spyOn(window, 'Audio' as keyof Window).mockImplementation(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  vi.spyOn(window as any, 'Audio').mockImplementation(
     () => mockAudio as unknown as HTMLAudioElement,
   );
   mockAudio.play.mockResolvedValue(undefined);
@@ -23,26 +24,26 @@ beforeEach(() => {
 });
 
 describe('useAudioManager', () => {
-  it('plays music and sets loop=true for menu track', async () => {
+  it('plays music and sets loop=true for menu track', () => {
     const { result } = renderHook(() => useAudioManager());
-    await act(async () => {
+    act(() => {
       result.current.playMusic('menu');
     });
     expect(mockAudio.play).toHaveBeenCalled();
     expect(mockAudio.loop).toBe(true);
   });
 
-  it('does not loop victory music', async () => {
+  it('does not loop victory music', () => {
     const { result } = renderHook(() => useAudioManager());
-    await act(async () => {
+    act(() => {
       result.current.playMusic('victory');
     });
     expect(mockAudio.loop).toBe(false);
   });
 
-  it('stops music on stopMusic()', async () => {
+  it('stops music on stopMusic()', () => {
     const { result } = renderHook(() => useAudioManager());
-    await act(async () => {
+    act(() => {
       result.current.playMusic('race');
       result.current.stopMusic();
     });
@@ -50,11 +51,11 @@ describe('useAudioManager', () => {
     expect(mockAudio.currentTime).toBe(0);
   });
 
-  it('applies volume from localStorage', async () => {
+  it('applies volume from localStorage', () => {
     localStorage.setItem('settings.masterVolume', '50');
     localStorage.setItem('settings.musicVolume', '80');
     const { result } = renderHook(() => useAudioManager());
-    await act(async () => {
+    act(() => {
       result.current.playMusic('menu');
     });
     // 0.5 * 0.8 = 0.4
