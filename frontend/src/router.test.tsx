@@ -3,6 +3,44 @@ import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { vi } from 'vitest';
 import { routeConfig } from './router';
 
+vi.mock('./features/statistics/statisticsApi', () => ({
+  fetchPlayerStats: () =>
+    Promise.resolve({
+      total_races: 0,
+      correct_answers: 0,
+      total_problems_solved: 0,
+      accuracy_all_time: null,
+      avg_response_ms: null,
+      favourite_operation: null,
+      best_streak: 0,
+      updated_at: '',
+    }),
+  fetchHistory: () => Promise.resolve({ results: [], page: 1, total_pages: 1, total_records: 0 }),
+  fetchWeeklySummary: () =>
+    Promise.resolve({
+      period_start: '',
+      period_end: '',
+      problems_solved: 0,
+      correct_answers: 0,
+      accuracy: null,
+      avg_response_ms: null,
+      strongest_operation: null,
+      weakest_operation: null,
+      races_completed: 0,
+      xp_earned: 0,
+    }),
+}));
+
+vi.mock('./features/statistics/parentApi', () => ({
+  fetchPersonalRecords: () =>
+    Promise.resolve({
+      best_streak: 0,
+      best_race_accuracy: null,
+      fastest_avg_response_ms: null,
+      total_races: 0,
+    }),
+}));
+
 vi.mock('./infrastructure/auth/AuthContext', () => ({
   useAuth: () => ({
     isAuthenticated: true,

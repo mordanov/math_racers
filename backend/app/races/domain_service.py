@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import uuid
 from typing import TYPE_CHECKING
 
@@ -12,6 +13,7 @@ if TYPE_CHECKING:
     from app.progression.repository import ProgressionRepository
     from app.races.repository import RaceRepository
     from app.races.schemas import RaceSummaryRequest, RaceSummaryResponse
+    from app.statistics.domain_service import StatisticsDomainService
 
 
 class RaceDomainService:
@@ -20,10 +22,12 @@ class RaceDomainService:
         repository: RaceRepository,
         progression_repository: ProgressionRepository | None = None,
         achievement_repository: AchievementRepository | None = None,
+        statistics_service: StatisticsDomainService | None = None,
     ) -> None:
         self._repository = repository
         self._progression_repository = progression_repository
         self._achievement_repository = achievement_repository
+        self._statistics_service = statistics_service
 
     async def persist_race(
         self,
@@ -70,5 +74,13 @@ class RaceDomainService:
                         account_id, progression.level_up.new_level, session
                     )
                 response.new_achievements = new_achievements
+
+        if account_id is not None and self._statistics_service is not None:
+            try:
+                await self._statistics_service.update_on_race(account_id, request)
+            except Exception:
+                logging.getLogger(__name__).exception(
+                    "Statistics update failed for account %s", account_id
+                )
 
         return response

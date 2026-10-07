@@ -158,6 +158,24 @@ def test_non_training_participant_requires_non_null_position() -> None:
 
 
 @pytest.mark.asyncio
+async def test_statistics_failure_does_not_lose_race_record() -> None:
+    """A stats-service error must not roll back the race record."""
+    mock_repo = MagicMock()
+    expected = RaceSummaryResponse(
+        race_id=uuid.uuid4(), created_at=datetime(2026, 8, 10, tzinfo=UTC)
+    )
+    mock_repo.create = AsyncMock(return_value=expected)
+
+    mock_stats = MagicMock()
+    mock_stats.update_on_race = AsyncMock(side_effect=RuntimeError("db timeout"))
+
+    service = RaceDomainService(mock_repo, statistics_service=mock_stats)
+    result = await service.persist_race(_make_request(), account_id=uuid.uuid4())
+
+    assert result == expected  # race survives the stats failure
+
+
+@pytest.mark.asyncio
 async def test_valid_multi_participant_race_passes_validation() -> None:
     request = _make_request(
         participants=[
