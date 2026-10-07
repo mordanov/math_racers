@@ -17,14 +17,21 @@ export default function StatisticsPage() {
   const [history, setHistory] = useState<HistoryResponse | null>(null);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     setLoading(true);
-    void Promise.all([fetchPlayerStats(), fetchHistory(page)]).then(([s, h]) => {
-      setStats(s);
-      setHistory(h);
-      setLoading(false);
-    });
+    setError(false);
+    void Promise.all([fetchPlayerStats(), fetchHistory(page)])
+      .then(([s, h]) => {
+        setStats(s);
+        setHistory(h);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError(true);
+        setLoading(false);
+      });
   }, [page]);
 
   return (
@@ -35,6 +42,7 @@ export default function StatisticsPage() {
       <h1 style={{ fontSize: 28, fontWeight: 900, marginBottom: tokens.spacing.lg }}>Statistics</h1>
 
       {loading && <p>Loading…</p>}
+      {error && <p>Failed to load statistics. Please try again.</p>}
 
       {stats && (
         <section aria-label="Player statistics" style={{ marginBottom: tokens.spacing.xl }}>

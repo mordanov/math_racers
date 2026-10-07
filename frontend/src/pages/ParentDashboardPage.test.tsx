@@ -63,4 +63,11 @@ describe('ParentDashboardPage', () => {
     renderPage();
     await waitFor(() => expect(screen.getByRole('link', { name: /export/i })).toBeInTheDocument());
   });
+
+  it('shows error message on fetch failure', async () => {
+    vi.mocked(statsApi.fetchWeeklySummary).mockRejectedValue(new Error('network error'));
+    renderPage();
+    await waitFor(() => expect(screen.getByText(/failed to load/i)).toBeInTheDocument());
+    expect(screen.queryByText('Loading…')).not.toBeInTheDocument();
+  });
 });

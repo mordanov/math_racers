@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import uuid
 from typing import TYPE_CHECKING
 
@@ -75,6 +76,11 @@ class RaceDomainService:
                 response.new_achievements = new_achievements
 
         if account_id is not None and self._statistics_service is not None:
-            await self._statistics_service.update_on_race(account_id, request)
+            try:
+                await self._statistics_service.update_on_race(account_id, request)
+            except Exception:
+                logging.getLogger(__name__).exception(
+                    "Statistics update failed for account %s", account_id
+                )
 
         return response

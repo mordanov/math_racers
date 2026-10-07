@@ -85,4 +85,11 @@ describe('StatisticsPage', () => {
     renderPage();
     await waitFor(() => expect(screen.getAllByText('—').length).toBeGreaterThan(0));
   });
+
+  it('shows error message on fetch failure', async () => {
+    vi.mocked(statsApi.fetchPlayerStats).mockRejectedValue(new Error('network error'));
+    renderPage();
+    await waitFor(() => expect(screen.getByText(/failed to load/i)).toBeInTheDocument());
+    expect(screen.queryByText('Loading…')).not.toBeInTheDocument();
+  });
 });

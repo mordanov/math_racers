@@ -12,13 +12,19 @@ export default function ParentDashboardPage() {
   const [summary, setSummary] = useState<WeeklySummary | null>(null);
   const [records, setRecords] = useState<PersonalRecords | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    void Promise.all([fetchWeeklySummary(), fetchPersonalRecords()]).then(([s, r]) => {
-      setSummary(s);
-      setRecords(r);
-      setLoading(false);
-    });
+    void Promise.all([fetchWeeklySummary(), fetchPersonalRecords()])
+      .then(([s, r]) => {
+        setSummary(s);
+        setRecords(r);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError(true);
+        setLoading(false);
+      });
   }, []);
 
   return (
@@ -31,6 +37,7 @@ export default function ParentDashboardPage() {
       </h1>
 
       {loading && <p>Loading…</p>}
+      {error && <p>Failed to load data. Please try again.</p>}
 
       {summary && (
         <section aria-label="This week" style={{ marginBottom: tokens.spacing.xl }}>
