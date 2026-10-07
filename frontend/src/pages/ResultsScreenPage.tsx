@@ -7,6 +7,7 @@ import type { Achievement } from '../engine/achievements/types';
 import { fetchProgression } from '../features/race/progressionApi';
 import { Button } from '../shared/components/Button';
 import { NotificationToast } from '../shared/components/NotificationToast';
+import { useAudioManager } from '../shared/hooks/useAudioManager';
 import tokens from '../shared/tokens';
 
 interface ResultsRouteState {
@@ -38,8 +39,14 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
   const [toastIndex, setToastIndex] = useState(0);
   const [currentLevel, setCurrentLevel] = useState<number | null>(null);
   const [levelBefore, setLevelBefore] = useState<number | null>(null);
+  const { playMusic, stopMusic } = useAudioManager();
 
   const playerEntry = summary.participants.find((p) => p.avatar_id === playerAvatarId);
+
+  useEffect(() => {
+    playMusic('victory');
+    return () => stopMusic();
+  }, []); // stable refs
 
   async function doSync() {
     const result = await postRaceSummary(summary);

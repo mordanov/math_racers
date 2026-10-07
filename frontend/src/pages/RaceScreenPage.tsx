@@ -6,6 +6,7 @@ import { PERSONALITIES } from '../engine/race/personalities';
 import type { ParticipantConfig, RaceConfig, RaceMode } from '../engine/race/types';
 import type { Tier } from '../engine/math/types';
 import { ConfirmDialog } from '../shared/components/ConfirmDialog';
+import { useAudioManager } from '../shared/hooks/useAudioManager';
 import tokens from '../shared/tokens';
 
 interface RaceScreenRouteState {
@@ -79,12 +80,18 @@ function RaceScreen({
   const [countdownNum, setCountdownNum] = useState(3);
   const [answerInput, setAnswerInput] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+  const { playMusic, stopMusic } = useAudioManager();
 
   const blocker = useBlocker(state === 'RACING');
 
   useEffect(() => {
     startCountdown();
-  }, []); // startCountdown is stable (useCallback with [] deps in useRaceEngine)
+    return () => stopMusic();
+  }, []); // startCountdown/stopMusic are stable refs
+
+  useEffect(() => {
+    if (state === 'RACING') playMusic('race');
+  }, [state]); // intentional: only start music when state transitions to RACING
 
   useEffect(() => {
     if (state !== 'COUNTDOWN') return;
