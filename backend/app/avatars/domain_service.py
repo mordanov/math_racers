@@ -79,12 +79,15 @@ def _to_detail(avatar: Avatar) -> AvatarDetailResponse:
 def _enqueue_job(redis_url: str, job_id: uuid.UUID, avatar_id: uuid.UUID) -> None:
     import redis as _redis
 
+    from infrastructure.logging import request_id_var
+
     client = _redis.from_url(redis_url)  # type: ignore[no-untyped-call]
     payload = json.dumps(
         {
             "job_type": "avatar_generation",
             "job_id": str(job_id),
             "avatar_id": str(avatar_id),
+            "request_id": request_id_var.get(),
         }
     )
     client.rpush("job_queue", payload)
