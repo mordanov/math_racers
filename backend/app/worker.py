@@ -24,9 +24,7 @@ async def process_job(job: dict[str, object]) -> None:
     """Dispatch a job to the appropriate handler. Idempotent."""
     import uuid as _uuid
 
-    rid = job.get("request_id")
-    if rid:
-        set_request_id(str(rid))
+    set_request_id(str(job.get("request_id") or "00000000-0000-0000-0000-000000000000"))
 
     job_id = job.get("job_id", "unknown")
     job_type = job.get("job_type", "unknown")

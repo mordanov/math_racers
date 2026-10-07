@@ -50,3 +50,28 @@ async def test_process_job_tolerates_missing_request_id() -> None:
         new=AsyncMock(return_value=None),
     ):
         await process_job(job)  # must not raise
+
+
+@pytest.mark.unit
+async def test_process_job_resets_request_id_to_nil_for_legacy_jobs() -> None:
+    """process_job resets request_id to the nil UUID when job has no request_id key."""
+    from app.worker import process_job
+    from infrastructure.logging import request_id_var
+
+    # Simulate a previous job having set the ContextVar to a non-nil value.
+    token = request_id_var.set("previous-job-uuid")
+    try:
+        job: dict[str, object] = {
+            "job_type": "avatar_generation",
+            "job_id": str(uuid.uuid4()),
+            "avatar_id": str(uuid.uuid4()),
+            # no request_id — legacy job enqueued before correlation ID support
+        }
+        with patch(
+            "app.avatars.generation_service.run_generation_job",
+            new=AsyncMock(return_value=None),
+        ):
+            await process_job(job)
+        assert request_id_var.get() == "00000000-0000-0000-0000-000000000000"
+    finally:
+        request_id_var.reset(token)
