@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { AvatarListItem } from '../../engine/avatar/types';
 import { ConfirmDialog } from '../../shared/components/ConfirmDialog';
 import tokens from '../../shared/tokens';
@@ -79,6 +79,13 @@ export function AvatarCard({
   const [editName, setEditName] = useState('');
   const [showManage, setShowManage] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (showManage && menuRef.current) {
+      menuRef.current.querySelector<HTMLElement>('[role="menuitem"]')?.focus();
+    }
+  }, [showManage]);
 
   const hasManage = !!(onRename || onRegenerate || onDelete);
 
@@ -216,11 +223,33 @@ export function AvatarCard({
           </button>
 
           {showManage && (
-            <div role="menu" style={menuStyle}>
+            <div
+              role="menu"
+              ref={menuRef}
+              style={menuStyle}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') {
+                  setShowManage(false);
+                  return;
+                }
+                if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+                e.preventDefault();
+                const items = Array.from(
+                  menuRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? [],
+                );
+                const idx = items.indexOf(document.activeElement as HTMLElement);
+                const next =
+                  e.key === 'ArrowDown'
+                    ? (idx + 1) % items.length
+                    : (idx - 1 + items.length) % items.length;
+                items[next]?.focus();
+              }}
+            >
               {onRename && (
                 <button
                   type="button"
                   role="menuitem"
+                  tabIndex={-1}
                   style={menuItemStyle}
                   onClick={() => {
                     setEditName(rawName);
@@ -235,6 +264,7 @@ export function AvatarCard({
                 <button
                   type="button"
                   role="menuitem"
+                  tabIndex={-1}
                   style={menuItemStyle}
                   onClick={() => {
                     onRegenerate(avatar.avatar_id);
@@ -248,6 +278,7 @@ export function AvatarCard({
                 <button
                   type="button"
                   role="menuitem"
+                  tabIndex={-1}
                   style={menuItemStyle}
                   onClick={() => {
                     setShowDeleteConfirm(true);

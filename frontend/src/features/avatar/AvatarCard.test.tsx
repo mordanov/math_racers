@@ -203,6 +203,30 @@ describe('AvatarCard — manage menu', () => {
     await user.click(screen.getByRole('menuitem', { name: /regenerate/i }));
     expect(onRegenerate).toHaveBeenCalledWith('a1');
   });
+
+  it('pressing Escape closes the manage menu (WAI-ARIA keyboard nav)', async () => {
+    const user = userEvent.setup();
+    render(
+      <AvatarCard avatar={published} onRename={vi.fn()} onRegenerate={vi.fn()} onDelete={vi.fn()} />,
+    );
+    await user.click(screen.getByRole('button', { name: /manage avatar/i }));
+    expect(screen.getByRole('menu')).toBeInTheDocument();
+    await user.keyboard('{Escape}');
+    expect(screen.queryByRole('menu')).toBeNull();
+  });
+
+  it('ArrowDown moves focus to next menuitem (WAI-ARIA keyboard nav)', async () => {
+    const user = userEvent.setup();
+    render(
+      <AvatarCard avatar={published} onRename={vi.fn()} onRegenerate={vi.fn()} onDelete={vi.fn()} />,
+    );
+    await user.click(screen.getByRole('button', { name: /manage avatar/i }));
+    const renameItem = screen.getByRole('menuitem', { name: /rename/i });
+    const regenItem = screen.getByRole('menuitem', { name: /regenerate/i });
+    renameItem.focus();
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(regenItem);
+  });
 });
 
 describe('AvatarCard — continued', () => {
