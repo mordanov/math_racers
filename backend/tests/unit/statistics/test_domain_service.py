@@ -176,6 +176,32 @@ async def test_get_weekly_summary_returns_zeros_when_no_sessions() -> None:
     assert result.weakest_operation is None
 
 
+async def test_race_domain_service_calls_statistics_update() -> None:
+    """RaceDomainService.persist_race calls update_on_race when statistics_service is set."""
+    from app.races.domain_service import RaceDomainService
+    from app.races.schemas import RaceSummaryResponse
+
+    mock_race_repo = MagicMock()
+    mock_race_repo.create = AsyncMock(
+        return_value=RaceSummaryResponse(
+            race_id=uuid.uuid4(), created_at=_NOW
+        )
+    )
+    mock_stats_service = MagicMock()
+    mock_stats_service.update_on_race = AsyncMock()
+
+    request = _make_request()
+    account_id = uuid.uuid4()
+
+    service = RaceDomainService(
+        repository=mock_race_repo,
+        statistics_service=mock_stats_service,
+    )
+    await service.persist_race(request, account_id=account_id)
+
+    mock_stats_service.update_on_race.assert_called_once_with(account_id, request)
+
+
 async def test_get_weekly_summary_aggregates_sessions() -> None:
     from app.statistics.domain_service import StatisticsDomainService
 

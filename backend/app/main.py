@@ -139,6 +139,9 @@ def create_app() -> FastAPI:
         router as progression_router,
     )
     from app.races.presentation.api.v1.races import router as races_router
+    from app.statistics.presentation.api.v1.statistics import (
+        router as statistics_router,
+    )
 
     app.include_router(achievements_router)
     app.include_router(auth_router)
@@ -151,6 +154,7 @@ def create_app() -> FastAPI:
     app.include_router(championships_router)
     app.include_router(avatars_router)
     app.include_router(progression_router)
+    app.include_router(statistics_router)
 
     @app.exception_handler(DomainError)
     async def domain_error_handler(request: Request, exc: DomainError) -> JSONResponse:

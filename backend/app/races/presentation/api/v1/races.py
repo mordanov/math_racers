@@ -10,6 +10,8 @@ from app.progression.repository import SQLAlchemyProgressionRepository
 from app.races.domain_service import RaceDomainService
 from app.races.repository import SQLAlchemyRaceRepository
 from app.races.schemas import RaceSummaryRequest, RaceSummaryResponse
+from app.statistics.domain_service import StatisticsDomainService
+from app.statistics.repository import SQLAlchemyStatisticsRepository
 from infrastructure.database.session import get_session
 
 router = APIRouter(prefix="/api/v1/races", tags=["races"])
@@ -24,5 +26,6 @@ async def create_race(
     race_repo = SQLAlchemyRaceRepository(session)
     progression_repo = SQLAlchemyProgressionRepository(session)
     achievement_repo = SQLAlchemyAchievementRepository(session)
-    service = RaceDomainService(race_repo, progression_repo, achievement_repo)
+    stats_service = StatisticsDomainService(SQLAlchemyStatisticsRepository(session))
+    service = RaceDomainService(race_repo, progression_repo, achievement_repo, stats_service)
     return await service.persist_race(body, account_id=account.id, session=session)
