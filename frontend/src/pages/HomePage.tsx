@@ -29,6 +29,15 @@ export default function HomePage() {
   return (
     <div
       data-testid="page-home"
+      style={{
+        minHeight: '100vh',
+        backgroundImage: 'url(/mainmenu.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }}
+    >
+    <div
       style={{ maxWidth: 480, margin: '0 auto', padding: tokens.spacing.xl, textAlign: 'center' }}
     >
       <h1
@@ -75,6 +84,7 @@ export default function HomePage() {
           Statistics
         </Button>
       </div>
+    </div>
     </div>
   );
 }

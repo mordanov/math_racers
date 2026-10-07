@@ -162,7 +162,16 @@ function RaceScreen({
   return (
     <div
       data-testid="page-race-screen"
-      style={{ maxWidth: 640, margin: '0 auto', padding: tokens.spacing.xl }}
+      style={{
+        maxWidth: 640,
+        margin: '0 auto',
+        padding: tokens.spacing.xl,
+        backgroundImage: 'url(/stadium.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center bottom',
+        backgroundRepeat: 'no-repeat',
+        minHeight: '100vh',
+      }}
     >
       <ConfirmDialog
         open={blocker.state === 'blocked'}
