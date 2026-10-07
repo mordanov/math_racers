@@ -124,7 +124,12 @@ describe('AvatarCard — manage menu', () => {
   it('clicking manage button shows rename/regenerate/delete actions', async () => {
     const user = userEvent.setup();
     render(
-      <AvatarCard avatar={published} onRename={vi.fn()} onRegenerate={vi.fn()} onDelete={vi.fn()} />,
+      <AvatarCard
+        avatar={published}
+        onRename={vi.fn()}
+        onRegenerate={vi.fn()}
+        onDelete={vi.fn()}
+      />,
     );
     await user.click(screen.getByRole('button', { name: /manage avatar/i }));
     expect(screen.getByRole('menuitem', { name: /rename/i })).toBeInTheDocument();
@@ -207,7 +212,12 @@ describe('AvatarCard — manage menu', () => {
   it('pressing Escape closes the manage menu (WAI-ARIA keyboard nav)', async () => {
     const user = userEvent.setup();
     render(
-      <AvatarCard avatar={published} onRename={vi.fn()} onRegenerate={vi.fn()} onDelete={vi.fn()} />,
+      <AvatarCard
+        avatar={published}
+        onRename={vi.fn()}
+        onRegenerate={vi.fn()}
+        onDelete={vi.fn()}
+      />,
     );
     await user.click(screen.getByRole('button', { name: /manage avatar/i }));
     expect(screen.getByRole('menu')).toBeInTheDocument();
@@ -218,7 +228,12 @@ describe('AvatarCard — manage menu', () => {
   it('ArrowDown moves focus to next menuitem (WAI-ARIA keyboard nav)', async () => {
     const user = userEvent.setup();
     render(
-      <AvatarCard avatar={published} onRename={vi.fn()} onRegenerate={vi.fn()} onDelete={vi.fn()} />,
+      <AvatarCard
+        avatar={published}
+        onRename={vi.fn()}
+        onRegenerate={vi.fn()}
+        onDelete={vi.fn()}
+      />,
     );
     await user.click(screen.getByRole('button', { name: /manage avatar/i }));
     const renameItem = screen.getByRole('menuitem', { name: /rename/i });

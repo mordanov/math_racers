@@ -99,7 +99,10 @@ describe('useAvatarGallery mutations', () => {
   });
 
   it('toggleFavourite optimistically flips is_favourite then calls patchAvatar', async () => {
-    vi.mocked(avatarApiModule.patchAvatar).mockResolvedValue({ ...published, is_favourite: true } as never);
+    vi.mocked(avatarApiModule.patchAvatar).mockResolvedValue({
+      ...published,
+      is_favourite: true,
+    } as never);
     const { result } = renderHook(() => useAvatarGallery());
     await waitFor(() => expect(result.current.loading).toBe(false));
 
@@ -125,7 +128,10 @@ describe('useAvatarGallery mutations', () => {
   });
 
   it('renameAvatar optimistically updates name then calls patchAvatar', async () => {
-    vi.mocked(avatarApiModule.patchAvatar).mockResolvedValue({ ...published, name: 'Renamed' } as never);
+    vi.mocked(avatarApiModule.patchAvatar).mockResolvedValue({
+      ...published,
+      name: 'Renamed',
+    } as never);
     const { result } = renderHook(() => useAvatarGallery());
     await waitFor(() => expect(result.current.loading).toBe(false));
 

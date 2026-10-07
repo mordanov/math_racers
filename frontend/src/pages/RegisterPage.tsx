@@ -144,7 +144,11 @@ export default function RegisterPage() {
           {error && (
             <p
               role="alert"
-              style={{ color: tokens.color.error, margin: `0 0 ${tokens.spacing.md}px`, fontSize: 14 }}
+              style={{
+                color: tokens.color.error,
+                margin: `0 0 ${tokens.spacing.md}px`,
+                fontSize: 14,
+              }}
             >
               {error}
             </p>
