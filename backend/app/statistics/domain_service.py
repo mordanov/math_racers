@@ -9,6 +9,7 @@ if TYPE_CHECKING:
     from app.races.schemas import RaceSummaryRequest
     from app.statistics.repository import StatisticsRepository
 
+from app.statistics.models import RaceSession
 from app.statistics.schemas import (
     AvatarStatsResponse,
     HistoryResponse,
@@ -178,5 +179,5 @@ class StatisticsDomainService:
             total_races=stats.total_races if stats else 0,
         )
 
-    async def get_all_sessions(self, account_id: uuid.UUID) -> list:
+    async def get_all_sessions(self, account_id: uuid.UUID) -> list[RaceSession]:
         return await self._repository.get_all_sessions(account_id)
