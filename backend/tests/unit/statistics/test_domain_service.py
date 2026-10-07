@@ -104,9 +104,7 @@ async def test_update_on_race_training_mode_no_wins_no_podiums() -> None:
 
     repo = _make_repo()
     service = StatisticsDomainService(repo)
-    await service.update_on_race(
-        _ACCOUNT_ID, _make_request(mode="training", position=None)
-    )
+    await service.update_on_race(_ACCOUNT_ID, _make_request(mode="training", position=None))
 
     _, kwargs = repo.upsert_avatar_stats.call_args
     assert kwargs["wins_delta"] == 0
@@ -118,9 +116,7 @@ async def test_update_on_race_player_stats_uses_correct_deltas() -> None:
 
     repo = _make_repo()
     service = StatisticsDomainService(repo)
-    await service.update_on_race(
-        _ACCOUNT_ID, _make_request(problems_correct=6, avg_ms=2000)
-    )
+    await service.update_on_race(_ACCOUNT_ID, _make_request(problems_correct=6, avg_ms=2000))
 
     _, kwargs = repo.upsert_player_stats.call_args
     assert kwargs["races_delta"] == 1
@@ -183,9 +179,7 @@ async def test_race_domain_service_calls_statistics_update() -> None:
 
     mock_race_repo = MagicMock()
     mock_race_repo.create = AsyncMock(
-        return_value=RaceSummaryResponse(
-            race_id=uuid.uuid4(), created_at=_NOW
-        )
+        return_value=RaceSummaryResponse(race_id=uuid.uuid4(), created_at=_NOW)
     )
     mock_stats_service = MagicMock()
     mock_stats_service.update_on_race = AsyncMock()

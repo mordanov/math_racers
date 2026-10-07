@@ -194,9 +194,7 @@ class SQLAlchemyStatisticsRepository:
         self._session.add(session)
         await self._session.flush()
 
-    async def get_history(
-        self, account_id: uuid.UUID, page: int
-    ) -> tuple[list[RaceSession], int]:
+    async def get_history(self, account_id: uuid.UUID, page: int) -> tuple[list[RaceSession], int]:
         total_result = await self._session.execute(
             select(func.count()).where(RaceSession.account_id == account_id)
         )
@@ -212,9 +210,7 @@ class SQLAlchemyStatisticsRepository:
         )
         return list(result.scalars().all()), total
 
-    async def get_sessions_since(
-        self, account_id: uuid.UUID, since: datetime
-    ) -> list[RaceSession]:
+    async def get_sessions_since(self, account_id: uuid.UUID, since: datetime) -> list[RaceSession]:
         result = await self._session.execute(
             select(RaceSession)
             .where(

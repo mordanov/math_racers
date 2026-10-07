@@ -115,18 +115,14 @@ async def export_my_csv(
     return StreamingResponse(
         iter([output.getvalue()]),
         media_type="text/csv",
-        headers={
-            "Content-Disposition": f"attachment; filename=statistics_{account.id}.csv"
-        },
+        headers={"Content-Disposition": f"attachment; filename=statistics_{account.id}.csv"},
     )
 
 
 # --- explicit account_id routes (for admin access) ---
 
 
-@router.get(
-    "/api/v1/players/{account_id}/statistics", response_model=PlayerStatsResponse
-)
+@router.get("/api/v1/players/{account_id}/statistics", response_model=PlayerStatsResponse)
 async def get_player_statistics(
     account_id: uuid.UUID,
     account: Account = Depends(get_current_account),
@@ -161,9 +157,7 @@ async def get_history(
     return await _service(session).get_history(account_id, page)
 
 
-@router.get(
-    "/api/v1/players/{account_id}/weekly-summary", response_model=WeeklySummaryResponse
-)
+@router.get("/api/v1/players/{account_id}/weekly-summary", response_model=WeeklySummaryResponse)
 async def get_weekly_summary(
     account_id: uuid.UUID,
     account: Account = Depends(get_current_account),
