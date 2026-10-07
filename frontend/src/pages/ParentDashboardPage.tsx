@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { fetchPersonalRecords, type PersonalRecords } from '../features/statistics/parentApi';
 import { fetchWeeklySummary, type WeeklySummary } from '../features/statistics/statisticsApi';
+import { Button } from '../shared/components/Button';
+import { useOffline } from '../shared/hooks/useOffline';
 import tokens from '../shared/tokens';
 
 function fmtPct(value: number | null): string {
@@ -9,6 +12,8 @@ function fmtPct(value: number | null): string {
 }
 
 export default function ParentDashboardPage() {
+  const navigate = useNavigate();
+  const isOffline = useOffline();
   const [summary, setSummary] = useState<WeeklySummary | null>(null);
   const [records, setRecords] = useState<PersonalRecords | null>(null);
   const [loading, setLoading] = useState(true);
@@ -26,6 +31,30 @@ export default function ParentDashboardPage() {
         setLoading(false);
       });
   }, []);
+
+  if (isOffline) {
+    return (
+      <div
+        data-testid="page-parent-dashboard"
+        role="alert"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: tokens.spacing.lg,
+          padding: tokens.spacing.xl,
+          textAlign: 'center',
+        }}
+      >
+        <p style={{ fontSize: 20, color: tokens.color.textPrimary }}>
+          Internet required to view parent dashboard.
+        </p>
+        <Button variant="secondary" onClick={() => void navigate(-1)}>
+          Go Back
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div

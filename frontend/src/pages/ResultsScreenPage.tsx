@@ -7,6 +7,8 @@ import type { Achievement } from '../engine/achievements/types';
 import { fetchProgression } from '../features/race/progressionApi';
 import { Button } from '../shared/components/Button';
 import { NotificationToast } from '../shared/components/NotificationToast';
+import { getBadgeUrl } from '../features/achievements/achievementBadges';
+import { useAudioManager } from '../shared/hooks/useAudioManager';
 import tokens from '../shared/tokens';
 
 interface ResultsRouteState {
@@ -38,8 +40,14 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
   const [toastIndex, setToastIndex] = useState(0);
   const [currentLevel, setCurrentLevel] = useState<number | null>(null);
   const [levelBefore, setLevelBefore] = useState<number | null>(null);
+  const { playMusic, stopMusic } = useAudioManager();
 
   const playerEntry = summary.participants.find((p) => p.avatar_id === playerAvatarId);
+
+  useEffect(() => {
+    playMusic('victory');
+    return () => stopMusic();
+  }, []); // stable refs
 
   async function doSync() {
     const result = await postRaceSummary(summary);
@@ -112,6 +120,36 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
           type="success"
           onClose={() => setToastIndex((i) => i + 1)}
         />
+      )}
+
+      {achievements.length > 0 && (
+        <div
+          style={{
+            display: 'flex',
+            gap: tokens.spacing.md,
+            flexWrap: 'wrap',
+            marginBottom: tokens.spacing.lg,
+          }}
+        >
+          {achievements.map((a) => (
+            <div key={a.key} style={{ textAlign: 'center' }}>
+              <img
+                src={getBadgeUrl(a.key)}
+                alt={a.title}
+                style={{ width: 64, height: 64, borderRadius: '50%' }}
+              />
+              <div
+                style={{
+                  fontSize: 12,
+                  color: tokens.color.textSecondary,
+                  marginTop: tokens.spacing.xs,
+                }}
+              >
+                {a.title}
+              </div>
+            </div>
+          ))}
+        </div>
       )}
 
       <h1 style={{ color: tokens.color.textPrimary, marginBottom: tokens.spacing.lg }}>

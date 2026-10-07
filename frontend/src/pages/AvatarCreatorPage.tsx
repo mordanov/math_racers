@@ -4,6 +4,7 @@ import { createAvatar, pollGenerationJob } from '../engine/avatar/avatarApi';
 import type { CreateAvatarRequest } from '../engine/avatar/types';
 import { Button } from '../shared/components/Button';
 import { LoadingSpinner } from '../shared/components/LoadingSpinner';
+import { useOffline } from '../shared/hooks/useOffline';
 import tokens from '../shared/tokens';
 
 const SPECIES = ['fox', 'rabbit', 'bear', 'cat', 'mouse', 'panda'] as const;
@@ -73,6 +74,7 @@ function ColorSwatch({
 
 export default function AvatarCreatorPage() {
   const navigate = useNavigate();
+  const isOffline = useOffline();
   const [wizard, setWizard] = useState<WizardState>({
     step: 1,
     species: '',
@@ -177,6 +179,30 @@ export default function AvatarCreatorPage() {
     fontWeight: 600,
     textTransform: 'capitalize' as const,
   });
+
+  if (isOffline) {
+    return (
+      <div
+        data-testid="page-avatar-creator"
+        role="alert"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: tokens.spacing.lg,
+          padding: tokens.spacing.xl,
+          textAlign: 'center',
+        }}
+      >
+        <p style={{ fontSize: 20, color: tokens.color.textPrimary }}>
+          Internet required to create avatars.
+        </p>
+        <Button variant="secondary" onClick={() => void navigate(-1)}>
+          Go Back
+        </Button>
+      </div>
+    );
+  }
 
   if (wizard.step === 1) {
     return (

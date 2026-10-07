@@ -10,7 +10,8 @@ interface AvatarCardProps {
 export function AvatarCard({ avatar, selected = false, onSelect }: AvatarCardProps) {
   const isPending = avatar.status === 'pending';
   const isFailed = avatar.status === 'failed';
-  const displayName = avatar.name ?? avatar.species;
+  const rawName = avatar.name ?? avatar.species;
+  const displayName = rawName.length > 24 ? rawName.slice(0, 24) + '…' : rawName;
 
   const cardStyle: React.CSSProperties = {
     background: tokens.color.surface,
@@ -46,7 +47,7 @@ export function AvatarCard({ avatar, selected = false, onSelect }: AvatarCardPro
       ) : (
         <img
           src={avatar.portrait?.small_url}
-          alt={displayName}
+          alt={rawName}
           style={{
             width: 80,
             height: 80,
@@ -56,7 +57,17 @@ export function AvatarCard({ avatar, selected = false, onSelect }: AvatarCardPro
           }}
         />
       )}
-      <div style={{ fontWeight: 600, color: tokens.color.textPrimary }}>{displayName}</div>
+      <div
+        title={rawName}
+        style={{
+          fontWeight: 600,
+          color: tokens.color.textPrimary,
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        {displayName}
+      </div>
       <div
         style={{
           fontSize: 14,

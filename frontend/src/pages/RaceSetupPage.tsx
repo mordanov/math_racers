@@ -8,6 +8,7 @@ import type { Tier } from '../engine/math/types';
 import { createRaceSession } from '../features/race/raceSessionApi';
 import { Button } from '../shared/components/Button';
 import { LoadingSpinner } from '../shared/components/LoadingSpinner';
+import { useOffline } from '../shared/hooks/useOffline';
 import tokens from '../shared/tokens';
 
 interface SetupRouteState {
@@ -39,6 +40,11 @@ export default function RaceSetupPage() {
   const [starting, setStarting] = useState(false);
   const continueChampionshipId = routeState.continueChampionshipId;
   const continueRaceIndex = routeState.continueRaceIndex ?? 0;
+  const isOffline = useOffline();
+
+  useEffect(() => {
+    if (isOffline) setMode('training');
+  }, [isOffline]);
 
   useEffect(() => {
     listAvatars()
@@ -122,25 +128,32 @@ export default function RaceSetupPage() {
               Mode
             </h2>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: tokens.spacing.sm }}>
-              {MODES.map((m) => (
-                <button
-                  key={m.mode}
-                  type="button"
-                  aria-pressed={mode === m.mode}
-                  onClick={() => handleModeChange(m.mode)}
-                  style={{
-                    padding: `${tokens.spacing.sm}px ${tokens.spacing.md}px`,
-                    borderRadius: tokens.radius.md,
-                    border: `2px solid ${mode === m.mode ? tokens.color.primary : tokens.color.border}`,
-                    background: mode === m.mode ? tokens.color.primary : tokens.color.surface,
-                    color: mode === m.mode ? tokens.color.textOnPrimary : tokens.color.textPrimary,
-                    cursor: 'pointer',
-                    fontWeight: 600,
-                  }}
-                >
-                  {m.label}
-                </button>
-              ))}
+              {MODES.map((m) => {
+                const disabledByOffline = isOffline && m.mode !== 'training';
+                return (
+                  <button
+                    key={m.mode}
+                    type="button"
+                    aria-pressed={mode === m.mode}
+                    disabled={disabledByOffline}
+                    onClick={() => handleModeChange(m.mode)}
+                    style={{
+                      padding: `${tokens.spacing.sm}px ${tokens.spacing.md}px`,
+                      borderRadius: tokens.radius.md,
+                      border: `2px solid ${mode === m.mode ? tokens.color.primary : tokens.color.border}`,
+                      background: mode === m.mode ? tokens.color.primary : tokens.color.surface,
+                      color:
+                        mode === m.mode ? tokens.color.textOnPrimary : tokens.color.textPrimary,
+                      cursor: disabledByOffline ? 'not-allowed' : 'pointer',
+                      fontWeight: 600,
+                      opacity: disabledByOffline ? 0.5 : 1,
+                    }}
+                  >
+                    {m.label}
+                    {disabledByOffline ? ' (offline)' : ''}
+                  </button>
+                );
+              })}
             </div>
           </section>
 

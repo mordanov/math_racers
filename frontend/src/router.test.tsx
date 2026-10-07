@@ -41,6 +41,10 @@ vi.mock('./features/statistics/parentApi', () => ({
     }),
 }));
 
+vi.mock('./shared/hooks/useAudioManager', () => ({
+  useAudioManager: () => ({ playMusic: vi.fn(), stopMusic: vi.fn() }),
+}));
+
 vi.mock('./infrastructure/auth/AuthContext', () => ({
   useAuth: () => ({
     isAuthenticated: true,
