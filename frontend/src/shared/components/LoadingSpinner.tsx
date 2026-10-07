@@ -18,15 +18,8 @@ export function LoadingSpinner({ message }: LoadingSpinnerProps) {
         padding: tokens.spacing.xl,
       }}
     >
-      <img
-        src="/loading.png"
-        alt=""
-        aria-hidden="true"
-        style={{ width: 120, height: 'auto' }}
-      />
-      {message && (
-        <p style={{ color: tokens.color.textSecondary, margin: 0 }}>{message}</p>
-      )}
+      <img src="/loading.png" alt="" aria-hidden="true" style={{ width: 120, height: 'auto' }} />
+      {message && <p style={{ color: tokens.color.textSecondary, margin: 0 }}>{message}</p>}
     </div>
   );
 }
