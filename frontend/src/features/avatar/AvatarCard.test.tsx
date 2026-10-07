@@ -89,6 +89,123 @@ describe('AvatarCard', () => {
     expect(screen.getByText(longName.slice(0, 24) + '…')).toBeInTheDocument();
   });
 
+  it('does not render favourite star when onFavourite is absent', () => {
+    render(<AvatarCard avatar={published} />);
+    expect(screen.queryByRole('button', { name: /favourites/i })).toBeNull();
+  });
+});
+
+describe('AvatarCard — favourite', () => {
+  it('renders favourite star when onFavourite is provided', () => {
+    render(<AvatarCard avatar={published} onFavourite={vi.fn()} />);
+    expect(screen.getByRole('button', { name: /add to favourites/i })).toBeInTheDocument();
+  });
+
+  it('shows remove label when is_favourite is true', () => {
+    render(<AvatarCard avatar={{ ...published, is_favourite: true }} onFavourite={vi.fn()} />);
+    expect(screen.getByRole('button', { name: /remove from favourites/i })).toBeInTheDocument();
+  });
+
+  it('calls onFavourite with flipped value on star click', async () => {
+    const onFavourite = vi.fn();
+    const user = userEvent.setup();
+    render(<AvatarCard avatar={published} onFavourite={onFavourite} />);
+    await user.click(screen.getByRole('button', { name: /add to favourites/i }));
+    expect(onFavourite).toHaveBeenCalledWith('a1', true);
+  });
+});
+
+describe('AvatarCard — manage menu', () => {
+  it('renders manage button when any manage callback is provided', () => {
+    render(<AvatarCard avatar={published} onDelete={vi.fn()} />);
+    expect(screen.getByRole('button', { name: /manage avatar/i })).toBeInTheDocument();
+  });
+
+  it('clicking manage button shows rename/regenerate/delete actions', async () => {
+    const user = userEvent.setup();
+    render(
+      <AvatarCard avatar={published} onRename={vi.fn()} onRegenerate={vi.fn()} onDelete={vi.fn()} />,
+    );
+    await user.click(screen.getByRole('button', { name: /manage avatar/i }));
+    expect(screen.getByRole('menuitem', { name: /rename/i })).toBeInTheDocument();
+    expect(screen.getByRole('menuitem', { name: /regenerate/i })).toBeInTheDocument();
+    expect(screen.getByRole('menuitem', { name: /delete/i })).toBeInTheDocument();
+  });
+
+  it('clicking Rename enters inline edit mode', async () => {
+    const user = userEvent.setup();
+    render(<AvatarCard avatar={published} onRename={vi.fn()} />);
+    await user.click(screen.getByRole('button', { name: /manage avatar/i }));
+    await user.click(screen.getByRole('menuitem', { name: /rename/i }));
+    expect(screen.getByRole('textbox', { name: /rename avatar/i })).toBeInTheDocument();
+  });
+
+  it('Save button is disabled when rename input is empty (Review Focus #2)', async () => {
+    const user = userEvent.setup();
+    render(<AvatarCard avatar={published} onRename={vi.fn()} />);
+    await user.click(screen.getByRole('button', { name: /manage avatar/i }));
+    await user.click(screen.getByRole('menuitem', { name: /rename/i }));
+    const input = screen.getByRole('textbox', { name: /rename avatar/i });
+    await user.clear(input);
+    expect(screen.getByRole('button', { name: /save/i })).toBeDisabled();
+  });
+
+  it('long name trimmed before onRename call (Review Focus #5)', async () => {
+    const onRename = vi.fn();
+    const user = userEvent.setup();
+    render(<AvatarCard avatar={published} onRename={onRename} />);
+    await user.click(screen.getByRole('button', { name: /manage avatar/i }));
+    await user.click(screen.getByRole('menuitem', { name: /rename/i }));
+    const input = screen.getByRole('textbox', { name: /rename avatar/i });
+    await user.clear(input);
+    await user.type(input, '  Padded  ');
+    await user.click(screen.getByRole('button', { name: /save/i }));
+    expect(onRename).toHaveBeenCalledWith('a1', 'Padded');
+  });
+
+  it('Escape cancels rename without calling onRename', async () => {
+    const onRename = vi.fn();
+    const user = userEvent.setup();
+    render(<AvatarCard avatar={published} onRename={onRename} />);
+    await user.click(screen.getByRole('button', { name: /manage avatar/i }));
+    await user.click(screen.getByRole('menuitem', { name: /rename/i }));
+    const input = screen.getByRole('textbox', { name: /rename avatar/i });
+    await user.clear(input);
+    await user.type(input, 'NewName');
+    await user.keyboard('{Escape}');
+    expect(onRename).not.toHaveBeenCalled();
+    expect(screen.queryByRole('textbox')).toBeNull();
+  });
+
+  it('clicking Delete opens ConfirmDialog', async () => {
+    const user = userEvent.setup();
+    render(<AvatarCard avatar={published} onDelete={vi.fn()} />);
+    await user.click(screen.getByRole('button', { name: /manage avatar/i }));
+    await user.click(screen.getByRole('menuitem', { name: /delete/i }));
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+  });
+
+  it('confirming delete calls onDelete with avatar_id', async () => {
+    const onDelete = vi.fn();
+    const user = userEvent.setup();
+    render(<AvatarCard avatar={published} onDelete={onDelete} />);
+    await user.click(screen.getByRole('button', { name: /manage avatar/i }));
+    await user.click(screen.getByRole('menuitem', { name: /delete/i }));
+    await user.click(screen.getByRole('button', { name: /^delete$/i }));
+    expect(onDelete).toHaveBeenCalledWith('a1');
+  });
+
+  it('clicking Regenerate calls onRegenerate with avatar_id', async () => {
+    const onRegenerate = vi.fn();
+    const user = userEvent.setup();
+    render(<AvatarCard avatar={published} onRegenerate={onRegenerate} />);
+    await user.click(screen.getByRole('button', { name: /manage avatar/i }));
+    await user.click(screen.getByRole('menuitem', { name: /regenerate/i }));
+    expect(onRegenerate).toHaveBeenCalledWith('a1');
+  });
+});
+
+describe('AvatarCard — continued', () => {
   it('uses full name (not truncated) for image alt text', () => {
     const longName = 'B'.repeat(30);
     render(
