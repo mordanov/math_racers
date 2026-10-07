@@ -70,4 +70,22 @@ describe('AvatarCard', () => {
     const btn = screen.getByRole('button');
     expect(btn).toHaveAttribute('aria-pressed', 'true');
   });
+
+  it('truncates long avatar names at 24 characters with ellipsis', () => {
+    const longName = 'A'.repeat(30);
+    render(
+      <AvatarCard
+        avatar={{
+          avatar_id: '1',
+          name: longName,
+          species: 'fox',
+          status: 'published',
+          is_favourite: false,
+          portrait: null,
+          created_at: '2024-01-01',
+        }}
+      />,
+    );
+    expect(screen.getByText(longName.slice(0, 24) + '…')).toBeInTheDocument();
+  });
 });
