@@ -7,7 +7,7 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 from app.races.schemas import ParticipantSummaryRequest, RaceSummaryRequest
-from app.statistics.models import AvatarStats, PlayerStats, RaceSession
+from app.statistics.models import PlayerStats, RaceSession
 
 pytestmark = pytest.mark.unit
 
