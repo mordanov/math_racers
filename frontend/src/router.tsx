@@ -1,6 +1,7 @@
 import { createBrowserRouter, type RouteObject } from 'react-router-dom';
 import App from './App';
 import RequireAuth from './infrastructure/auth/RequireAuth';
+import RequireParent from './infrastructure/auth/RequireParent';
 import AvatarCreatorPage from './pages/AvatarCreatorPage';
 import AvatarGalleryPage from './pages/AvatarGalleryPage';
 import ChampionshipPage from './pages/ChampionshipPage';
@@ -33,7 +34,10 @@ export const routeConfig: RouteObject[] = [
           { path: '/race/:id/results', element: <ResultsScreenPage /> },
           { path: '/statistics', element: <StatisticsPage /> },
           { path: '/settings', element: <SettingsPage /> },
-          { path: '/parent', element: <ParentDashboardPage /> },
+          {
+            element: <RequireParent />,
+            children: [{ path: '/parent', element: <ParentDashboardPage /> }],
+          },
           { path: '/championship/:id', element: <ChampionshipPage /> },
         ],
       },

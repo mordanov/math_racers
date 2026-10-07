@@ -60,6 +60,15 @@ describe('LoginPage', () => {
     expect(await screen.findByRole('alert')).toBeInTheDocument();
   });
 
+  it('renders a link to the register page', () => {
+    render(
+      <MemoryRouter>
+        <LoginPage />
+      </MemoryRouter>,
+    );
+    expect(screen.getByRole('link', { name: /register/i })).toHaveAttribute('href', '/register');
+  });
+
   it('disables submit button while login is in progress', async () => {
     mockLogin.mockReturnValue(new Promise(() => {})); // never resolves
     const user = userEvent.setup();

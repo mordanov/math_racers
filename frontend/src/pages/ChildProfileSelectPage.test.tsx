@@ -52,6 +52,16 @@ describe('ChildProfileSelectPage', () => {
     expect(mockSelectChild).toHaveBeenCalledWith('p1');
   });
 
+  it('renders page heading', async () => {
+    vi.mocked(childProfilesApi.fetchChildProfiles).mockResolvedValue([]);
+    render(
+      <MemoryRouter>
+        <ChildProfileSelectPage />
+      </MemoryRouter>,
+    );
+    expect(await screen.findByRole('heading', { name: /who's playing/i })).toBeInTheDocument();
+  });
+
   it('shows empty state when no profiles exist', async () => {
     vi.mocked(childProfilesApi.fetchChildProfiles).mockResolvedValue([]);
     render(

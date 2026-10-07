@@ -51,6 +51,15 @@ describe('RegisterPage', () => {
     expect(await screen.findByRole('alert')).toBeInTheDocument();
   });
 
+  it('renders a link to the login page', () => {
+    render(
+      <MemoryRouter>
+        <RegisterPage />
+      </MemoryRouter>,
+    );
+    expect(screen.getByRole('link', { name: /log in/i })).toHaveAttribute('href', '/login');
+  });
+
   it('disables submit button while register is in progress', async () => {
     vi.mocked(authApiModule.register).mockReturnValue(new Promise(() => {})); // never resolves
     const user = userEvent.setup();
