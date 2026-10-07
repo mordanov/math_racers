@@ -47,7 +47,7 @@ export function AvatarCard({ avatar, selected = false, onSelect }: AvatarCardPro
       ) : (
         <img
           src={avatar.portrait?.small_url}
-          alt={displayName}
+          alt={rawName}
           style={{
             width: 80,
             height: 80,

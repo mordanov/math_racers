@@ -63,4 +63,24 @@ describe('useAudioManager', () => {
     localStorage.removeItem('settings.masterVolume');
     localStorage.removeItem('settings.musicVolume');
   });
+
+  it('updates playing track volume when storage event fires', () => {
+    localStorage.setItem('settings.masterVolume', '100');
+    localStorage.setItem('settings.musicVolume', '100');
+    const { result } = renderHook(() => useAudioManager());
+    act(() => {
+      result.current.playMusic('menu');
+    });
+    expect(mockAudio.volume).toBeCloseTo(1, 2);
+
+    localStorage.setItem('settings.masterVolume', '50');
+    act(() => {
+      window.dispatchEvent(new StorageEvent('storage'));
+    });
+    // 0.5 * 1.0 = 0.5
+    expect(mockAudio.volume).toBeCloseTo(0.5, 2);
+
+    localStorage.removeItem('settings.masterVolume');
+    localStorage.removeItem('settings.musicVolume');
+  });
 });

@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 export type MusicTrack = 'menu' | 'race' | 'victory';
 
@@ -43,6 +43,14 @@ export function useAudioManager() {
     },
     [stopMusic],
   );
+
+  useEffect(() => {
+    const handler = () => {
+      if (audioRef.current) audioRef.current.volume = readVolume();
+    };
+    window.addEventListener('storage', handler);
+    return () => window.removeEventListener('storage', handler);
+  }, []);
 
   return { playMusic, stopMusic };
 }

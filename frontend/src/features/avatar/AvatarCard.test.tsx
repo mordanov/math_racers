@@ -88,4 +88,32 @@ describe('AvatarCard', () => {
     );
     expect(screen.getByText(longName.slice(0, 24) + '…')).toBeInTheDocument();
   });
+
+  it('uses full name (not truncated) for image alt text', () => {
+    const longName = 'B'.repeat(30);
+    render(
+      <AvatarCard
+        avatar={{
+          avatar_id: '2',
+          name: longName,
+          species: 'fox',
+          status: 'published',
+          is_favourite: false,
+          portrait: {
+            id: 'p1',
+            version: 1,
+            prompt_version: '1.0.0',
+            model_version: 'dall-e-3',
+            full_url: 'http://example.com/full.png',
+            medium_url: 'http://example.com/medium.png',
+            small_url: 'http://example.com/small.png',
+            thumb_url: 'http://example.com/thumb.png',
+            created_at: '2024-01-01T00:00:00Z',
+          },
+          created_at: '2024-01-01',
+        }}
+      />,
+    );
+    expect(screen.getByRole('img')).toHaveAttribute('alt', longName);
+  });
 });
