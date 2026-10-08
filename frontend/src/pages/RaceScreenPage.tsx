@@ -185,12 +185,13 @@ function RaceScreen({
       />
 
       {/* Runner track */}
-      <div style={{ marginBottom: tokens.spacing.lg }} aria-label="Race track">
+      <div role="list" style={{ marginBottom: tokens.spacing.lg }} aria-label="Race track">
         {runners.map((runner) => {
           const pct = Math.min(100, (runner.totalDistanceMetres / MAX_TRACK_DISTANCE) * 100);
           return (
             <div
               key={runner.runnerId}
+              role="listitem"
               aria-label={`${runner.isHuman ? 'You' : `CPU ${runner.runnerId.replace('ai-', '')}`}: ${runner.totalDistanceMetres}m`}
               style={{
                 display: 'flex',

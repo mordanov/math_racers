@@ -277,8 +277,8 @@ describe('RaceScreenPage — reduced motion', () => {
     vi.mocked(reduceMotionModule.useReducedMotion).mockReturnValue(false);
     vi.mocked(useRaceEngineModule.useRaceEngine).mockReturnValue(racingState);
     renderPage();
-    expect(screen.getByRole('generic', { name: 'You: 42m' })).toBeInTheDocument();
-    expect(screen.getByRole('generic', { name: 'CPU 1: 30m' })).toBeInTheDocument();
+    expect(screen.getByRole('listitem', { name: 'You: 42m' })).toBeInTheDocument();
+    expect(screen.getByRole('listitem', { name: 'CPU 1: 30m' })).toBeInTheDocument();
   });
 
   it('runner dot has no transition when useReducedMotion is true', () => {
@@ -304,5 +304,24 @@ describe('RaceScreenPage — reduced motion', () => {
     expect(absoluteDots.length).toBeGreaterThan(0);
     const hasTransition = Array.from(absoluteDots).some((dot) => dot.style.transition !== '');
     expect(hasTransition).toBe(true);
+  });
+
+  it('timer bar has no transition when useReducedMotion is true', () => {
+    vi.mocked(reduceMotionModule.useReducedMotion).mockReturnValue(true);
+    vi.mocked(useRaceEngineModule.useRaceEngine).mockReturnValue(racingState);
+    const { container } = renderPage();
+    // The timer bar inner div has height:'100%' and a width percentage — it's the only div with height:'100%'
+    const timerFill = container.querySelector<HTMLElement>('[style*="height: 100%"]');
+    expect(timerFill).not.toBeNull();
+    expect(timerFill!.style.transition).toBe('');
+  });
+
+  it('timer bar has transition when useReducedMotion is false', () => {
+    vi.mocked(reduceMotionModule.useReducedMotion).mockReturnValue(false);
+    vi.mocked(useRaceEngineModule.useRaceEngine).mockReturnValue(racingState);
+    const { container } = renderPage();
+    const timerFill = container.querySelector<HTMLElement>('[style*="height: 100%"]');
+    expect(timerFill).not.toBeNull();
+    expect(timerFill!.style.transition).toBe('width 0.1s linear');
   });
 });
