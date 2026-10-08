@@ -1,23 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import type { Achievement } from '../../engine/achievements/types';
 import type { RaceState } from '../../engine/race/types';
+import { useReducedMotion } from '../../shared/hooks/useReducedMotion';
 
 interface Props {
   achievements: Achievement[];
   raceState: RaceState;
-}
-
-function useReducedMotion(): boolean {
-  const [reduced, setReduced] = useState(
-    () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-  );
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const handler = (e: MediaQueryListEvent) => setReduced(e.matches);
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
-  }, []);
-  return reduced;
 }
 
 function playChime(): void {
