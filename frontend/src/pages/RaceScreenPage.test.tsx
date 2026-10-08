@@ -4,7 +4,10 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import RaceScreenPage from './RaceScreenPage';
 import * as useRaceEngineModule from '../engine/race/hooks/useRaceEngine';
+import * as reduceMotionModule from '../shared/hooks/useReducedMotion';
 import type { RaceEngineState } from '../engine/race/types';
+
+vi.mock('../shared/hooks/useReducedMotion');
 
 vi.mock('../engine/race/hooks/useRaceEngine');
 
@@ -75,6 +78,7 @@ describe('RaceScreenPage', () => {
   beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     vi.mocked(useRaceEngineModule.useRaceEngine).mockReturnValue(makeEngineReturn());
+    vi.mocked(reduceMotionModule.useReducedMotion).mockReturnValue(false);
   });
   afterEach(() => {
     vi.useRealTimers();
@@ -227,5 +231,97 @@ describe('RaceScreenPage', () => {
     );
     renderPage();
     await waitFor(() => expect(screen.getByText('Results')).toBeInTheDocument());
+  });
+});
+
+describe('RaceScreenPage — reduced motion', () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.clearAllMocks();
+  });
+
+  const racingState = makeEngineReturn({
+    state: 'RACING',
+    currentObstacle: 0,
+    obstacleClockMs: 5000,
+    runners: [
+      {
+        runnerId: 'player',
+        isHuman: true,
+        totalDistanceMetres: 42,
+        obstaclesCompleted: 0,
+        obstacleResults: [],
+        finishTime: null,
+      },
+      {
+        runnerId: 'ai-1',
+        isHuman: false,
+        totalDistanceMetres: 30,
+        obstaclesCompleted: 0,
+        obstacleResults: [],
+        finishTime: null,
+      },
+    ],
+    problemSet: {
+      seed: 1,
+      tier: 1 as const,
+      count: 8,
+      problems: Array.from({ length: 8 }, () => problem),
+    },
+  });
+
+  it('runner row has accessible aria-label combining identity and distance', () => {
+    vi.mocked(reduceMotionModule.useReducedMotion).mockReturnValue(false);
+    vi.mocked(useRaceEngineModule.useRaceEngine).mockReturnValue(racingState);
+    renderPage();
+    expect(screen.getByRole('listitem', { name: 'You: 42m' })).toBeInTheDocument();
+    expect(screen.getByRole('listitem', { name: 'CPU 1: 30m' })).toBeInTheDocument();
+  });
+
+  it('runner dot has no transition when useReducedMotion is true', () => {
+    vi.mocked(reduceMotionModule.useReducedMotion).mockReturnValue(true);
+    vi.mocked(useRaceEngineModule.useRaceEngine).mockReturnValue(racingState);
+    const { container } = renderPage();
+    const track = container.querySelector('[aria-label="Race track"]');
+    const absoluteDots =
+      track?.querySelectorAll<HTMLElement>('[style*="position: absolute"]') ?? [];
+    expect(absoluteDots.length).toBeGreaterThan(0);
+    absoluteDots.forEach((dot) => {
+      expect(dot.style.transition).toBe('');
+    });
+  });
+
+  it('runner dot has transition when useReducedMotion is false', () => {
+    vi.mocked(reduceMotionModule.useReducedMotion).mockReturnValue(false);
+    vi.mocked(useRaceEngineModule.useRaceEngine).mockReturnValue(racingState);
+    const { container } = renderPage();
+    const track = container.querySelector('[aria-label="Race track"]');
+    const absoluteDots =
+      track?.querySelectorAll<HTMLElement>('[style*="position: absolute"]') ?? [];
+    expect(absoluteDots.length).toBeGreaterThan(0);
+    const hasTransition = Array.from(absoluteDots).some((dot) => dot.style.transition !== '');
+    expect(hasTransition).toBe(true);
+  });
+
+  it('timer bar has no transition when useReducedMotion is true', () => {
+    vi.mocked(reduceMotionModule.useReducedMotion).mockReturnValue(true);
+    vi.mocked(useRaceEngineModule.useRaceEngine).mockReturnValue(racingState);
+    const { container } = renderPage();
+    // The timer bar inner div has height:'100%' and a width percentage — it's the only div with height:'100%'
+    const timerFill = container.querySelector<HTMLElement>('[style*="height: 100%"]');
+    expect(timerFill).not.toBeNull();
+    expect(timerFill!.style.transition).toBe('');
+  });
+
+  it('timer bar has transition when useReducedMotion is false', () => {
+    vi.mocked(reduceMotionModule.useReducedMotion).mockReturnValue(false);
+    vi.mocked(useRaceEngineModule.useRaceEngine).mockReturnValue(racingState);
+    const { container } = renderPage();
+    const timerFill = container.querySelector<HTMLElement>('[style*="height: 100%"]');
+    expect(timerFill).not.toBeNull();
+    expect(timerFill!.style.transition).toBe('width 0.1s linear');
   });
 });
