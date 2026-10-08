@@ -7,6 +7,7 @@ import type { ParticipantConfig, RaceConfig, RaceMode } from '../engine/race/typ
 import type { Tier } from '../engine/math/types';
 import { ConfirmDialog } from '../shared/components/ConfirmDialog';
 import { useAudioManager } from '../shared/hooks/useAudioManager';
+import { useReducedMotion } from '../shared/hooks/useReducedMotion';
 import tokens from '../shared/tokens';
 
 interface RaceScreenRouteState {
@@ -81,6 +82,7 @@ function RaceScreen({
   const [answerInput, setAnswerInput] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const { playMusic, stopMusic } = useAudioManager();
+  const reduced = useReducedMotion();
 
   const blocker = useBlocker(state === 'RACING');
 
@@ -189,6 +191,7 @@ function RaceScreen({
           return (
             <div
               key={runner.runnerId}
+              aria-label={`${runner.isHuman ? 'You' : `CPU ${runner.runnerId.replace('ai-', '')}`}: ${runner.totalDistanceMetres}m`}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -197,6 +200,7 @@ function RaceScreen({
               }}
             >
               <span
+                aria-hidden="true"
                 style={{
                   width: 24,
                   fontSize: 12,
@@ -227,11 +231,12 @@ function RaceScreen({
                     height: 20,
                     borderRadius: '50%',
                     background: runner.isHuman ? tokens.color.primary : tokens.color.textSecondary,
-                    transition: `left ${tokens.animation.micro} ease-out`,
+                    transition: reduced ? undefined : `left ${tokens.animation.micro} ease-out`,
                   }}
                 />
               </div>
               <span
+                aria-hidden="true"
                 style={{
                   width: 40,
                   fontSize: 12,
@@ -268,7 +273,7 @@ function RaceScreen({
                     : obstacleClockMs < 4000
                       ? tokens.color.warning
                       : tokens.color.error,
-                transition: 'width 0.1s linear',
+                transition: reduced ? undefined : 'width 0.1s linear',
               }}
             />
           </div>
