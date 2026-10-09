@@ -1,3 +1,4 @@
+import { useSfxPlayer } from '../hooks/useSfxPlayer';
 import tokens from '../tokens';
 
 interface ButtonProps {
@@ -8,6 +9,7 @@ interface ButtonProps {
   loading?: boolean;
   type?: 'button' | 'submit' | 'reset';
   'aria-label'?: string;
+  playSound?: boolean;
 }
 
 const variantStyles: Record<ButtonProps['variant'], React.CSSProperties> = {
@@ -36,8 +38,10 @@ export function Button({
   loading = false,
   type = 'button',
   'aria-label': ariaLabel,
+  playSound = false,
 }: ButtonProps) {
   const isInert = disabled || loading;
+  const { playSfx } = useSfxPlayer();
 
   const style: React.CSSProperties = {
     ...variantStyles[variant],
@@ -63,7 +67,8 @@ export function Button({
       type={type}
       style={style}
       disabled={isInert}
-      onClick={isInert ? undefined : onClick}
+      onClick={isInert ? undefined : () => { if (playSound) playSfx('ui_click'); onClick?.(); }}
+      onMouseEnter={isInert || !playSound ? undefined : () => playSfx('ui_hover')}
       aria-label={ariaLabel}
       aria-busy={loading}
       onFocus={(e) => {

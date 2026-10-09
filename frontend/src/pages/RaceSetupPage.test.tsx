@@ -5,11 +5,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as avatarApiModule from '../engine/avatar/avatarApi';
 import * as raceSessionApiModule from '../features/race/raceSessionApi';
 import * as championshipApiModule from '../engine/race/championshipApi';
+import * as sfxModule from '../shared/hooks/useSfxPlayer';
 import RaceSetupPage from './RaceSetupPage';
 
 vi.mock('../engine/avatar/avatarApi');
 vi.mock('../features/race/raceSessionApi');
 vi.mock('../engine/race/championshipApi');
+vi.mock('../shared/hooks/useSfxPlayer');
 
 const published = {
   avatar_id: 'av1',
@@ -29,6 +31,7 @@ describe('RaceSetupPage', () => {
       race_id: 'r1',
       seed: 42,
     });
+    vi.mocked(sfxModule.useSfxPlayer).mockReturnValue({ playSfx: vi.fn() });
   });
 
   function renderPage(initialPath = '/race/setup', state?: unknown) {
@@ -75,6 +78,26 @@ describe('RaceSetupPage', () => {
     await user.click(screen.getByRole('button', { name: /start race/i }));
     await waitFor(() => expect(screen.getByText('Race Screen')).toBeInTheDocument());
     expect(raceSessionApiModule.createRaceSession).toHaveBeenCalled();
+  });
+
+  it('plays ui_card_select sfx when hovering over a mode card', async () => {
+    const user = userEvent.setup();
+    const playSfx = vi.fn();
+    vi.mocked(sfxModule.useSfxPlayer).mockReturnValue({ playSfx });
+    renderPage();
+    await waitFor(() => screen.getByRole('button', { name: /quick race/i }));
+    await user.hover(screen.getByRole('button', { name: /quick race/i }));
+    expect(playSfx).toHaveBeenCalledWith('ui_card_select');
+  });
+
+  it('plays ui_avatar_select sfx when Start Race is clicked', async () => {
+    const user = userEvent.setup();
+    const playSfx = vi.fn();
+    vi.mocked(sfxModule.useSfxPlayer).mockReturnValue({ playSfx });
+    renderPage();
+    await waitFor(() => screen.getByRole('button', { name: /start race/i }));
+    await user.click(screen.getByRole('button', { name: /start race/i }));
+    expect(playSfx).toHaveBeenCalledWith('ui_avatar_select');
   });
 
   it('pre-selects championship mode when continueChampionshipId in route state', async () => {
