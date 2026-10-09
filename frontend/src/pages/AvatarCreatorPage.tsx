@@ -407,7 +407,13 @@ export default function AvatarCreatorPage() {
         src="/artwork/avatar_generation.jpeg"
         alt=""
         aria-hidden="true"
-        style={{ width: 240, borderRadius: tokens.radius.lg, objectFit: 'cover', display: 'block', margin: '0 auto' }}
+        style={{
+          width: 240,
+          borderRadius: tokens.radius.lg,
+          objectFit: 'cover',
+          display: 'block',
+          margin: '0 auto',
+        }}
       />
       {isGenerating && (
         <p style={{ color: tokens.color.textSecondary, marginTop: tokens.spacing.md }}>

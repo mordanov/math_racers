@@ -67,7 +67,14 @@ export function Button({
       type={type}
       style={style}
       disabled={isInert}
-      onClick={isInert ? undefined : () => { if (playSound) playSfx('ui_click'); onClick?.(); }}
+      onClick={
+        isInert
+          ? undefined
+          : () => {
+              if (playSound) playSfx('ui_click');
+              onClick?.();
+            }
+      }
       onMouseEnter={isInert || !playSound ? undefined : () => playSfx('ui_hover')}
       aria-label={ariaLabel}
       aria-busy={loading}

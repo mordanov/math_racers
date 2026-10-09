@@ -46,8 +46,8 @@ describe('SettingsPage', () => {
     localStorage.setItem('settings.ambienceVolume', '30');
     localStorage.setItem('settings.voiceVolume', '90');
     renderPage();
-    expect((screen.getByLabelText(/ambience volume/i) as HTMLInputElement).value).toBe('30');
-    expect((screen.getByLabelText(/voice volume/i) as HTMLInputElement).value).toBe('90');
+    expect(screen.getByLabelText<HTMLInputElement>(/ambience volume/i).value).toBe('30');
+    expect(screen.getByLabelText<HTMLInputElement>(/voice volume/i).value).toBe('90');
   });
 
   it('shows reduced motion toggle', () => {

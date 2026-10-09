@@ -42,8 +42,7 @@ export function useAudioManager() {
           'ended',
           () => {
             if (audioRef.current !== audio) return;
-            const next =
-              index + 1 < files.length ? index + 1 : track !== 'victory' ? 0 : -1;
+            const next = index + 1 < files.length ? index + 1 : track !== 'victory' ? 0 : -1;
             if (next >= 0) playAt(next);
           },
           { once: true },

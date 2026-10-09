@@ -136,6 +136,19 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
         />
       )}
 
+      <img
+        src="/artwork/achievements.png"
+        alt=""
+        aria-hidden="true"
+        style={{
+          width: '100%',
+          maxWidth: 640,
+          borderRadius: tokens.radius.lg,
+          display: 'block',
+          margin: '0 auto 12px',
+        }}
+      />
+
       {achievements.length > 0 && (
         <div
           style={{
