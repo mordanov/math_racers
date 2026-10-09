@@ -14,6 +14,7 @@ import tokens from '../shared/tokens';
 interface ResultsRouteState {
   summary: RaceSummary;
   playerAvatarId: string;
+  avatarSpecies: string;
   championshipId?: string;
   raceIndex?: number;
 }
@@ -33,7 +34,7 @@ export default function ResultsScreenPage() {
 
 function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
   const navigate = useNavigate();
-  const { summary, playerAvatarId, championshipId, raceIndex } = routeState;
+  const { summary, playerAvatarId, avatarSpecies: _avatarSpecies, championshipId, raceIndex } = routeState;
 
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('pending');
   const [achievements, setAchievements] = useState<Achievement[]>([]);

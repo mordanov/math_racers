@@ -15,6 +15,7 @@ interface RaceScreenRouteState {
   tier: Tier;
   seed: number;
   avatarId: string;
+  avatarSpecies: string;
   opponentCount: number;
   championshipId?: string;
   raceIndex: number;
@@ -115,6 +116,7 @@ function RaceScreen({
       state: {
         summary: getSummary(),
         playerAvatarId: routeState.avatarId,
+        avatarSpecies: routeState.avatarSpecies,
         championshipId: routeState.championshipId,
         raceIndex: routeState.raceIndex,
       },

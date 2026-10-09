@@ -94,6 +94,7 @@ export default function RaceSetupPage() {
           tier,
           seed: session.seed,
           avatarId: selectedAvatarId,
+          avatarSpecies: avatars.find((a) => a.avatar_id === selectedAvatarId)?.species ?? '',
           opponentCount,
           championshipId: championship_id,
           raceIndex,
