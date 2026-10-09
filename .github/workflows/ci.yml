@@ -22,6 +22,9 @@ jobs:
     services:
       postgres:
         image: postgres:16-alpine
+        credentials:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
         env:
           POSTGRES_DB: mathracers_test
           POSTGRES_USER: mathracers
@@ -36,6 +39,9 @@ jobs:
 
       redis:
         image: redis:7-alpine
+        credentials:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
         ports:
           - 6379:6379
         options: >-
@@ -45,6 +51,13 @@ jobs:
           --health-retries 5
 
     steps:
+      # ── 0. Authenticate to Docker Hub (avoids unauthenticated pull rate limit) ─
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       # ── 1. Install dependencies ──────────────────────────────────────────────
       - name: Checkout
         uses: actions/checkout@v4
