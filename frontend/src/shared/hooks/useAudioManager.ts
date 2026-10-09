@@ -3,9 +3,9 @@ import { useCallback, useEffect, useRef } from 'react';
 export type MusicTrack = 'menu' | 'race' | 'victory';
 
 const TRACK_FILES: Record<MusicTrack, string[]> = {
-  menu: ['/audio/music_menu_1.wav', '/audio/music_menu_2.wav'],
-  race: ['/audio/music_race_1.wav', '/audio/music_race_2.wav'],
-  victory: ['/audio/music_victory_1.wav', '/audio/music_victory_2.wav'],
+  menu: ['/audio/music_menu_1.ogg', '/audio/music_menu_2.ogg'],
+  race: ['/audio/music_race_1.ogg', '/audio/music_race_2.ogg'],
+  victory: ['/audio/music_victory_1.ogg', '/audio/music_victory_2.ogg'],
 };
 
 function readVolume(): number {

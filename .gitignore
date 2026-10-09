@@ -108,6 +108,9 @@ uploads/
 generated/
 assets/generated/
 *.png
+# Source audio (keep OGG/MP3 production files; WAV/FLAC sources are local only)
+assets/**/*.wav
+assets/**/*.flac
 *.jpg
 *.jpeg
 *.webp
@@ -115,6 +118,9 @@ assets/generated/
 !docs/**/*.jpg
 !public/**/*.png
 !public/**/*.jpg
+!assets/**/*.png
+!assets/**/*.jpg
+!assets/**/*.jpeg
 !public/**/*.svg
 !src/**/*.svg
 

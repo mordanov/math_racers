@@ -17,7 +17,7 @@ export function useVoicePlayer(species: Species | null) {
   const playVoice = useCallback(
     (emotion: VoiceEmotion) => {
       if (!species) return;
-      const audio = new Audio(`/characters/voice_${species}_${emotion}.wav`);
+      const audio = new Audio(`/characters/voice_${species}_${emotion}.ogg`);
       audio.volume = readVoiceVolume();
       audio.play().catch(() => {});
     },

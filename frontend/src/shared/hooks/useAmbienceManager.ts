@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef } from 'react';
 
 const AMBIENCE_FILES = {
-  baseline: '/ambience/ambience_crowd_baseline.wav',
-  cheer: '/ambience/ambience_crowd_cheer_short.wav',
-  applause: '/ambience/ambience_crowd_applause.flac',
+  baseline: '/ambience/ambience_crowd_baseline.ogg',
+  cheer: '/ambience/ambience_crowd_cheer_short.ogg',
+  applause: '/ambience/ambience_crowd_applause.ogg',
 } as const;
 
 function readAmbienceVolume(): number {
