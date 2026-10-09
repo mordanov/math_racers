@@ -5,6 +5,8 @@ const KEYS = {
   masterVolume: 'settings.masterVolume',
   musicVolume: 'settings.musicVolume',
   sfxVolume: 'settings.sfxVolume',
+  ambienceVolume: 'settings.ambienceVolume',
+  voiceVolume: 'settings.voiceVolume',
   reducedMotion: 'settings.reducedMotion',
 } as const;
 
@@ -41,6 +43,8 @@ export default function SettingsPage() {
   const [masterVolume, setMasterVolume] = useState(() => loadInt(KEYS.masterVolume, 80));
   const [musicVolume, setMusicVolume] = useState(() => loadInt(KEYS.musicVolume, 70));
   const [sfxVolume, setSfxVolume] = useState(() => loadInt(KEYS.sfxVolume, 80));
+  const [ambienceVolume, setAmbienceVolume] = useState(() => loadInt(KEYS.ambienceVolume, 60));
+  const [voiceVolume, setVoiceVolume] = useState(() => loadInt(KEYS.voiceVolume, 80));
   const [reducedMotion, setReducedMotion] = useState(() => loadBool(KEYS.reducedMotion, false));
 
   function handleVolume(key: string, setter: (v: number) => void, value: string) {
@@ -81,6 +85,18 @@ export default function SettingsPage() {
             label: 'SFX Volume',
             value: sfxVolume,
             setter: (v: string) => handleVolume(KEYS.sfxVolume, setSfxVolume, v),
+          },
+          {
+            id: 'ambience-volume',
+            label: 'Ambience Volume',
+            value: ambienceVolume,
+            setter: (v: string) => handleVolume(KEYS.ambienceVolume, setAmbienceVolume, v),
+          },
+          {
+            id: 'voice-volume',
+            label: 'Voice Volume',
+            value: voiceVolume,
+            setter: (v: string) => handleVolume(KEYS.voiceVolume, setVoiceVolume, v),
           },
         ].map(({ id, label, value, setter }) => (
           <div key={id} style={{ marginBottom: tokens.spacing.md }}>

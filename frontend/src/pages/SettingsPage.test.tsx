@@ -24,6 +24,30 @@ describe('SettingsPage', () => {
     expect(screen.getByLabelText(/master volume/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/music volume/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/sfx volume/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/ambience volume/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/voice volume/i)).toBeInTheDocument();
+  });
+
+  it('persists ambience volume change to localStorage', () => {
+    renderPage();
+    const slider = screen.getByLabelText(/ambience volume/i);
+    fireEvent.change(slider, { target: { value: '40' } });
+    expect(localStorage.getItem('settings.ambienceVolume')).toBe('40');
+  });
+
+  it('persists voice volume change to localStorage', () => {
+    renderPage();
+    const slider = screen.getByLabelText(/voice volume/i);
+    fireEvent.change(slider, { target: { value: '50' } });
+    expect(localStorage.getItem('settings.voiceVolume')).toBe('50');
+  });
+
+  it('loads ambience and voice volumes from localStorage on mount', () => {
+    localStorage.setItem('settings.ambienceVolume', '30');
+    localStorage.setItem('settings.voiceVolume', '90');
+    renderPage();
+    expect((screen.getByLabelText(/ambience volume/i) as HTMLInputElement).value).toBe('30');
+    expect((screen.getByLabelText(/voice volume/i) as HTMLInputElement).value).toBe('90');
   });
 
   it('shows reduced motion toggle', () => {
