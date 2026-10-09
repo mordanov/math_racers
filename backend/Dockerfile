@@ -1,4 +1,4 @@
-FROM python:3.12-slim AS builder
+FROM public.ecr.aws/docker/library/python:3.12-slim AS builder
 
 RUN pip install uv
 
@@ -6,7 +6,7 @@ WORKDIR /build
 COPY pyproject.toml .
 RUN uv pip install --system --no-cache -r pyproject.toml
 
-FROM python:3.12-slim AS runtime
+FROM public.ecr.aws/docker/library/python:3.12-slim AS runtime
 
 ARG VERSION=dev
 ENV VERSION=${VERSION}

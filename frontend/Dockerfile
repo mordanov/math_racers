@@ -1,4 +1,4 @@
-FROM node:20-alpine AS builder
+FROM public.ecr.aws/docker/library/node:20-alpine AS builder
 
 RUN npm install -g pnpm
 
@@ -9,7 +9,7 @@ RUN pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm build
 
-FROM nginx:1.27-alpine AS runtime
+FROM public.ecr.aws/docker/library/nginx:1.27-alpine AS runtime
 
 RUN apk upgrade --no-cache
 
