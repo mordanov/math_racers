@@ -21,10 +21,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:16-alpine
-        credentials:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+        image: public.ecr.aws/docker/library/postgres:16-alpine
         env:
           POSTGRES_DB: mathracers_test
           POSTGRES_USER: mathracers
@@ -38,10 +35,7 @@ jobs:
           --health-retries 5
 
       redis:
-        image: redis:7-alpine
-        credentials:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+        image: public.ecr.aws/docker/library/redis:7-alpine
         ports:
           - 6379:6379
         options: >-
@@ -232,7 +226,7 @@ jobs:
             -p 443:443 \
             -v "/tmp/ci-nginx-certs:/etc/nginx/certs:ro" \
             -v "/tmp/ci-nginx-conf/hsts-check.conf:/etc/nginx/conf.d/default.conf:ro" \
-            nginx:1.27-alpine
+            public.ecr.aws/docker/library/nginx:1.27-alpine
           sleep 3
           HSTS=$(curl -skI https://localhost/ | grep -i strict-transport-security || true)
           docker rm -f ci-nginx 2>/dev/null || true
