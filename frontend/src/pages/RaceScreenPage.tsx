@@ -9,6 +9,8 @@ import { ConfirmDialog } from '../shared/components/ConfirmDialog';
 import { useAudioManager } from '../shared/hooks/useAudioManager';
 import { useAmbienceManager } from '../shared/hooks/useAmbienceManager';
 import { useSfxPlayer } from '../shared/hooks/useSfxPlayer';
+import { useVoicePlayer } from '../shared/hooks/useVoicePlayer';
+import type { Species } from '../shared/hooks/useVoicePlayer';
 import { useReducedMotion } from '../shared/hooks/useReducedMotion';
 import tokens from '../shared/tokens';
 
@@ -87,6 +89,7 @@ function RaceScreen({
   const { playMusic, stopMusic } = useAudioManager();
   const { playSfx } = useSfxPlayer();
   const { triggerAmbience } = useAmbienceManager();
+  const { playVoice } = useVoicePlayer((routeState.avatarSpecies as Species) || null);
   const reduced = useReducedMotion();
 
   const blocker = useBlocker(state === 'RACING');
@@ -118,6 +121,10 @@ function RaceScreen({
   }, [state, currentObstacle]);
 
   useEffect(() => {
+    if (state === 'RACING') playVoice('thinking');
+  }, [state, currentObstacle]); // intentional: playVoice is stable ref
+
+  useEffect(() => {
     if (state === 'RESULTS') triggerAmbience('applause');
   }, [state]); // intentional: triggerAmbience is a stable ref
 
@@ -145,8 +152,10 @@ function RaceScreen({
     if (isCorrect) {
       playSfx('correct');
       triggerAmbience('cheer');
+      playVoice('happy');
     } else {
       playSfx('incorrect');
+      playVoice('surprised');
     }
     setAnswerInput('');
   }

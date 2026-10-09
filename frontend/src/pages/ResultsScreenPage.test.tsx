@@ -4,12 +4,16 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as raceApiModule from '../engine/race/raceApi';
 import * as progressionApiModule from '../features/race/progressionApi';
 import * as championshipApiModule from '../engine/race/championshipApi';
+import * as sfxModule from '../shared/hooks/useSfxPlayer';
+import * as voiceModule from '../shared/hooks/useVoicePlayer';
 import ResultsScreenPage from './ResultsScreenPage';
 import type { RaceSummary } from '../engine/race/types';
 
 vi.mock('../engine/race/raceApi');
 vi.mock('../features/race/progressionApi');
 vi.mock('../engine/race/championshipApi');
+vi.mock('../shared/hooks/useSfxPlayer');
+vi.mock('../shared/hooks/useVoicePlayer');
 
 const makeSummary = (xpEarned = 80): RaceSummary => ({
   race_id: 'r1',
@@ -63,6 +67,8 @@ describe('ResultsScreenPage', () => {
       current_level: 1,
       xp_to_next_level: 200,
     });
+    vi.mocked(sfxModule.useSfxPlayer).mockReturnValue({ playSfx: vi.fn() });
+    vi.mocked(voiceModule.useVoicePlayer).mockReturnValue({ playVoice: vi.fn() });
   });
 
   it('renders empty page when no route state', () => {
@@ -142,5 +148,25 @@ describe('ResultsScreenPage', () => {
       ),
     );
     expect(screen.getByRole('button', { name: /view championship/i })).toBeInTheDocument();
+  });
+
+  it('plays celebrating voice on mount', async () => {
+    const playVoice = vi.fn();
+    vi.mocked(voiceModule.useVoicePlayer).mockReturnValue({ playVoice });
+    renderPage({ summary: makeSummary(), playerAvatarId: 'av1', avatarSpecies: 'fox' });
+    await waitFor(() => expect(playVoice).toHaveBeenCalledWith('celebrating'));
+  });
+
+  it('plays levelup sfx when level increases after race', async () => {
+    const playSfx = vi.fn();
+    vi.mocked(sfxModule.useSfxPlayer).mockReturnValue({ playSfx });
+    vi.mocked(progressionApiModule.fetchProgression).mockResolvedValue({
+      player_id: 'p1',
+      total_xp: 400,
+      current_level: 2,
+      xp_to_next_level: 500,
+    });
+    renderPage({ summary: makeSummary(80), playerAvatarId: 'av1', avatarSpecies: 'cat' });
+    await waitFor(() => expect(playSfx).toHaveBeenCalledWith('levelup'));
   });
 });

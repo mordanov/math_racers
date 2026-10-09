@@ -7,11 +7,13 @@ import * as useRaceEngineModule from '../engine/race/hooks/useRaceEngine';
 import * as reduceMotionModule from '../shared/hooks/useReducedMotion';
 import * as sfxModule from '../shared/hooks/useSfxPlayer';
 import * as ambienceModule from '../shared/hooks/useAmbienceManager';
+import * as voiceModule from '../shared/hooks/useVoicePlayer';
 import type { RaceEngineState } from '../engine/race/types';
 
 vi.mock('../shared/hooks/useReducedMotion');
 vi.mock('../shared/hooks/useSfxPlayer');
 vi.mock('../shared/hooks/useAmbienceManager');
+vi.mock('../shared/hooks/useVoicePlayer');
 
 vi.mock('../engine/race/hooks/useRaceEngine');
 
@@ -67,10 +69,11 @@ const routeState = {
   raceIndex: 0,
 };
 
-// Default sfx/ambience mocks — override per test as needed
+// Default sfx/ambience/voice mocks — override per test as needed
 beforeEach(() => {
   vi.mocked(sfxModule.useSfxPlayer).mockReturnValue({ playSfx: vi.fn() });
   vi.mocked(ambienceModule.useAmbienceManager).mockReturnValue({ triggerAmbience: vi.fn() });
+  vi.mocked(voiceModule.useVoicePlayer).mockReturnValue({ playVoice: vi.fn() });
 });
 
 function renderPage(state: unknown = routeState) {
@@ -477,5 +480,101 @@ describe('RaceScreenPage — audio', () => {
     );
     renderPage();
     await waitFor(() => expect(triggerAmbience).toHaveBeenCalledWith('applause'));
+  });
+
+  it('plays thinking voice when new obstacle appears while RACING', () => {
+    const playVoice = vi.fn();
+    vi.mocked(voiceModule.useVoicePlayer).mockReturnValue({ playVoice });
+    vi.mocked(useRaceEngineModule.useRaceEngine).mockReturnValue(
+      makeEngineReturn({
+        state: 'RACING',
+        currentObstacle: 0,
+        obstacleClockMs: 5000,
+        runners: [
+          {
+            runnerId: 'player',
+            isHuman: true,
+            totalDistanceMetres: 0,
+            obstaclesCompleted: 0,
+            obstacleResults: [],
+            finishTime: null,
+          },
+        ],
+        problemSet: {
+          seed: 1,
+          tier: 1 as const,
+          count: 8,
+          problems: Array.from({ length: 8 }, () => problem),
+        },
+      }),
+    );
+    renderPage();
+    expect(playVoice).toHaveBeenCalledWith('thinking');
+  });
+
+  it('plays happy voice on correct answer', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const playVoice = vi.fn();
+    vi.mocked(voiceModule.useVoicePlayer).mockReturnValue({ playVoice });
+    vi.mocked(useRaceEngineModule.useRaceEngine).mockReturnValue(
+      makeEngineReturn({
+        state: 'RACING',
+        currentObstacle: 0,
+        obstacleClockMs: 5000,
+        runners: [
+          {
+            runnerId: 'player',
+            isHuman: true,
+            totalDistanceMetres: 0,
+            obstaclesCompleted: 0,
+            obstacleResults: [],
+            finishTime: null,
+          },
+        ],
+        problemSet: {
+          seed: 1,
+          tier: 1 as const,
+          count: 8,
+          problems: Array.from({ length: 8 }, () => problem),
+        },
+      }),
+    );
+    renderPage();
+    await user.type(screen.getByRole('spinbutton'), '7');
+    await user.keyboard('{Enter}');
+    expect(playVoice).toHaveBeenCalledWith('happy');
+  });
+
+  it('plays surprised voice on wrong answer', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const playVoice = vi.fn();
+    vi.mocked(voiceModule.useVoicePlayer).mockReturnValue({ playVoice });
+    vi.mocked(useRaceEngineModule.useRaceEngine).mockReturnValue(
+      makeEngineReturn({
+        state: 'RACING',
+        currentObstacle: 0,
+        obstacleClockMs: 5000,
+        runners: [
+          {
+            runnerId: 'player',
+            isHuman: true,
+            totalDistanceMetres: 0,
+            obstaclesCompleted: 0,
+            obstacleResults: [],
+            finishTime: null,
+          },
+        ],
+        problemSet: {
+          seed: 1,
+          tier: 1 as const,
+          count: 8,
+          problems: Array.from({ length: 8 }, () => problem),
+        },
+      }),
+    );
+    renderPage();
+    await user.type(screen.getByRole('spinbutton'), '5');
+    await user.keyboard('{Enter}');
+    expect(playVoice).toHaveBeenCalledWith('surprised');
   });
 });
