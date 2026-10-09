@@ -197,7 +197,7 @@ function RaceScreen({
         maxWidth: 640,
         margin: '0 auto',
         padding: tokens.spacing.xl,
-        backgroundImage: 'url(/stadium.png)',
+        backgroundImage: 'url(/artwork/stadium.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center bottom',
         backgroundRepeat: 'no-repeat',

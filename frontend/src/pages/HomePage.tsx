@@ -31,7 +31,7 @@ export default function HomePage() {
       data-testid="page-home"
       style={{
         minHeight: '100vh',
-        backgroundImage: 'url(/mainmenu.png)',
+        backgroundImage: 'url(/artwork/mainmenu.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
