@@ -43,7 +43,7 @@ describe('useAudioManager — sequential playback', () => {
     act(() => {
       result.current.playMusic('menu');
     });
-    expect(audioInstances[0].src).toBe('/audio/music_menu_1.wav');
+    expect(audioInstances[0].src).toBe('/audio/music_menu_1.ogg');
     expect(audioInstances[0].play).toHaveBeenCalledTimes(1);
   });
 
@@ -55,7 +55,7 @@ describe('useAudioManager — sequential playback', () => {
     act(() => {
       audioInstances[0]._triggerEnded();
     });
-    expect(audioInstances[1].src).toBe('/audio/music_race_2.wav');
+    expect(audioInstances[1].src).toBe('/audio/music_race_2.ogg');
     expect(audioInstances[1].play).toHaveBeenCalledTimes(1);
   });
 
@@ -70,7 +70,7 @@ describe('useAudioManager — sequential playback', () => {
     act(() => {
       audioInstances[1]._triggerEnded();
     });
-    expect(audioInstances[2].src).toBe('/audio/music_menu_1.wav');
+    expect(audioInstances[2].src).toBe('/audio/music_menu_1.ogg');
   });
 
   it('does NOT loop after second file ends for victory track', () => {

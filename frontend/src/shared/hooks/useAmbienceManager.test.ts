@@ -35,7 +35,7 @@ afterEach(() => vi.unstubAllGlobals());
 describe('useAmbienceManager', () => {
   it('starts crowd baseline looping on mount', () => {
     renderHook(() => useAmbienceManager());
-    expect(audioInstances[0].src).toBe('/ambience/ambience_crowd_baseline.wav');
+    expect(audioInstances[0].src).toBe('/ambience/ambience_crowd_baseline.ogg');
     expect(audioInstances[0].loop).toBe(true);
     expect(audioInstances[0].play).toHaveBeenCalled();
   });

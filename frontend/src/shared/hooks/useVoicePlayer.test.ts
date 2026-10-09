@@ -24,7 +24,7 @@ describe('useVoicePlayer', () => {
     act(() => {
       result.current.playVoice('happy');
     });
-    expect(audioInstances[0].src).toBe('/characters/voice_bear_happy.wav');
+    expect(audioInstances[0].src).toBe('/characters/voice_bear_happy.ogg');
     expect(audioInstances[0].play).toHaveBeenCalledTimes(1);
   });
 
@@ -33,7 +33,7 @@ describe('useVoicePlayer', () => {
     act(() => {
       result.current.playVoice('celebrating');
     });
-    expect(audioInstances[0].src).toBe('/characters/voice_rabbit_celebrating.wav');
+    expect(audioInstances[0].src).toBe('/characters/voice_rabbit_celebrating.ogg');
   });
 
   it('playVoice is a no-op when species is null', () => {
