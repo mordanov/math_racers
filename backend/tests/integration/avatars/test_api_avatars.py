@@ -141,6 +141,7 @@ def test_list_avatars_includes_created() -> None:
     assert create_resp.status_code == 201
     avatar_id = create_resp.json()["avatar_id"]
 
+    time.sleep(0.1)
     list_resp = httpx.get(
         f"{BASE_URL}/api/v1/avatars",
         headers={"Authorization": f"Bearer {token}"},
