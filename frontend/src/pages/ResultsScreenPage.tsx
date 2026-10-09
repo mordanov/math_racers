@@ -9,11 +9,15 @@ import { Button } from '../shared/components/Button';
 import { NotificationToast } from '../shared/components/NotificationToast';
 import { getBadgeUrl } from '../features/achievements/achievementBadges';
 import { useAudioManager } from '../shared/hooks/useAudioManager';
+import { useSfxPlayer } from '../shared/hooks/useSfxPlayer';
+import { useVoicePlayer } from '../shared/hooks/useVoicePlayer';
+import type { Species } from '../shared/hooks/useVoicePlayer';
 import tokens from '../shared/tokens';
 
 interface ResultsRouteState {
   summary: RaceSummary;
   playerAvatarId: string;
+  avatarSpecies: string;
   championshipId?: string;
   raceIndex?: number;
 }
@@ -33,7 +37,7 @@ export default function ResultsScreenPage() {
 
 function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
   const navigate = useNavigate();
-  const { summary, playerAvatarId, championshipId, raceIndex } = routeState;
+  const { summary, playerAvatarId, avatarSpecies, championshipId, raceIndex } = routeState;
 
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('pending');
   const [achievements, setAchievements] = useState<Achievement[]>([]);
@@ -41,6 +45,8 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
   const [currentLevel, setCurrentLevel] = useState<number | null>(null);
   const [levelBefore, setLevelBefore] = useState<number | null>(null);
   const { playMusic, stopMusic } = useAudioManager();
+  const { playSfx } = useSfxPlayer();
+  const { playVoice } = useVoicePlayer((avatarSpecies as Species) || null);
 
   const playerEntry = summary.participants.find((p) => p.avatar_id === playerAvatarId);
 
@@ -48,6 +54,10 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
     playMusic('victory');
     return () => stopMusic();
   }, []); // stable refs
+
+  useEffect(() => {
+    playVoice('celebrating');
+  }, []); // stable ref
 
   async function doSync() {
     const result = await postRaceSummary(summary);
@@ -91,6 +101,10 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
 
   const didLevelUp = currentLevel !== null && levelBefore !== null && currentLevel > levelBefore;
 
+  useEffect(() => {
+    if (didLevelUp) playSfx('levelup');
+  }, [didLevelUp]); // intentional: playSfx is stable ref
+
   return (
     <div
       data-testid="page-results-screen"
@@ -121,6 +135,19 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
           onClose={() => setToastIndex((i) => i + 1)}
         />
       )}
+
+      <img
+        src="/artwork/achievements.png"
+        alt=""
+        aria-hidden="true"
+        style={{
+          width: '100%',
+          maxWidth: 640,
+          borderRadius: tokens.radius.lg,
+          display: 'block',
+          margin: '0 auto 12px',
+        }}
+      />
 
       {achievements.length > 0 && (
         <div

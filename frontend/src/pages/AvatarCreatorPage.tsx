@@ -403,6 +403,18 @@ export default function AvatarCreatorPage() {
     <div style={{ ...containerStyle, textAlign: 'center' }}>
       <h1 style={headingStyle}>Creating Your Avatar…</h1>
       <LoadingSpinner />
+      <img
+        src="/artwork/avatar_generation.jpeg"
+        alt=""
+        aria-hidden="true"
+        style={{
+          width: 240,
+          borderRadius: tokens.radius.lg,
+          objectFit: 'cover',
+          display: 'block',
+          margin: '0 auto',
+        }}
+      />
       {isGenerating && (
         <p style={{ color: tokens.color.textSecondary, marginTop: tokens.spacing.md }}>
           Our AI artist is painting your character. This takes about 20 seconds.

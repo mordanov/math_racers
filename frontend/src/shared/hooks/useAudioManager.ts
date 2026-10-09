@@ -25,21 +25,32 @@ export function useAudioManager() {
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
+      audioRef.current = null;
     }
   }, []);
 
   const playMusic = useCallback(
     (track: MusicTrack) => {
       stopMusic();
-      const files = TRACK_FILES[track];
-      const file = files[Math.floor(Math.random() * files.length)];
-      const audio = new Audio(file);
-      audio.loop = track !== 'victory';
-      audio.volume = readVolume();
-      audioRef.current = audio;
-      audio.play().catch(() => {
-        // Autoplay blocked — silently ignore
-      });
+
+      function playAt(index: number) {
+        const files = TRACK_FILES[track];
+        const audio = new Audio(files[index]);
+        audio.volume = readVolume();
+        audioRef.current = audio;
+        audio.addEventListener(
+          'ended',
+          () => {
+            if (audioRef.current !== audio) return;
+            const next = index + 1 < files.length ? index + 1 : track !== 'victory' ? 0 : -1;
+            if (next >= 0) playAt(next);
+          },
+          { once: true },
+        );
+        audio.play().catch(() => {});
+      }
+
+      playAt(0);
     },
     [stopMusic],
   );

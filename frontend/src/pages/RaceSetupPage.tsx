@@ -9,6 +9,7 @@ import { createRaceSession } from '../features/race/raceSessionApi';
 import { Button } from '../shared/components/Button';
 import { LoadingSpinner } from '../shared/components/LoadingSpinner';
 import { useOffline } from '../shared/hooks/useOffline';
+import { useSfxPlayer } from '../shared/hooks/useSfxPlayer';
 import tokens from '../shared/tokens';
 
 interface SetupRouteState {
@@ -41,6 +42,7 @@ export default function RaceSetupPage() {
   const continueChampionshipId = routeState.continueChampionshipId;
   const continueRaceIndex = routeState.continueRaceIndex ?? 0;
   const isOffline = useOffline();
+  const { playSfx } = useSfxPlayer();
 
   useEffect(() => {
     if (isOffline) setMode('training');
@@ -68,6 +70,7 @@ export default function RaceSetupPage() {
 
   async function handleStart() {
     if (!selectedAvatarId || starting) return;
+    playSfx('ui_avatar_select');
     setStarting(true);
     try {
       let championship_id = continueChampionshipId;
@@ -94,6 +97,7 @@ export default function RaceSetupPage() {
           tier,
           seed: session.seed,
           avatarId: selectedAvatarId,
+          avatarSpecies: avatars.find((a) => a.avatar_id === selectedAvatarId)?.species ?? '',
           opponentCount,
           championshipId: championship_id,
           raceIndex,
@@ -136,6 +140,7 @@ export default function RaceSetupPage() {
                     type="button"
                     aria-pressed={mode === m.mode}
                     disabled={disabledByOffline}
+                    onMouseEnter={disabledByOffline ? undefined : () => playSfx('ui_card_select')}
                     onClick={() => handleModeChange(m.mode)}
                     style={{
                       padding: `${tokens.spacing.sm}px ${tokens.spacing.md}px`,

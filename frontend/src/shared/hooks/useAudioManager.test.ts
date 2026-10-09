@@ -1,54 +1,116 @@
 import { renderHook, act } from '@testing-library/react';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { useAudioManager } from './useAudioManager';
 
-const mockAudio = {
-  play: vi.fn().mockResolvedValue(undefined),
-  pause: vi.fn(),
-  loop: false,
-  volume: 1,
-  currentTime: 0,
-  src: '',
-};
+let audioInstances: Array<{
+  src: string;
+  volume: number;
+  currentTime: number;
+  play: ReturnType<typeof vi.fn>;
+  pause: ReturnType<typeof vi.fn>;
+  addEventListener: ReturnType<typeof vi.fn>;
+  _triggerEnded: () => void;
+}>;
 
 beforeEach(() => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  vi.spyOn(window as any, 'Audio').mockImplementation(
-    () => mockAudio as unknown as HTMLAudioElement,
+  audioInstances = [];
+  vi.stubGlobal(
+    'Audio',
+    vi.fn().mockImplementation((src: string) => {
+      let endedFn: (() => void) | null = null;
+      const inst = {
+        src,
+        volume: 0,
+        currentTime: 0,
+        play: vi.fn().mockResolvedValue(undefined),
+        pause: vi.fn(),
+        addEventListener: vi.fn().mockImplementation((ev: string, fn: () => void) => {
+          if (ev === 'ended') endedFn = fn;
+        }),
+        _triggerEnded: () => endedFn?.(),
+      };
+      audioInstances.push(inst);
+      return inst;
+    }),
   );
-  mockAudio.play.mockResolvedValue(undefined);
-  mockAudio.loop = false;
-  mockAudio.volume = 1;
-  mockAudio.currentTime = 0;
-  mockAudio.src = '';
 });
 
-describe('useAudioManager', () => {
-  it('plays music and sets loop=true for menu track', () => {
+afterEach(() => vi.unstubAllGlobals());
+
+describe('useAudioManager — sequential playback', () => {
+  it('plays first file of the track on playMusic()', () => {
     const { result } = renderHook(() => useAudioManager());
     act(() => {
       result.current.playMusic('menu');
     });
-    expect(mockAudio.play).toHaveBeenCalled();
-    expect(mockAudio.loop).toBe(true);
+    expect(audioInstances[0].src).toBe('/audio/music_menu_1.wav');
+    expect(audioInstances[0].play).toHaveBeenCalledTimes(1);
   });
 
-  it('does not loop victory music', () => {
+  it('plays second file when first ends', () => {
+    const { result } = renderHook(() => useAudioManager());
+    act(() => {
+      result.current.playMusic('race');
+    });
+    act(() => {
+      audioInstances[0]._triggerEnded();
+    });
+    expect(audioInstances[1].src).toBe('/audio/music_race_2.wav');
+    expect(audioInstances[1].play).toHaveBeenCalledTimes(1);
+  });
+
+  it('loops back to first file after second ends for non-victory tracks', () => {
+    const { result } = renderHook(() => useAudioManager());
+    act(() => {
+      result.current.playMusic('menu');
+    });
+    act(() => {
+      audioInstances[0]._triggerEnded();
+    });
+    act(() => {
+      audioInstances[1]._triggerEnded();
+    });
+    expect(audioInstances[2].src).toBe('/audio/music_menu_1.wav');
+  });
+
+  it('does NOT loop after second file ends for victory track', () => {
     const { result } = renderHook(() => useAudioManager());
     act(() => {
       result.current.playMusic('victory');
     });
-    expect(mockAudio.loop).toBe(false);
+    act(() => {
+      audioInstances[0]._triggerEnded();
+    });
+    act(() => {
+      audioInstances[1]._triggerEnded();
+    });
+    expect(audioInstances.length).toBe(2);
   });
 
-  it('stops music on stopMusic()', () => {
+  it('stopMusic() prevents the ended chain from continuing', () => {
     const { result } = renderHook(() => useAudioManager());
     act(() => {
       result.current.playMusic('race');
+    });
+    act(() => {
       result.current.stopMusic();
     });
-    expect(mockAudio.pause).toHaveBeenCalled();
-    expect(mockAudio.currentTime).toBe(0);
+    act(() => {
+      audioInstances[0]._triggerEnded();
+    });
+    expect(audioInstances.length).toBe(1);
+  });
+
+  it('stopMusic() pauses and clears currentTime', () => {
+    const { result } = renderHook(() => useAudioManager());
+    act(() => {
+      result.current.playMusic('menu');
+    });
+    act(() => {
+      result.current.stopMusic();
+    });
+    expect(audioInstances[0].pause).toHaveBeenCalled();
+    expect(audioInstances[0].currentTime).toBe(0);
   });
 
   it('applies volume from localStorage', () => {
@@ -58,8 +120,7 @@ describe('useAudioManager', () => {
     act(() => {
       result.current.playMusic('menu');
     });
-    // 0.5 * 0.8 = 0.4
-    expect(mockAudio.volume).toBeCloseTo(0.4, 2);
+    expect(audioInstances[0].volume).toBeCloseTo(0.4, 2);
     localStorage.removeItem('settings.masterVolume');
     localStorage.removeItem('settings.musicVolume');
   });
@@ -71,15 +132,11 @@ describe('useAudioManager', () => {
     act(() => {
       result.current.playMusic('menu');
     });
-    expect(mockAudio.volume).toBeCloseTo(1, 2);
-
     localStorage.setItem('settings.masterVolume', '50');
     act(() => {
       window.dispatchEvent(new StorageEvent('storage'));
     });
-    // 0.5 * 1.0 = 0.5
-    expect(mockAudio.volume).toBeCloseTo(0.5, 2);
-
+    expect(audioInstances[0].volume).toBeCloseTo(0.5, 2);
     localStorage.removeItem('settings.masterVolume');
     localStorage.removeItem('settings.musicVolume');
   });

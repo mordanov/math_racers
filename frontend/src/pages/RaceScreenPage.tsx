@@ -7,6 +7,10 @@ import type { ParticipantConfig, RaceConfig, RaceMode } from '../engine/race/typ
 import type { Tier } from '../engine/math/types';
 import { ConfirmDialog } from '../shared/components/ConfirmDialog';
 import { useAudioManager } from '../shared/hooks/useAudioManager';
+import { useAmbienceManager } from '../shared/hooks/useAmbienceManager';
+import { useSfxPlayer } from '../shared/hooks/useSfxPlayer';
+import { useVoicePlayer } from '../shared/hooks/useVoicePlayer';
+import type { Species } from '../shared/hooks/useVoicePlayer';
 import { useReducedMotion } from '../shared/hooks/useReducedMotion';
 import tokens from '../shared/tokens';
 
@@ -15,6 +19,7 @@ interface RaceScreenRouteState {
   tier: Tier;
   seed: number;
   avatarId: string;
+  avatarSpecies: string;
   opponentCount: number;
   championshipId?: string;
   raceIndex: number;
@@ -82,6 +87,9 @@ function RaceScreen({
   const [answerInput, setAnswerInput] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const { playMusic, stopMusic } = useAudioManager();
+  const { playSfx } = useSfxPlayer();
+  const { triggerAmbience } = useAmbienceManager();
+  const { playVoice } = useVoicePlayer((routeState.avatarSpecies as Species) || null);
   const reduced = useReducedMotion();
 
   const blocker = useBlocker(state === 'RACING');
@@ -98,16 +106,27 @@ function RaceScreen({
   useEffect(() => {
     if (state !== 'COUNTDOWN') return;
     if (countdownNum > 0) {
-      const t = setTimeout(() => setCountdownNum((n) => n - 1), 1000);
+      const t = setTimeout(() => {
+        setCountdownNum((n) => n - 1);
+        playSfx('countdown');
+      }, 1000);
       return () => clearTimeout(t);
     }
     const t = setTimeout(startRacing, 800);
     return () => clearTimeout(t);
-  }, [state, countdownNum, startRacing]);
+  }, [state, countdownNum, startRacing, playSfx]);
 
   useEffect(() => {
     if (state === 'RACING') inputRef.current?.focus();
   }, [state, currentObstacle]);
+
+  useEffect(() => {
+    if (state === 'RACING') playVoice('thinking');
+  }, [state, currentObstacle]); // intentional: playVoice is stable ref
+
+  useEffect(() => {
+    if (state === 'RESULTS') triggerAmbience('applause');
+  }, [state]); // intentional: triggerAmbience is a stable ref
 
   useEffect(() => {
     if (state !== 'RESULTS') return;
@@ -115,6 +134,7 @@ function RaceScreen({
       state: {
         summary: getSummary(),
         playerAvatarId: routeState.avatarId,
+        avatarSpecies: routeState.avatarSpecies,
         championshipId: routeState.championshipId,
         raceIndex: routeState.raceIndex,
       },
@@ -127,7 +147,16 @@ function RaceScreen({
     const problem = problemSet?.problems[currentObstacle];
     if (!problem) return;
     const parsed = parseInt(answerInput, 10);
-    submitAnswer({ isCorrect: !isNaN(parsed) && parsed === problem.answer });
+    const isCorrect = !isNaN(parsed) && parsed === problem.answer;
+    submitAnswer({ isCorrect });
+    if (isCorrect) {
+      playSfx('correct');
+      triggerAmbience('cheer');
+      playVoice('happy');
+    } else {
+      playSfx('incorrect');
+      playVoice('surprised');
+    }
     setAnswerInput('');
   }
 
@@ -168,7 +197,7 @@ function RaceScreen({
         maxWidth: 640,
         margin: '0 auto',
         padding: tokens.spacing.xl,
-        backgroundImage: 'url(/stadium.png)',
+        backgroundImage: 'url(/artwork/stadium.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center bottom',
         backgroundRepeat: 'no-repeat',
