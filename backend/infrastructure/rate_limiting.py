@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from typing import Protocol
+from collections.abc import Awaitable
+from typing import Any, Protocol
 
 from redis.exceptions import RedisError
 
 
 class RedisClient(Protocol):
-    async def eval(self, script: str, numkeys: int, *keys_and_args: str) -> int | str: ...
+    def eval(self, script: str, numkeys: int, *keys_and_args: Any) -> Awaitable[Any]: ...
     async def aclose(self) -> None: ...
 
 
