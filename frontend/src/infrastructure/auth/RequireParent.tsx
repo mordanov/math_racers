@@ -4,7 +4,7 @@ import { useAuth } from './AuthContext';
 
 export default function RequireParent() {
   const { account, isLoading } = useAuth();
-  if (isLoading) return <LoadingSpinner message="Loading…" />;
+  if (isLoading) return <LoadingSpinner />;
   if (account?.role !== 'parent') return <Navigate to="/" replace />;
   return <Outlet />;
 }

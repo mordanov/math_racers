@@ -4,7 +4,7 @@ import { useAuth } from './AuthContext';
 
 export default function RequireAuth() {
   const { isAuthenticated, isLoading } = useAuth();
-  if (isLoading) return <LoadingSpinner message="Loading…" />;
+  if (isLoading) return <LoadingSpinner />;
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   return <Outlet />;
 }

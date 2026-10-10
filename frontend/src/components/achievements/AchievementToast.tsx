@@ -3,6 +3,8 @@ import type { Achievement } from '../../engine/achievements/types';
 import type { RaceState } from '../../engine/race/types';
 import { useSfxPlayer } from '../../shared/hooks/useSfxPlayer';
 import { useReducedMotion } from '../../shared/hooks/useReducedMotion';
+import { useLocale } from '../../infrastructure/localization/LocaleContext';
+import { getAchievementTranslationKeys } from '../../infrastructure/localization/formatters';
 
 interface Props {
   achievements: Achievement[];
@@ -18,6 +20,7 @@ export function AchievementToast({ achievements, raceState }: Props): React.Reac
   const [animating, setAnimating] = useState(false);
   const reducedMotion = useReducedMotion();
   const { playSfx } = useSfxPlayer();
+  const { t } = useLocale();
   const draining = useRef(false);
 
   // Load new achievements into queue when they arrive
@@ -51,6 +54,9 @@ export function AchievementToast({ achievements, raceState }: Props): React.Reac
   }, [queue, raceState, reducedMotion]);
 
   if (raceState !== 'RESULTS' || current === null) return null;
+  const translation = getAchievementTranslationKeys(current.key);
+  const title = translation ? t(translation.title) : current.title;
+  const description = translation ? t(translation.description) : current.description;
 
   return (
     <div
@@ -62,10 +68,10 @@ export function AchievementToast({ achievements, raceState }: Props): React.Reac
         className={`achievement-badge${animating && !reducedMotion ? ' achievement-badge--bounce' : ''}`}
       >
         {animating && !reducedMotion && <span className="achievement-sparkle" aria-hidden="true" />}
-        <img src={`/${current.icon_path}`} alt={current.title} className="achievement-icon" />
+        <img src={`/${current.icon_path}`} alt={title} className="achievement-icon" />
         <div className="achievement-text">
-          <span className="achievement-title">{current.title}</span>
-          <span className="achievement-description">{current.description}</span>
+          <span className="achievement-title">{title}</span>
+          <span className="achievement-description">{description}</span>
         </div>
       </div>
     </div>

@@ -1,12 +1,21 @@
 import { APIError } from '../../infrastructure/api-client';
 import tokens from '../tokens';
 import { Button } from './Button';
+import { useLocale } from '../../infrastructure/localization/LocaleContext';
+import type { TranslationKey } from '../../infrastructure/localization/catalogs';
 
-export function getChildFriendlyMessage(error: Error): string {
+export function getChildFriendlyMessage(error: Error): TranslationKey {
   if (error instanceof APIError) {
-    if (error.status === 404) return "We couldn't find that. Let's go back!";
+    const body =
+      typeof error.body === 'object' && error.body !== null
+        ? (error.body as Record<string, unknown>)
+        : {};
+    if (body.error_code === 'CSRF_ORIGIN_REJECTED') {
+      return 'This request could not be verified. Refresh the page and try again.';
+    }
+    if (error.status === 404) return 'We couldn’t find that. Let’s go back!';
     if (error.status === 401 || error.status === 403) return 'Please log in again.';
-    return "Something went wrong. Let's try again!";
+    return 'Something went wrong. Let’s try again!';
   }
   return 'Oops! Check your internet connection and try again.';
 }
@@ -17,6 +26,7 @@ interface ErrorStateProps {
 }
 
 export function ErrorState({ error, onRetry }: ErrorStateProps) {
+  const { t } = useLocale();
   const message = error ? getChildFriendlyMessage(error) : 'Something went wrong.';
 
   return (
@@ -35,10 +45,10 @@ export function ErrorState({ error, onRetry }: ErrorStateProps) {
       <span style={{ fontSize: 32 }} aria-hidden="true">
         😕
       </span>
-      <p style={{ fontSize: 18, margin: 0 }}>{message}</p>
+      <p style={{ fontSize: 18, margin: 0 }}>{t(message)}</p>
       {onRetry && (
         <Button variant="primary" onClick={onRetry}>
-          Try Again
+          {t('Try Again')}
         </Button>
       )}
     </div>

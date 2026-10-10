@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
 import { AuthProvider } from './infrastructure/auth/AuthContext';
+import { LocaleProvider } from './infrastructure/localization/LocaleContext';
 import { router } from './router';
 import './shared/animations.css';
 
@@ -10,8 +11,10 @@ if (!root) throw new Error('Root element not found');
 
 createRoot(root).render(
   <StrictMode>
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <LocaleProvider>
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
+    </LocaleProvider>
   </StrictMode>,
 );

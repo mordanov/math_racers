@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { register } from '../infrastructure/auth/authApi';
+import { useLocale } from '../infrastructure/localization/LocaleContext';
+import type { TranslationKey } from '../infrastructure/localization/catalogs';
+import { getAuthErrorMessage } from '../infrastructure/localization/authErrors';
 import { Button } from '../shared/components/Button';
 import tokens from '../shared/tokens';
 
@@ -47,11 +50,12 @@ const inputStyle: React.CSSProperties = {
 };
 
 export default function RegisterPage() {
+  const { t } = useLocale();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<TranslationKey | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -61,7 +65,7 @@ export default function RegisterPage() {
       await register(email, password);
       setSuccess(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Registration failed');
+      setError(getAuthErrorMessage(err, 'Registration could not be completed. Please try again.'));
     } finally {
       setLoading(false);
     }
@@ -75,7 +79,7 @@ export default function RegisterPage() {
             role="status"
             style={{ color: tokens.color.success, margin: 0, fontWeight: 600, textAlign: 'center' }}
           >
-            Account created. Please wait for an administrator to approve your account.
+            {t('Account created. Please wait for an administrator to approve your account.')}
           </p>
           <p
             style={{
@@ -89,7 +93,7 @@ export default function RegisterPage() {
               to="/login"
               style={{ color: tokens.color.primary, textDecoration: 'none', fontWeight: 600 }}
             >
-              Log In
+              {t('Log In')}
             </Link>
           </p>
         </div>
@@ -108,7 +112,7 @@ export default function RegisterPage() {
             fontWeight: 700,
           }}
         >
-          Register
+          {t('Register')}
         </h1>
         <form
           onSubmit={(e) => {
@@ -117,7 +121,7 @@ export default function RegisterPage() {
         >
           <div style={fieldStyle}>
             <label htmlFor="email" style={labelStyle}>
-              Email
+              {t('Email')}
             </label>
             <input
               id="email"
@@ -130,7 +134,7 @@ export default function RegisterPage() {
           </div>
           <div style={fieldStyle}>
             <label htmlFor="password" style={labelStyle}>
-              Password
+              {t('Password')}
             </label>
             <input
               id="password"
@@ -150,11 +154,11 @@ export default function RegisterPage() {
                 fontSize: 14,
               }}
             >
-              {error}
+              {t(error)}
             </p>
           )}
           <Button type="submit" variant="primary" loading={loading} disabled={loading}>
-            Register
+            {t('Register')}
           </Button>
         </form>
         <p
@@ -165,12 +169,12 @@ export default function RegisterPage() {
             fontSize: 14,
           }}
         >
-          Already have an account?{' '}
+          {t('Already have an account?')}{' '}
           <Link
             to="/login"
             style={{ color: tokens.color.primary, textDecoration: 'none', fontWeight: 600 }}
           >
-            Log In
+            {t('Log In')}
           </Link>
         </p>
       </div>

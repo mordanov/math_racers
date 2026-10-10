@@ -14,6 +14,8 @@ import { useVoicePlayer } from '../shared/hooks/useVoicePlayer';
 import type { Species } from '../shared/hooks/useVoicePlayer';
 import { useReducedMotion } from '../shared/hooks/useReducedMotion';
 import { useOffline } from '../shared/hooks/useOffline';
+import { useLocale } from '../infrastructure/localization/LocaleContext';
+import type { TranslationKey } from '../infrastructure/localization/catalogs';
 import tokens from '../shared/tokens';
 
 interface RaceScreenRouteState {
@@ -95,7 +97,7 @@ function RaceScreen({
   const [countdownNum, setCountdownNum] = useState(3);
   const [answerInput, setAnswerInput] = useState('');
   const [submittingAnswer, setSubmittingAnswer] = useState(false);
-  const [answerError, setAnswerError] = useState<string | null>(null);
+  const [answerError, setAnswerError] = useState<TranslationKey | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const { playMusic, stopMusic } = useAudioManager();
   const { playSfx } = useSfxPlayer();
@@ -103,6 +105,7 @@ function RaceScreen({
   const { playVoice } = useVoicePlayer((routeState.avatarSpecies as Species) || null);
   const reduced = useReducedMotion();
   const isOffline = useOffline();
+  const { t } = useLocale();
 
   const blocker = useBlocker(state === 'RACING' && config.mode !== 'training');
 
@@ -184,7 +187,7 @@ function RaceScreen({
       }
       setAnswerInput('');
     } catch (error) {
-      setAnswerError(error instanceof Error ? error.message : 'The answer could not be saved.');
+      setAnswerError('The answer could not be saved.');
     } finally {
       setSubmittingAnswer(false);
     }
@@ -214,7 +217,7 @@ function RaceScreen({
             lineHeight: 1,
           }}
         >
-          {state === 'COUNTDOWN' ? (countdownNum > 0 ? String(countdownNum) : 'GO!') : '…'}
+          {state === 'COUNTDOWN' ? (countdownNum > 0 ? String(countdownNum) : t('GO!')) : '…'}
         </div>
       </div>
     );
@@ -236,23 +239,28 @@ function RaceScreen({
     >
       <ConfirmDialog
         open={blocker.state === 'blocked'}
-        title="Leave Race?"
-        message="Your progress will be lost if you leave now."
-        confirmLabel="Leave"
+        title={t('Leave Race?')}
+        message={t('Your progress will be lost if you leave now.')}
+        confirmLabel={t('Leave')}
         onConfirm={() => blocker.proceed?.()}
         onClose={() => blocker.reset?.()}
       />
 
       {/* Runner track */}
       {config.mode !== 'training' && (
-        <div role="list" style={{ marginBottom: tokens.spacing.lg }} aria-label="Race track">
+        <div role="list" style={{ marginBottom: tokens.spacing.lg }} aria-label={t('Race track')}>
           {runners.map((runner) => {
             const pct = Math.min(100, (runner.totalDistanceMetres / MAX_TRACK_DISTANCE) * 100);
             return (
               <div
                 key={runner.runnerId}
                 role="listitem"
-                aria-label={`${runner.isHuman ? 'You' : `CPU ${runner.runnerId.replace('ai-', '')}`}: ${runner.totalDistanceMetres}m`}
+                aria-label={t('{{runner}}: {{distance}}m', {
+                  runner: runner.isHuman
+                    ? t('You')
+                    : t('CPU {{number}}', { number: runner.runnerId.replace('ai-', '') }),
+                  distance: runner.totalDistanceMetres,
+                })}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -369,7 +377,11 @@ function RaceScreen({
           <input
             ref={inputRef}
             type="number"
-            aria-label={`What is ${problem.operand_a} ${OP_SYMBOL[problem.operation] ?? '?'} ${problem.operand_b}?`}
+            aria-label={t('What is {{first}} {{operator}} {{second}}?', {
+              first: problem.operand_a,
+              operator: OP_SYMBOL[problem.operation] ?? '?',
+              second: problem.operand_b,
+            })}
             value={answerInput}
             onChange={(e) => setAnswerInput(e.target.value)}
             onKeyDown={(e) => {
@@ -401,10 +413,10 @@ function RaceScreen({
                 minHeight: tokens.touchTarget,
               }}
             >
-              Submit
+              {t('Submit')}
             </button>
           </div>
-          {answerError && <p role="alert">{answerError}</p>}
+          {answerError && <p role="alert">{t(answerError)}</p>}
           <p
             style={{
               color: tokens.color.textSecondary,
@@ -413,8 +425,11 @@ function RaceScreen({
             }}
           >
             {config.mode === 'training'
-              ? `Problems answered: ${currentObstacle}`
-              : `Obstacle ${currentObstacle + 1} of ${OBSTACLE_COUNT}`}
+              ? t('Problems answered: {{count}}', { count: currentObstacle })
+              : t('Obstacle {{current}} of {{total}}', {
+                  current: currentObstacle + 1,
+                  total: OBSTACLE_COUNT,
+                })}
           </p>
         </div>
       )}
@@ -437,7 +452,7 @@ function RaceScreen({
             fontSize: 14,
           }}
         >
-          {config.mode === 'training' ? 'Finish Training' : 'Leave Race'}
+          {config.mode === 'training' ? t('Finish Training') : t('Leave Race')}
         </button>
       )}
     </div>

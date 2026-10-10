@@ -3,11 +3,13 @@ import { postRaceSummary } from '../../engine/race/raceApi';
 import { useAuth } from '../auth/AuthContext';
 import { listPendingTrainingResults, removePendingTrainingResult } from './offlineStore';
 import tokens from '../../shared/tokens';
+import { useLocale } from '../localization/LocaleContext';
 
 type SyncState = 'idle' | 'syncing' | 'synced' | 'error';
 
 export default function OfflineResultSync() {
   const { activeChildId } = useAuth();
+  const { t } = useLocale();
   const [state, setState] = useState<SyncState>('idle');
   const isSyncing = useRef(false);
 
@@ -56,13 +58,13 @@ export default function OfflineResultSync() {
         color: state === 'error' ? tokens.color.error : tokens.color.textPrimary,
       }}
     >
-      {state === 'syncing' && 'Syncing saved Training results…'}
-      {state === 'synced' && 'Saved Training results are synced.'}
+      {state === 'syncing' && t('Syncing saved Training results…')}
+      {state === 'synced' && t('Saved Training results are synced.')}
       {state === 'error' && (
         <>
-          Training results could not sync. They remain saved on this device.{' '}
+          {t('Training results could not sync. They remain saved on this device.')}{' '}
           <button type="button" onClick={() => void sync()}>
-            Retry
+            {t('Retry')}
           </button>
         </>
       )}

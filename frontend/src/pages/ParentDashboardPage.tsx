@@ -14,9 +14,15 @@ import {
   type WeeklySummary,
 } from '../features/statistics/statisticsApi';
 import { useAuth } from '../infrastructure/auth/AuthContext';
+import { useLocale } from '../infrastructure/localization/LocaleContext';
+import type { TranslationKey, TranslationValues } from '../infrastructure/localization/catalogs';
 import { deleteCachedChildData, getCachedChildData } from '../infrastructure/offline/offlineStore';
 import { Button } from '../shared/components/Button';
 import { useOffline } from '../shared/hooks/useOffline';
+import {
+  translateLegacyRecordType,
+  translateOperation,
+} from '../infrastructure/localization/formatters';
 import tokens from '../shared/tokens';
 
 function fmtPct(value: number | null): string {
@@ -26,6 +32,7 @@ function fmtPct(value: number | null): string {
 
 export default function ParentDashboardPage() {
   const navigate = useNavigate();
+  const { t } = useLocale();
   const isOffline = useOffline();
   const { activeChildId, selectChild } = useAuth();
   const [summary, setSummary] = useState<WeeklySummary | null>(null);
@@ -33,8 +40,11 @@ export default function ParentDashboardPage() {
   const [cachedStats, setCachedStats] = useState<PlayerStats | null>(null);
   const [legacyRecords, setLegacyRecords] = useState<LegacyRecord[]>([]);
   const [selectedLegacyKeys, setSelectedLegacyKeys] = useState<string[]>([]);
-  const [childActionMessage, setChildActionMessage] = useState<string | null>(null);
-  const [childActionError, setChildActionError] = useState<string | null>(null);
+  const [childActionMessage, setChildActionMessage] = useState<{
+    key: TranslationKey;
+    values?: TranslationValues;
+  } | null>(null);
+  const [childActionError, setChildActionError] = useState<TranslationKey | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -100,7 +110,10 @@ export default function ParentDashboardPage() {
       const response = await assignLegacyData(activeChildId, assignments);
       setSelectedLegacyKeys([]);
       setLegacyRecords(await listLegacyData(activeChildId));
-      setChildActionMessage(`${response.assigned} records assigned to this child.`);
+      setChildActionMessage({
+        key: '{{count}} records assigned to this child.',
+        values: { count: response.assigned },
+      });
       setChildActionError(null);
     } catch {
       setChildActionError('Could not assign the selected records. Refresh and try again.');
@@ -126,7 +139,7 @@ export default function ParentDashboardPage() {
   }
 
   async function deleteSelectedChild(): Promise<void> {
-    if (!activeChildId || !window.confirm('Delete this child profile and all its data?')) return;
+    if (!activeChildId || !window.confirm(t('Delete this child profile and all its data?'))) return;
     const childProfileId = activeChildId;
     try {
       await deleteChildProfile(childProfileId);
@@ -160,21 +173,29 @@ export default function ParentDashboardPage() {
           textAlign: 'center',
         }}
       >
-        <p style={{ fontSize: 20, color: tokens.color.textPrimary }}>You are offline.</p>
+        <p style={{ fontSize: 20, color: tokens.color.textPrimary }}>{t('You are offline.')}</p>
         {cachedStats ? (
-          <section aria-label="Saved progress">
-            <h2>Last saved progress</h2>
-            <p>{cachedStats.total_races} races completed</p>
-            <p>{cachedStats.total_problems_solved} problems answered</p>
-            <p>Accuracy: {fmtPct(cachedStats.accuracy_all_time)}</p>
-            <p>Favourite operation: {cachedStats.favourite_operation ?? '—'}</p>
+          <section aria-label={t('Saved progress')}>
+            <h2>{t('Last saved progress')}</h2>
+            <p>{t('{{races}} races completed', { races: cachedStats.total_races })}</p>
+            <p>
+              {t('{{problems}} problems answered', { problems: cachedStats.total_problems_solved })}
+            </p>
+            <p>
+              {t('Accuracy: {{accuracy}}', { accuracy: fmtPct(cachedStats.accuracy_all_time) })}
+            </p>
+            <p>
+              {t('Favourite operation: {{operation}}', {
+                operation: translateOperation(cachedStats.favourite_operation, t),
+              })}
+            </p>
           </section>
         ) : (
-          <p role="status">No saved progress is available for this child.</p>
+          <p role="status">{t('No saved progress is available for this child.')}</p>
         )}
-        {error && <p role="alert">Could not load saved progress.</p>}
+        {error && <p role="alert">{t('Could not load saved progress.')}</p>}
         <Button variant="secondary" onClick={() => void navigate(-1)}>
-          Go Back
+          {t('Go Back')}
         </Button>
       </div>
     );
@@ -186,16 +207,16 @@ export default function ParentDashboardPage() {
       style={{ maxWidth: 700, margin: '0 auto', padding: tokens.spacing.xl }}
     >
       <h1 style={{ fontSize: 28, fontWeight: 900, marginBottom: tokens.spacing.lg }}>
-        Parent Dashboard
+        {t('Parent Dashboard')}
       </h1>
 
-      {loading && <p>Loading…</p>}
-      {error && <p>Failed to load data. Please try again.</p>}
+      {loading && <p>{t('Loading…')}</p>}
+      {error && <p>{t('Failed to load data. Please try again.')}</p>}
 
       {summary && (
-        <section aria-label="This week" style={{ marginBottom: tokens.spacing.xl }}>
+        <section aria-label={t('This Week')} style={{ marginBottom: tokens.spacing.xl }}>
           <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: tokens.spacing.md }}>
-            This Week
+            {t('This Week')}
           </h2>
           <div
             style={{
@@ -206,27 +227,40 @@ export default function ParentDashboardPage() {
             }}
           >
             <p>
-              <strong>{summary.races_completed} races</strong> completed
+              <strong>{t('{{races}} races', { races: summary.races_completed })}</strong>{' '}
+              {t('completed')}
             </p>
             <p>
-              {summary.problems_solved} problems solved ({summary.correct_answers} correct)
+              {t('{{solved}} problems solved ({{correct}} correct)', {
+                solved: summary.problems_solved,
+                correct: summary.correct_answers,
+              })}
             </p>
-            <p>Accuracy: {fmtPct(summary.accuracy)}</p>
-            <p>Strongest operation: {summary.strongest_operation ?? '—'}</p>
-            <p>Weakest operation: {summary.weakest_operation ?? '—'}</p>
+            <p>{t('Accuracy: {{accuracy}}', { accuracy: fmtPct(summary.accuracy) })}</p>
             <p>
-              Avg response:{' '}
-              {summary.avg_response_ms !== null ? `${summary.avg_response_ms} ms` : '—'}
+              {t('Strongest operation: {{operation}}', {
+                operation: translateOperation(summary.strongest_operation, t),
+              })}
             </p>
-            <p>XP earned: {summary.xp_earned}</p>
+            <p>
+              {t('Weakest operation: {{operation}}', {
+                operation: translateOperation(summary.weakest_operation, t),
+              })}
+            </p>
+            <p>
+              {t('Avg response: {{duration}} ms', {
+                duration: summary.avg_response_ms !== null ? summary.avg_response_ms : '—',
+              })}
+            </p>
+            <p>{t('XP earned: {{xp}}', { xp: summary.xp_earned })}</p>
           </div>
         </section>
       )}
 
       {records && (
-        <section aria-label="All-time records" style={{ marginBottom: tokens.spacing.xl }}>
+        <section aria-label={t('All-Time Records')} style={{ marginBottom: tokens.spacing.xl }}>
           <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: tokens.spacing.md }}>
-            All-Time Records
+            {t('All-Time Records')}
           </h2>
           <div
             style={{
@@ -235,18 +269,20 @@ export default function ParentDashboardPage() {
               gap: tokens.spacing.md,
             }}
           >
-            {[
-              { label: 'Total Races', value: String(records.total_races) },
-              { label: 'Best Streak', value: String(records.best_streak) },
-              { label: 'Best Accuracy', value: fmtPct(records.best_race_accuracy) },
-              {
-                label: 'Fastest Avg (ms)',
-                value:
-                  records.fastest_avg_response_ms !== null
-                    ? String(records.fastest_avg_response_ms)
-                    : '—',
-              },
-            ].map(({ label, value }) => (
+            {(
+              [
+                { label: 'Total Races', value: String(records.total_races) },
+                { label: 'Best Streak', value: String(records.best_streak) },
+                { label: 'Best Accuracy', value: fmtPct(records.best_race_accuracy) },
+                {
+                  label: 'Fastest Avg (ms)',
+                  value:
+                    records.fastest_avg_response_ms !== null
+                      ? String(records.fastest_avg_response_ms)
+                      : '—',
+                },
+              ] as const
+            ).map(({ label, value }) => (
               <div
                 key={label}
                 style={{
@@ -261,7 +297,7 @@ export default function ParentDashboardPage() {
                   {value}
                 </p>
                 <p style={{ fontSize: 12, color: tokens.color.textSecondary, marginTop: 4 }}>
-                  {label}
+                  {t(label)}
                 </p>
               </div>
             ))}
@@ -269,16 +305,16 @@ export default function ParentDashboardPage() {
         </section>
       )}
 
-      <section aria-label="Child data management" style={{ marginBottom: tokens.spacing.xl }}>
+      <section aria-label={t('Child data management')} style={{ marginBottom: tokens.spacing.xl }}>
         <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: tokens.spacing.md }}>
-          Child Data
+          {t('Child Data')}
         </h2>
         {activeChildId ? (
           <>
-            <p>Unassigned records are not visible to this child until you assign them.</p>
+            <p>{t('Unassigned records are not visible to this child until you assign them.')}</p>
             {legacyRecords.length > 0 ? (
               <fieldset>
-                <legend>Unassigned records</legend>
+                <legend>{t('Unassigned records')}</legend>
                 {legacyRecords.map((item) => {
                   const key = `${item.record_type}:${item.record_id}`;
                   return (
@@ -288,7 +324,7 @@ export default function ParentDashboardPage() {
                         checked={selectedLegacyKeys.includes(key)}
                         onChange={(event) => toggleLegacyRecord(key, event.target.checked)}
                       />{' '}
-                      {item.record_type}: {item.label}
+                      {translateLegacyRecordType(item.record_type, t)}: {item.label}
                     </label>
                   );
                 })}
@@ -297,30 +333,34 @@ export default function ParentDashboardPage() {
                   disabled={selectedLegacyKeys.length === 0}
                   onClick={() => void assignSelectedRecords()}
                 >
-                  Assign selected data
+                  {t('Assign selected data')}
                 </Button>
               </fieldset>
             ) : (
-              <p>No unassigned records.</p>
+              <p>{t('No unassigned records.')}</p>
             )}
             <div style={{ display: 'flex', gap: tokens.spacing.md, flexWrap: 'wrap' }}>
               <Button variant="secondary" onClick={() => void downloadChildData()}>
-                Export child data
+                {t('Export child data')}
               </Button>
               <Button variant="secondary" onClick={() => void deleteSelectedChild()}>
-                Delete child profile and data
+                {t('Delete child profile and data')}
               </Button>
             </div>
           </>
         ) : (
-          <p>Select a child profile to manage child data.</p>
+          <p>{t('Select a child profile to manage child data.')}</p>
         )}
-        {childActionMessage && <p role="status">{childActionMessage}</p>}
-        {childActionError && <p role="alert">{childActionError}</p>}
+        {childActionMessage && (
+          <p role="status">{t(childActionMessage.key, childActionMessage.values)}</p>
+        )}
+        {childActionError && <p role="alert">{t(childActionError)}</p>}
       </section>
 
-      <section aria-label="Data export">
-        <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: tokens.spacing.md }}>Export</h2>
+      <section aria-label={t('Data export')}>
+        <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: tokens.spacing.md }}>
+          {t('Export')}
+        </h2>
         <a
           href="/api/v1/players/me/export"
           download="statistics.csv"
@@ -336,7 +376,7 @@ export default function ParentDashboardPage() {
             lineHeight: `${tokens.touchTarget}px`,
           }}
         >
-          Export race history (CSV)
+          {t('Export race history (CSV)')}
         </a>
       </section>
     </div>

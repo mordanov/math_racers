@@ -129,7 +129,9 @@ describe('ResultsScreenPage', () => {
       ],
     });
     renderPage({ summary: makeSummary(), playerAvatarId: 'av1' });
-    await waitFor(() => expect(screen.getByText(/achievement: first steps/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/achievement: off to the races!/i)).toBeInTheDocument(),
+    );
   });
 
   it('shows retry button with role=alert when sync fails', async () => {

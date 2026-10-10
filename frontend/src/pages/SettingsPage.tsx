@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import tokens from '../shared/tokens';
+import { useLocale } from '../infrastructure/localization/LocaleContext';
 
 const KEYS = {
   masterVolume: 'settings.masterVolume',
@@ -40,6 +41,7 @@ function saveKey(key: string, value: string): void {
 }
 
 export default function SettingsPage() {
+  const { t } = useLocale();
   const [masterVolume, setMasterVolume] = useState(() => loadInt(KEYS.masterVolume, 80));
   const [musicVolume, setMusicVolume] = useState(() => loadInt(KEYS.musicVolume, 70));
   const [sfxVolume, setSfxVolume] = useState(() => loadInt(KEYS.sfxVolume, 80));
@@ -63,38 +65,42 @@ export default function SettingsPage() {
       data-testid="page-settings"
       style={{ maxWidth: 500, margin: '0 auto', padding: tokens.spacing.xl }}
     >
-      <h1 style={{ fontSize: 28, fontWeight: 900, marginBottom: tokens.spacing.lg }}>Settings</h1>
+      <h1 style={{ fontSize: 28, fontWeight: 900, marginBottom: tokens.spacing.lg }}>
+        {t('Settings')}
+      </h1>
 
-      <section aria-label="Audio settings" style={{ marginBottom: tokens.spacing.xl }}>
-        <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: tokens.spacing.md }}>Audio</h2>
+      <section aria-label={t('Audio settings')} style={{ marginBottom: tokens.spacing.xl }}>
+        <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: tokens.spacing.md }}>
+          {t('Audio')}
+        </h2>
         {[
           {
             id: 'master-volume',
-            label: 'Master Volume',
+            label: t('Master Volume'),
             value: masterVolume,
             setter: (v: string) => handleVolume(KEYS.masterVolume, setMasterVolume, v),
           },
           {
             id: 'music-volume',
-            label: 'Music Volume',
+            label: t('Music Volume'),
             value: musicVolume,
             setter: (v: string) => handleVolume(KEYS.musicVolume, setMusicVolume, v),
           },
           {
             id: 'sfx-volume',
-            label: 'SFX Volume',
+            label: t('SFX Volume'),
             value: sfxVolume,
             setter: (v: string) => handleVolume(KEYS.sfxVolume, setSfxVolume, v),
           },
           {
             id: 'ambience-volume',
-            label: 'Ambience Volume',
+            label: t('Ambience Volume'),
             value: ambienceVolume,
             setter: (v: string) => handleVolume(KEYS.ambienceVolume, setAmbienceVolume, v),
           },
           {
             id: 'voice-volume',
-            label: 'Voice Volume',
+            label: t('Voice Volume'),
             value: voiceVolume,
             setter: (v: string) => handleVolume(KEYS.voiceVolume, setVoiceVolume, v),
           },
@@ -124,9 +130,9 @@ export default function SettingsPage() {
         ))}
       </section>
 
-      <section aria-label="Accessibility settings">
+      <section aria-label={t('Accessibility settings')}>
         <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: tokens.spacing.md }}>
-          Accessibility
+          {t('Accessibility')}
         </h2>
         <label
           style={{
@@ -138,11 +144,11 @@ export default function SettingsPage() {
         >
           <input
             type="checkbox"
-            aria-label="Reduce motion"
+            aria-label={t('Reduce motion')}
             checked={reducedMotion}
             onChange={(e) => handleReducedMotion(e.target.checked)}
           />
-          <span>Reduce motion</span>
+          <span>{t('Reduce motion')}</span>
         </label>
       </section>
     </div>

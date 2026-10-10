@@ -110,7 +110,7 @@ describe('AvatarGalleryPage — mutations', () => {
       </MemoryRouter>,
     );
     await user.click(await screen.findByRole('button', { name: /add to favourites/i }));
-    expect(await screen.findByRole('alert', { name: /mutation error/i })).toBeInTheDocument();
+    expect(await screen.findByRole('alert', { name: /avatar update error/i })).toBeInTheDocument();
   });
 
   it('mutation error banner has a dismiss button that clears it', async () => {
@@ -123,8 +123,8 @@ describe('AvatarGalleryPage — mutations', () => {
       </MemoryRouter>,
     );
     await user.click(await screen.findByRole('button', { name: /add to favourites/i }));
-    const banner = await screen.findByRole('alert', { name: /mutation error/i });
+    const banner = await screen.findByRole('alert', { name: /avatar update error/i });
     await user.click(within(banner).getByRole('button', { name: /dismiss/i }));
-    expect(screen.queryByRole('alert', { name: /mutation error/i })).toBeNull();
+    expect(screen.queryByRole('alert', { name: /avatar update error/i })).toBeNull();
   });
 });

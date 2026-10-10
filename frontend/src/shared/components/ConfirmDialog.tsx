@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react';
 import tokens from '../tokens';
 import { Button } from './Button';
+import { useLocale } from '../../infrastructure/localization/LocaleContext';
+import { LanguageSwitcher } from './LanguageSwitcher';
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -16,11 +18,12 @@ export function ConfirmDialog({
   open,
   title,
   message,
-  confirmLabel = 'Confirm',
-  cancelLabel = 'Cancel',
+  confirmLabel,
+  cancelLabel,
   onConfirm,
   onClose,
 }: ConfirmDialogProps) {
+  const { t } = useLocale();
   const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -88,6 +91,15 @@ export function ConfirmDialog({
         }}
         onClick={(e) => e.stopPropagation()}
       >
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            marginBottom: tokens.spacing.md,
+          }}
+        >
+          <LanguageSwitcher />
+        </div>
         <h2
           id="confirm-title"
           style={{
@@ -103,10 +115,10 @@ export function ConfirmDialog({
         </p>
         <div style={{ display: 'flex', gap: tokens.spacing.sm, justifyContent: 'flex-end' }}>
           <Button variant="ghost" onClick={onClose}>
-            {cancelLabel}
+            {cancelLabel ?? t('Cancel')}
           </Button>
           <Button variant="primary" onClick={onConfirm}>
-            {confirmLabel}
+            {confirmLabel ?? t('Confirm')}
           </Button>
         </div>
       </div>

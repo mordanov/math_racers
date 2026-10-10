@@ -1,14 +1,16 @@
 import tokens from '../tokens';
+import { useLocale } from '../../infrastructure/localization/LocaleContext';
 
 interface LoadingSpinnerProps {
   message?: string;
 }
 
 export function LoadingSpinner({ message }: LoadingSpinnerProps) {
+  const { t } = useLocale();
   return (
     <div
       role="status"
-      aria-label={message ?? 'Loading…'}
+      aria-label={message ?? t('Loading…')}
       style={{
         display: 'flex',
         flexDirection: 'column',

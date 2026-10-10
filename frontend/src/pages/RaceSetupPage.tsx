@@ -15,6 +15,9 @@ import {
   type CachedTrainingSession,
 } from '../infrastructure/offline/offlineStore';
 import { useAuth } from '../infrastructure/auth/AuthContext';
+import { useLocale } from '../infrastructure/localization/LocaleContext';
+import type { TranslationKey } from '../infrastructure/localization/catalogs';
+import { translateAvatarSpecies } from '../infrastructure/localization/formatters';
 import { Button } from '../shared/components/Button';
 import { LoadingSpinner } from '../shared/components/LoadingSpinner';
 import { useOffline } from '../shared/hooks/useOffline';
@@ -26,7 +29,7 @@ interface SetupRouteState {
   continueRaceIndex?: number;
 }
 
-const MODES: Array<{ mode: RaceMode; label: string; defaultOpponents: number }> = [
+const MODES: Array<{ mode: RaceMode; label: TranslationKey; defaultOpponents: number }> = [
   { mode: 'quick', label: 'Quick Race', defaultOpponents: 3 },
   { mode: 'championship', label: 'Championship', defaultOpponents: 3 },
   { mode: 'training', label: 'Training', defaultOpponents: 0 },
@@ -39,6 +42,7 @@ export default function RaceSetupPage() {
   const location = useLocation();
   const routeState = (location.state ?? {}) as SetupRouteState;
   const { account, activeChildId } = useAuth();
+  const { t } = useLocale();
 
   const [avatars, setAvatars] = useState<AvatarListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -54,13 +58,13 @@ export default function RaceSetupPage() {
   });
   const [tier6SettingsSaved, setTier6SettingsSaved] = useState(false);
   const [savingTier6Settings, setSavingTier6Settings] = useState(false);
-  const [tier6SettingsError, setTier6SettingsError] = useState<string | null>(null);
+  const [tier6SettingsError, setTier6SettingsError] = useState<TranslationKey | null>(null);
   const [opponentCount, setOpponentCount] = useState(3);
   const [champRaces, setChampRaces] = useState(3);
   const [selectedAvatarId, setSelectedAvatarId] = useState<string | null>(null);
   const [starting, setStarting] = useState(false);
   const [cachedChildData, setCachedChildData] = useState<CachedChildData | null>(null);
-  const [offlineError, setOfflineError] = useState<string | null>(null);
+  const [offlineError, setOfflineError] = useState<TranslationKey | null>(null);
   const continueChampionshipId = routeState.continueChampionshipId;
   const continueRaceIndex = routeState.continueRaceIndex ?? 0;
   const isOffline = useOffline();
@@ -150,7 +154,7 @@ export default function RaceSetupPage() {
         let statistics = existing?.statistics ?? null;
         try {
           statistics = await fetchPlayerStats();
-        } catch {
+        } catch (error) {
           if (!cancelled) setOfflineError('Statistics could not be refreshed for offline use.');
         }
         const data: CachedChildData = {
@@ -168,9 +172,13 @@ export default function RaceSetupPage() {
         }
       } catch (error) {
         if (!cancelled) {
-          setOfflineError(
-            error instanceof Error ? error.message : 'Could not load saved child data.',
-          );
+          const message =
+            error instanceof Error &&
+            (error.message === 'Select a child profile before Training.' ||
+              error.message === 'No saved avatar or offline Training session is available.')
+              ? error.message
+              : 'Could not load saved child data.';
+          setOfflineError(message);
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -194,10 +202,8 @@ export default function RaceSetupPage() {
       const saved = await saveTier6Settings(account.id, customTierConfig);
       setCustomTierConfig(saved);
       setTier6SettingsSaved(true);
-    } catch (error) {
-      setTier6SettingsError(
-        error instanceof Error ? error.message : 'Settings could not be saved.',
-      );
+    } catch {
+      setTier6SettingsError('Settings could not be saved.');
     } finally {
       setSavingTier6Settings(false);
     }
@@ -265,11 +271,11 @@ export default function RaceSetupPage() {
       data-testid="page-race-setup"
       style={{ maxWidth: 480, margin: '0 auto', padding: tokens.spacing.xl }}
     >
-      {loading && <LoadingSpinner message="Loading your avatars…" />}
+      {loading && <LoadingSpinner message={t('Loading your avatars…')} />}
       {!loading && (
         <>
           <h1 style={{ color: tokens.color.textPrimary, marginBottom: tokens.spacing.lg }}>
-            Race Setup
+            {t('Race Setup')}
           </h1>
 
           <section aria-labelledby="mode-heading" style={{ marginBottom: tokens.spacing.lg }}>
@@ -281,7 +287,7 @@ export default function RaceSetupPage() {
                 marginBottom: tokens.spacing.sm,
               }}
             >
-              Mode
+              {t('Mode')}
             </h2>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: tokens.spacing.sm }}>
               {MODES.map((m) => {
@@ -306,8 +312,8 @@ export default function RaceSetupPage() {
                       opacity: disabledByOffline ? 0.5 : 1,
                     }}
                   >
-                    {m.label}
-                    {disabledByOffline ? ' (offline)' : ''}
+                    {t(m.label)}
+                    {disabledByOffline ? ` (${t('offline')})` : ''}
                   </button>
                 );
               })}
@@ -324,7 +330,7 @@ export default function RaceSetupPage() {
                   marginBottom: tokens.spacing.xs,
                 }}
               >
-                Number of Races
+                {t('Number of Races')}
               </label>
               <select
                 id="champ-races"
@@ -339,7 +345,7 @@ export default function RaceSetupPage() {
               >
                 {[3, 5, 7].map((n) => (
                   <option key={n} value={n}>
-                    {n} races
+                    {t('{{races}} races', { races: n })}
                   </option>
                 ))}
               </select>
@@ -356,7 +362,7 @@ export default function RaceSetupPage() {
                   marginBottom: tokens.spacing.xs,
                 }}
               >
-                Opponents
+                {t('Opponents')}
               </label>
               <select
                 id="opponent-count"
@@ -387,7 +393,7 @@ export default function RaceSetupPage() {
                 marginBottom: tokens.spacing.xs,
               }}
             >
-              Difficulty (Tier 1 = easiest)
+              {t('Difficulty (Tier 1 = easiest)')}
             </label>
             <select
               id="tier-select"
@@ -405,9 +411,9 @@ export default function RaceSetupPage() {
                 fontSize: 16,
               }}
             >
-              {([1, 2, 3, 4, 5, 6] as Tier[]).map((t) => (
-                <option key={t} value={t}>
-                  Tier {t}
+              {([1, 2, 3, 4, 5, 6] as Tier[]).map((tierOption) => (
+                <option key={tierOption} value={tierOption}>
+                  {t('Tier {{tier}}', { tier: tierOption })}
                 </option>
               ))}
             </select>
@@ -415,8 +421,8 @@ export default function RaceSetupPage() {
 
           {tier === 6 && (
             <fieldset style={{ marginBottom: tokens.spacing.lg }}>
-              <legend>Custom Tier 6 settings</legend>
-              <p>Select one or more operations and an operand range from 1 to 100.</p>
+              <legend>{t('Custom Tier 6 settings')}</legend>
+              <p>{t('Select one or more operations and an operand range from 1 to 100.')}</p>
               {OPERATIONS.map((operation) => (
                 <label key={operation} style={{ display: 'block' }}>
                   <input
@@ -432,11 +438,11 @@ export default function RaceSetupPage() {
                       }));
                     }}
                   />{' '}
-                  {operation}
+                  {t(operation)}
                 </label>
               ))}
               <label>
-                Minimum operand
+                {t('Minimum operand')}
                 <input
                   type="number"
                   min={1}
@@ -452,7 +458,7 @@ export default function RaceSetupPage() {
                 />
               </label>
               <label>
-                Maximum operand
+                {t('Maximum operand')}
                 <input
                   type="number"
                   min={1}
@@ -478,10 +484,10 @@ export default function RaceSetupPage() {
                 }
                 onClick={() => void handleSaveTier6Settings()}
               >
-                {savingTier6Settings ? 'Saving…' : 'Save Tier 6 settings'}
+                {savingTier6Settings ? t('Saving…') : t('Save Tier 6 settings')}
               </Button>
-              {tier6SettingsSaved && <p>Tier 6 settings saved.</p>}
-              {tier6SettingsError && <p role="alert">{tier6SettingsError}</p>}
+              {tier6SettingsSaved && <p>{t('Tier 6 settings saved.')}</p>}
+              {tier6SettingsError && <p role="alert">{t(tier6SettingsError)}</p>}
             </fieldset>
           )}
 
@@ -495,7 +501,7 @@ export default function RaceSetupPage() {
                   marginBottom: tokens.spacing.xs,
                 }}
               >
-                Racing as
+                {t('Racing as')}
               </label>
               <select
                 id="avatar-select"
@@ -510,7 +516,7 @@ export default function RaceSetupPage() {
               >
                 {avatars.map((a) => (
                   <option key={a.avatar_id} value={a.avatar_id}>
-                    {a.name ?? a.species}
+                    {a.name ?? translateAvatarSpecies(a.species, t)}
                   </option>
                 ))}
               </select>
@@ -519,7 +525,7 @@ export default function RaceSetupPage() {
 
           {offlineError && (
             <p role="alert" style={{ color: tokens.color.error, marginBottom: tokens.spacing.md }}>
-              {offlineError}
+              {t(offlineError)}
             </p>
           )}
           <div style={{ width: '100%' }}>
@@ -538,7 +544,7 @@ export default function RaceSetupPage() {
               }
               onClick={() => void handleStart()}
             >
-              {starting ? 'Setting up…' : 'Start Race'}
+              {starting ? t('Setting up…') : t('Start Race')}
             </Button>
           </div>
         </>

@@ -3,9 +3,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getChampionship, type ChampionshipState } from '../engine/race/championshipApi';
 import { Button } from '../shared/components/Button';
 import { LoadingSpinner } from '../shared/components/LoadingSpinner';
+import { useLocale } from '../infrastructure/localization/LocaleContext';
 import tokens from '../shared/tokens';
 
 export default function ChampionshipPage() {
+  const { t } = useLocale();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [championship, setChampionship] = useState<ChampionshipState | null>(null);
@@ -24,7 +26,7 @@ export default function ChampionshipPage() {
   if (loading) {
     return (
       <div data-testid="page-championship">
-        <LoadingSpinner message="Loading standings…" />
+        <LoadingSpinner message={t('Loading standings…')} />
       </div>
     );
   }
@@ -32,7 +34,7 @@ export default function ChampionshipPage() {
   if (!championship) {
     return (
       <div data-testid="page-championship" style={{ padding: tokens.spacing.xl }}>
-        Championship not found.
+        {t('Championship not found.')}
       </div>
     );
   }
@@ -54,16 +56,19 @@ export default function ChampionshipPage() {
       style={{ maxWidth: 640, margin: '0 auto', padding: tokens.spacing.xl }}
     >
       <h1 style={{ color: tokens.color.textPrimary, marginBottom: tokens.spacing.xs }}>
-        Championship
+        {t('Championship')}
       </h1>
       <p style={{ color: tokens.color.textSecondary, marginBottom: tokens.spacing.lg }}>
-        Race {championship.races_completed} of {championship.total_races} complete
+        {t('Race {{completed}} of {{total}} complete', {
+          completed: championship.races_completed,
+          total: championship.total_races,
+        })}
       </p>
 
       <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: tokens.spacing.lg }}>
         <thead>
           <tr>
-            {['Position', 'Runner', 'Points', 'Podiums'].map((h) => (
+            {(['Position', 'Runner', 'Points', 'Podiums'] as const).map((h) => (
               <th
                 key={h}
                 scope="col"
@@ -76,7 +81,7 @@ export default function ChampionshipPage() {
                   textAlign: h === 'Position' || h === 'Runner' ? 'left' : 'right',
                 }}
               >
-                {h}
+                {t(h)}
               </th>
             ))}
           </tr>
@@ -91,7 +96,7 @@ export default function ChampionshipPage() {
                 {entry.position}
               </th>
               <td style={{ padding: tokens.spacing.sm, fontWeight: entry.is_player ? 700 : 400 }}>
-                {entry.is_player ? 'You' : 'Opponent'}
+                {entry.is_player ? t('You') : t('Opponent')}
               </td>
               <td style={{ padding: tokens.spacing.sm, textAlign: 'right' }}>{entry.points}</td>
               <td style={{ padding: tokens.spacing.sm, textAlign: 'right' }}>{entry.podiums}</td>
@@ -102,14 +107,14 @@ export default function ChampionshipPage() {
 
       {isCompleted ? (
         <div>
-          <h2 style={{ color: tokens.color.success }}>Championship Complete!</h2>
+          <h2 style={{ color: tokens.color.success }}>{t('Championship Complete!')}</h2>
           <Button variant="primary" onClick={() => void navigate('/race/setup')}>
-            Play Again
+            {t('Play Again')}
           </Button>
         </div>
       ) : (
         <Button variant="primary" onClick={handleStartNext}>
-          Start Next Race
+          {t('Start Next Race')}
         </Button>
       )}
     </div>

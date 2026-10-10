@@ -6,12 +6,13 @@ import {
   regeneratePortrait,
 } from '../../engine/avatar/avatarApi';
 import type { AvatarListItem, AvatarStatus } from '../../engine/avatar/types';
+import type { TranslationKey } from '../../infrastructure/localization/catalogs';
 
 export function useAvatarGallery() {
   const [avatars, setAvatars] = useState<AvatarListItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [mutationError, setMutationError] = useState<string | null>(null);
+  const [error, setError] = useState<TranslationKey | null>(null);
+  const [mutationError, setMutationError] = useState<TranslationKey | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const fetchAvatars = useCallback(async (fromPoll = false) => {

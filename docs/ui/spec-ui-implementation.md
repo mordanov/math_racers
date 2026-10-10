@@ -43,6 +43,13 @@ Rules:
 - Components are stateless where practical; receive data via props.
 - Shared UI has no business logic; contains only design tokens and primitive components.
 
+## Localization
+
+- The typed localization catalogs provide complete Russian, English, and Spanish UI copy.
+- `LocaleProvider` wraps the application and persists the selected locale; the global language selector stays mounted in the app shell and is also available inside modal dialogs.
+- Components and pages render application-authored messages and accessibility text through the locale context. API enum labels and achievement copy are mapped to localized catalog keys; user-provided names remain unchanged.
+- Language changes update the current route in place and must not reset form values or race state.
+
 ---
 
 ## Feature State Models

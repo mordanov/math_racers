@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../infrastructure/auth/AuthContext';
+import { useLocale } from '../infrastructure/localization/LocaleContext';
+import type { TranslationKey } from '../infrastructure/localization/catalogs';
+import { getAuthErrorMessage } from '../infrastructure/localization/authErrors';
 import { Button } from '../shared/components/Button';
 import tokens from '../shared/tokens';
 
@@ -48,11 +51,12 @@ const inputStyle: React.CSSProperties = {
 
 export default function LoginPage() {
   const { login } = useAuth();
+  const { t } = useLocale();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<TranslationKey | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -62,7 +66,13 @@ export default function LoginPage() {
       await login(email, password);
       void navigate('/child-profiles');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed');
+      setError(
+        getAuthErrorMessage(
+          err,
+          'Something went wrong. Please try again.',
+          'The sign-in details are incorrect or the account is not approved yet.',
+        ),
+      );
     } finally {
       setLoading(false);
     }
@@ -79,7 +89,7 @@ export default function LoginPage() {
             fontWeight: 700,
           }}
         >
-          Log In
+          {t('Log In')}
         </h1>
         <form
           onSubmit={(e) => {
@@ -88,7 +98,7 @@ export default function LoginPage() {
         >
           <div style={fieldStyle}>
             <label htmlFor="email" style={labelStyle}>
-              Email
+              {t('Email')}
             </label>
             <input
               id="email"
@@ -101,7 +111,7 @@ export default function LoginPage() {
           </div>
           <div style={fieldStyle}>
             <label htmlFor="password" style={labelStyle}>
-              Password
+              {t('Password')}
             </label>
             <input
               id="password"
@@ -121,11 +131,11 @@ export default function LoginPage() {
                 fontSize: 14,
               }}
             >
-              {error}
+              {t(error)}
             </p>
           )}
           <Button type="submit" variant="primary" loading={loading} disabled={loading}>
-            Log In
+            {t('Log In')}
           </Button>
         </form>
         <p
@@ -136,12 +146,12 @@ export default function LoginPage() {
             fontSize: 14,
           }}
         >
-          Don&apos;t have an account?{' '}
+          {t('Don’t have an account?')}{' '}
           <Link
             to="/register"
             style={{ color: tokens.color.primary, textDecoration: 'none', fontWeight: 600 }}
           >
-            Register
+            {t('Register')}
           </Link>
         </p>
       </div>

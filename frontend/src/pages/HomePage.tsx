@@ -4,9 +4,11 @@ import { getChampionship } from '../engine/race/championshipApi';
 import { Button } from '../shared/components/Button';
 import { useAudioManager } from '../shared/hooks/useAudioManager';
 import tokens from '../shared/tokens';
+import { useLocale } from '../infrastructure/localization/LocaleContext';
 
 export default function HomePage() {
   const navigate = useNavigate();
+  const { t } = useLocale();
   const [activeChampionshipId, setActiveChampionshipId] = useState<string | null>(null);
   const { playMusic, stopMusic } = useAudioManager();
 
@@ -62,26 +64,26 @@ export default function HomePage() {
             }}
           >
             <p style={{ margin: `0 0 ${tokens.spacing.sm}px`, color: tokens.color.textPrimary }}>
-              You have an active championship!
+              {t('You have an active championship!')}
             </p>
             <Button
               variant="primary"
               onClick={() => void navigate(`/championship/${activeChampionshipId}`)}
             >
-              Continue Championship
+              {t('Continue Championship')}
             </Button>
           </div>
         )}
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacing.md }}>
           <Button variant="primary" onClick={() => void navigate('/race/setup')}>
-            Start Racing
+            {t('Start Racing')}
           </Button>
           <Button variant="secondary" onClick={() => void navigate('/avatars')}>
-            My Avatars
+            {t('My Avatars')}
           </Button>
           <Button variant="secondary" onClick={() => void navigate('/statistics')}>
-            Statistics
+            {t('Statistics')}
           </Button>
         </div>
       </div>
