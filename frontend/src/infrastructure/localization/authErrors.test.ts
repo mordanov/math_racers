@@ -16,8 +16,6 @@ describe('getAuthErrorMessage', () => {
         'Something went wrong. Please try again.',
         'The sign-in details are incorrect or the account is not approved yet.',
       ),
-    ).toBe(
-      'The sign-in details are incorrect or the account is not approved yet.',
-    );
+    ).toBe('The sign-in details are incorrect or the account is not approved yet.');
   });
 });
