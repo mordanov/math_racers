@@ -9,7 +9,12 @@ import pytest
 
 from app.mathematics.generator import generate_problem_set
 from app.races.repository import SQLAlchemyRaceRepository
-from app.races.schemas import RaceAnswerSubmitRequest
+from app.races.schemas import (
+    OperationAnswerRequest,
+    ParticipantSummaryRequest,
+    RaceAnswerSubmitRequest,
+    RaceSummaryRequest,
+)
 from app.shared.exceptions import ConflictError, ValidationError
 
 pytestmark = pytest.mark.unit
@@ -23,6 +28,7 @@ def _session(race: SimpleNamespace, answers: list[MagicMock]) -> MagicMock:
     session = MagicMock()
     session.execute = AsyncMock(side_effect=[race_result, answer_result])
     session.flush = AsyncMock()
+    session.refresh = AsyncMock()
     return session
 
 
@@ -130,3 +136,52 @@ async def test_answer_submission_requires_the_expected_next_index() -> None:
         await SQLAlchemyRaceRepository(session).submit_answer(
             race.id, race.account_id, race.child_profile_id, request
         )
+
+
+@pytest.mark.asyncio
+async def test_training_result_persists_only_answers_missing_after_saved_prefix() -> None:
+    race = _race(mode="training", avatar_id="avatar-1")
+    race.created_at = datetime.now(UTC)
+    problems = [generate_problem_set(2, 42 + index, 1).problems[0] for index in range(3)]
+    saved_prefix = MagicMock(answer_index=0)
+    session = _session(race, [saved_prefix])
+    request = RaceSummaryRequest(
+        human_avatar_id="avatar-1",
+        race_id=race.id,
+        child_profile_id=race.child_profile_id,
+        idempotency_key=uuid.uuid4(),
+        seed="42",
+        difficulty_tier=2,
+        mode="training",
+        started_at=race.started_at,
+        completed_at=datetime.now(UTC),
+        participants=[
+            ParticipantSummaryRequest(
+                avatar_id="avatar-1",
+                position=None,
+                problems_correct=3,
+                longest_streak=3,
+                average_response_ms=1000,
+                total_distance=0,
+                xp_earned=0,
+            )
+        ],
+        answers=[
+            OperationAnswerRequest(
+                operation=problem.operation.value,
+                is_correct=True,
+                response_time_ms=1000 + index,
+                submitted_answer=str(problem.answer),
+            )
+            for index, problem in enumerate(problems)
+        ],
+    )
+
+    await SQLAlchemyRaceRepository(session).create(request)
+
+    saved_answers = [
+        call.args[0]
+        for call in session.add.call_args_list
+        if call.args and getattr(call.args[0], "answer_index", None) is not None
+    ]
+    assert [answer.answer_index for answer in saved_answers] == [1, 2]

@@ -489,6 +489,66 @@ async def test_submit_training_result_uses_the_clients_per_problem_seed_sequence
 
 
 @pytest.mark.asyncio
+async def test_training_result_merges_saved_prefix_with_offline_answers() -> None:
+    from app.mathematics.generator import generate_problem_set
+
+    seed = 42
+    problems = [generate_problem_set(2, seed + index, 1).problems[0] for index in range(3)]
+    account_id = uuid.uuid4()
+    child_id = uuid.uuid4()
+    race_id = uuid.uuid4()
+    request = RaceResultRequest(
+        idempotency_key=uuid.uuid4(),
+        human_avatar_id="avatar-1",
+        participants=[RaceResultParticipantRequest(avatar_id="avatar-1", position=None)],
+        answers=[
+            RaceResultAnswerRequest(
+                operation=problem.operation.value,
+                answer=str(problem.answer),
+                response_time_ms=1500 + index,
+            )
+            for index, problem in enumerate(problems)
+        ],
+    )
+    race = MagicMock(
+        account_id=account_id,
+        child_profile_id=child_id,
+        avatar_id="avatar-1",
+        status="active",
+        id=race_id,
+        seed=str(seed),
+        difficulty_tier=2,
+        mode="training",
+        opponent_count=0,
+        started_at=datetime(2026, 8, 10, 12, tzinfo=UTC),
+        custom_tier_config=None,
+    )
+    saved_prefix = MagicMock(
+        answer_index=0,
+        operation=problems[0].operation.value,
+        submitted_answer=str(problems[0].answer),
+        is_correct=True,
+        response_time_ms=900,
+    )
+    repo = MagicMock()
+    repo.get_session_for_update = AsyncMock(return_value=race)
+    repo.list_answers = AsyncMock(return_value=[saved_prefix])
+    repo.create = AsyncMock(
+        return_value=RaceSummaryResponse(
+            race_id=race_id, created_at=datetime(2026, 8, 10, tzinfo=UTC)
+        )
+    )
+    repo.save_result_response = AsyncMock()
+
+    await RaceDomainService(repo).submit_result(race_id, account_id, child_id, request, MagicMock())
+
+    summary = repo.create.await_args.args[0]
+    assert len(summary.answers) == 3
+    assert [answer.response_time_ms for answer in summary.answers] == [900, 1501, 1502]
+    assert all(answer.is_correct for answer in summary.answers)
+
+
+@pytest.mark.asyncio
 async def test_race_result_rejects_client_claimed_ai_win_and_uses_server_ai_metrics() -> None:
     account_id = uuid.uuid4()
     child_id = uuid.uuid4()

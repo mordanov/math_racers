@@ -50,6 +50,29 @@ describe('useRaceEngine', () => {
     expect(() => result.current.getSummary()).toThrow();
   });
 
+  it('uses server-authoritative answer correctness and timing', () => {
+    const { result } = renderHook(() => useRaceEngine(config));
+    act(() => {
+      result.current.startCountdown();
+      result.current.startRacing();
+    });
+
+    let obstacle: ReturnType<typeof result.current.submitAnswer> | undefined;
+    act(() => {
+      obstacle = result.current.submitAnswer({
+        answer: 'not numeric',
+        isCorrect: true,
+        responseTimeMs: 3750,
+      });
+    });
+
+    expect(obstacle).toMatchObject({
+      isCorrect: true,
+      responseTimeMs: 3750,
+      distanceMetres: 15,
+    });
+  });
+
   it('does not expose summaryStatus', () => {
     const { result } = renderHook(() => useRaceEngine(config));
     expect((result.current as Record<string, unknown>)['summaryStatus']).toBeUndefined();

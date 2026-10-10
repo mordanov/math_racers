@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { createRaceEngine } from '../raceEngine';
+import { createRaceEngine, type RaceEngine } from '../raceEngine';
 import type { ObstacleResult, RaceConfig, RaceEngineState, RaceSummary } from '../types';
 
 export function useRaceEngine(config: RaceConfig) {
@@ -41,7 +41,8 @@ export function useRaceEngine(config: RaceConfig) {
   }, []);
 
   const submitAnswer = useCallback(
-    (input: { answer: string }): ObstacleResult => engineRef.current.submitAnswer(input),
+    (input: Parameters<RaceEngine['submitAnswer']>[0]): ObstacleResult =>
+      engineRef.current.submitAnswer(input),
     [],
   );
 

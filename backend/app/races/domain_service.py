@@ -186,10 +186,9 @@ class RaceDomainService:
             raise ValidationError(
                 "INVALID_RACE_ANSWERS", "Race results require eight saved answers."
             )
-        use_saved_answers = bool(saved_answers) or race.mode != "training"
-        answer_count = len(saved_answers) if use_saved_answers else len(request.answers)
-        if race.mode != "training":
-            answer_count = 8
+        answer_count = (
+            max(len(saved_answers), len(request.answers)) if race.mode == "training" else 8
+        )
         try:
             if race.mode == "training":
                 generated_problems = _generate_training_problems(
@@ -211,7 +210,7 @@ class RaceDomainService:
 
         validated_answers: list[OperationAnswerRequest] = []
         for index, problem in enumerate(generated_problems):
-            if use_saved_answers:
+            if index < len(saved_answers):
                 saved = saved_answers[index]
                 operation = saved.operation
                 submitted_answer = saved.submitted_answer or ""
@@ -231,7 +230,7 @@ class RaceDomainService:
                     "INVALID_RACE_ANSWERS",
                     "Answer operations do not match the stored race questions.",
                 )
-            if use_saved_answers:
+            if index < len(saved_answers):
                 try:
                     is_correct = int(submitted_answer.strip()) == problem.answer
                 except ValueError:
