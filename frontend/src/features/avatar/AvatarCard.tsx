@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import type { AvatarListItem } from '../../engine/avatar/types';
 import { ConfirmDialog } from '../../shared/components/ConfirmDialog';
 import tokens from '../../shared/tokens';
+import { useLocale } from '../../infrastructure/localization/LocaleContext';
+import { translateAvatarSpecies } from '../../infrastructure/localization/formatters';
 
 interface AvatarCardProps {
   avatar: AvatarListItem;
@@ -70,6 +72,7 @@ export function AvatarCard({
   onRegenerate,
   onDelete,
 }: AvatarCardProps) {
+  const { t } = useLocale();
   const isPending = avatar.status === 'pending';
   const isFailed = avatar.status === 'failed';
   const rawName = avatar.name ?? avatar.species;
@@ -115,7 +118,7 @@ export function AvatarCard({
       {onFavourite && (
         <button
           type="button"
-          aria-label={avatar.is_favourite ? 'Remove from favourites' : 'Add to favourites'}
+          aria-label={avatar.is_favourite ? t('Remove from favourites') : t('Add to favourites')}
           style={starBtnStyle}
           onClick={() => onFavourite(avatar.avatar_id, !avatar.is_favourite)}
         >
@@ -158,7 +161,7 @@ export function AvatarCard({
         <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacing.xs }}>
           <input
             type="text"
-            aria-label="Rename avatar"
+            aria-label={t('Rename avatar')}
             value={editName}
             onChange={(e) => setEditName(e.target.value)}
             onKeyDown={(e) => {
@@ -172,7 +175,7 @@ export function AvatarCard({
             autoFocus
           />
           <button type="button" disabled={!editName.trim()} onClick={handleSave}>
-            Save
+            {t('Save')}
           </button>
         </div>
       ) : (
@@ -195,19 +198,19 @@ export function AvatarCard({
               textTransform: 'capitalize',
             }}
           >
-            {avatar.species}
+            {translateAvatarSpecies(avatar.species, t)}
           </div>
         </>
       )}
 
       {isPending && (
         <div style={{ fontSize: 12, color: tokens.color.primary, marginTop: tokens.spacing.xs }}>
-          Generating…
+          {t('Generating…')}
         </div>
       )}
       {isFailed && (
         <div style={{ fontSize: 12, color: tokens.color.error, marginTop: tokens.spacing.xs }}>
-          Hmm, something went wobbly.
+          {t('Hmm, something went wobbly.')}
         </div>
       )}
 
@@ -215,7 +218,7 @@ export function AvatarCard({
         <>
           <button
             type="button"
-            aria-label="Manage avatar"
+            aria-label={t('Manage avatar')}
             style={manageBtnStyle}
             onClick={() => setShowManage((v) => !v)}
           >
@@ -257,7 +260,7 @@ export function AvatarCard({
                     setShowManage(false);
                   }}
                 >
-                  Rename
+                  {t('Rename')}
                 </button>
               )}
               {onRegenerate && (
@@ -271,7 +274,7 @@ export function AvatarCard({
                     setShowManage(false);
                   }}
                 >
-                  Regenerate
+                  {t('Regenerate')}
                 </button>
               )}
               {onDelete && (
@@ -285,7 +288,7 @@ export function AvatarCard({
                     setShowManage(false);
                   }}
                 >
-                  Delete
+                  {t('Delete')}
                 </button>
               )}
             </div>
@@ -295,9 +298,9 @@ export function AvatarCard({
 
       <ConfirmDialog
         open={showDeleteConfirm}
-        title="Delete avatar?"
-        message="This cannot be undone."
-        confirmLabel="Delete"
+        title={t('Delete avatar?')}
+        message={t('This cannot be undone.')}
+        confirmLabel={t('Delete')}
         onConfirm={() => {
           onDelete?.(avatar.avatar_id);
           setShowDeleteConfirm(false);

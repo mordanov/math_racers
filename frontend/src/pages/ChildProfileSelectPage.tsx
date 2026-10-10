@@ -5,6 +5,8 @@ import { createChildProfile, fetchChildProfiles } from '../infrastructure/auth/c
 import type { ChildProfile } from '../infrastructure/auth/types';
 import { Button } from '../shared/components/Button';
 import { LoadingSpinner } from '../shared/components/LoadingSpinner';
+import { useLocale } from '../infrastructure/localization/LocaleContext';
+import type { TranslationKey } from '../infrastructure/localization/catalogs';
 import tokens from '../shared/tokens';
 
 const pageStyle: React.CSSProperties = {
@@ -62,10 +64,11 @@ const inputStyle: React.CSSProperties = {
 
 export default function ChildProfileSelectPage() {
   const { selectChild } = useAuth();
+  const { t } = useLocale();
   const navigate = useNavigate();
   const [profiles, setProfiles] = useState<ChildProfile[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<TranslationKey | null>(null);
   const [newName, setNewName] = useState('');
   const [creating, setCreating] = useState(false);
 
@@ -96,8 +99,8 @@ export default function ChildProfileSelectPage() {
     }
   };
 
-  if (loading) return <LoadingSpinner message="Loading profiles…" />;
-  if (error) return <p role="alert">{error}</p>;
+  if (loading) return <LoadingSpinner message={t('Loading profiles…')} />;
+  if (error) return <p role="alert">{t(error)}</p>;
 
   return (
     <div style={pageStyle}>
@@ -111,7 +114,7 @@ export default function ChildProfileSelectPage() {
             fontWeight: 700,
           }}
         >
-          Who&apos;s Playing?
+          {t('Who’s Playing?')}
         </h1>
 
         {profiles.length === 0 ? (
@@ -122,7 +125,7 @@ export default function ChildProfileSelectPage() {
               margin: `0 0 ${tokens.spacing.xl}px`,
             }}
           >
-            No profiles yet — add one below.
+            {t('No profiles yet — add one below.')}
           </p>
         ) : (
           <div
@@ -166,7 +169,7 @@ export default function ChildProfileSelectPage() {
                 marginBottom: tokens.spacing.sm,
               }}
             >
-              Add a profile
+              {t('Add a profile')}
             </p>
             <form
               onSubmit={(e) => {
@@ -178,13 +181,13 @@ export default function ChildProfileSelectPage() {
                 type="text"
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
-                placeholder="Profile name"
+                placeholder={t('Profile name')}
                 maxLength={50}
-                aria-label="New profile name"
+                aria-label={t('New profile name')}
                 style={inputStyle}
               />
               <Button type="submit" variant="primary" disabled={creating || !newName.trim()}>
-                Add
+                {t('Add')}
               </Button>
             </form>
           </div>

@@ -5,6 +5,8 @@ import type { CreateAvatarRequest } from '../engine/avatar/types';
 import { Button } from '../shared/components/Button';
 import { LoadingSpinner } from '../shared/components/LoadingSpinner';
 import { useOffline } from '../shared/hooks/useOffline';
+import { useLocale } from '../infrastructure/localization/LocaleContext';
+import type { TranslationKey } from '../infrastructure/localization/catalogs';
 import tokens from '../shared/tokens';
 
 const SPECIES = ['fox', 'rabbit', 'bear', 'cat', 'mouse', 'panda'] as const;
@@ -74,6 +76,7 @@ function ColorSwatch({
 
 export default function AvatarCreatorPage() {
   const navigate = useNavigate();
+  const { t } = useLocale();
   const isOffline = useOffline();
   const [wizard, setWizard] = useState<WizardState>({
     step: 1,
@@ -85,7 +88,7 @@ export default function AvatarCreatorPage() {
     topColor: CLOTHES_COLORS[0],
     bottomColor: CLOTHES_COLORS[7],
   });
-  const [genError, setGenError] = useState<string | null>(null);
+  const [genError, setGenError] = useState<TranslationKey | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -128,7 +131,7 @@ export default function AvatarCreatorPage() {
             } else if (TERMINAL_STATUSES.has(job.status)) {
               if (pollRef.current) clearInterval(pollRef.current);
               setIsGenerating(false);
-              setGenError("Hmm, something went wobbly. Let's try again!");
+              setGenError('Hmm, something went wobbly.');
             }
           } catch {
             if (pollRef.current) clearInterval(pollRef.current);
@@ -139,7 +142,7 @@ export default function AvatarCreatorPage() {
       }, 3000);
     } catch {
       setIsGenerating(false);
-      setGenError("Hmm, something went wobbly. Let's try again!");
+      setGenError('Hmm, something went wobbly.');
     }
   }, [wizard, navigate]);
 
@@ -195,10 +198,10 @@ export default function AvatarCreatorPage() {
         }}
       >
         <p style={{ fontSize: 20, color: tokens.color.textPrimary }}>
-          Internet required to create avatars.
+          {t('Internet required to create avatars.')}
         </p>
         <Button variant="secondary" onClick={() => void navigate(-1)}>
-          Go Back
+          {t('Go Back')}
         </Button>
       </div>
     );
@@ -207,7 +210,7 @@ export default function AvatarCreatorPage() {
   if (wizard.step === 1) {
     return (
       <div data-testid="page-avatar-creator" style={containerStyle}>
-        <h1 style={headingStyle}>Choose Your Animal</h1>
+        <h1 style={headingStyle}>{t('Choose Your Animal')}</h1>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: tokens.spacing.sm }}>
           {SPECIES.map((sp) => (
             <button
@@ -217,14 +220,14 @@ export default function AvatarCreatorPage() {
               onClick={() => set('species', sp)}
               style={choiceButtonStyle(wizard.species === sp)}
             >
-              {sp}
+              {t(sp)}
             </button>
           ))}
         </div>
         <div style={navStyle}>
           <span />
           <Button variant="primary" disabled={!wizard.species} onClick={next}>
-            Next
+            {t('Next')}
           </Button>
         </div>
       </div>
@@ -234,8 +237,8 @@ export default function AvatarCreatorPage() {
   if (wizard.step === 2) {
     return (
       <div style={containerStyle}>
-        <h1 style={headingStyle}>Choose Colours</h1>
-        <p style={{ color: tokens.color.textSecondary }}>Fur colour</p>
+        <h1 style={headingStyle}>{t('Choose Colours')}</h1>
+        <p style={{ color: tokens.color.textSecondary }}>{t('Fur colour')}</p>
         <div
           style={{
             display: 'flex',
@@ -250,11 +253,11 @@ export default function AvatarCreatorPage() {
               color={c}
               selected={wizard.furColor === c}
               onSelect={(v) => set('furColor', v)}
-              label={`Fur colour ${c}`}
+              label={t('Fur colour {{color}}', { color: c })}
             />
           ))}
         </div>
-        <p style={{ color: tokens.color.textSecondary }}>Eye colour</p>
+        <p style={{ color: tokens.color.textSecondary }}>{t('Eye colour')}</p>
         <div style={{ display: 'flex', gap: tokens.spacing.sm, flexWrap: 'wrap' }}>
           {EYE_COLORS.map((c) => (
             <ColorSwatch
@@ -262,16 +265,16 @@ export default function AvatarCreatorPage() {
               color={c}
               selected={wizard.eyeColor === c}
               onSelect={(v) => set('eyeColor', v)}
-              label={`Eye colour ${c}`}
+              label={t('Eye colour {{color}}', { color: c })}
             />
           ))}
         </div>
         <div style={navStyle}>
           <Button variant="secondary" onClick={back}>
-            Back
+            {t('Back')}
           </Button>
           <Button variant="primary" onClick={next}>
-            Next
+            {t('Next')}
           </Button>
         </div>
       </div>
@@ -281,8 +284,8 @@ export default function AvatarCreatorPage() {
   if (wizard.step === 3) {
     return (
       <div style={containerStyle}>
-        <h1 style={headingStyle}>Choose Your Style</h1>
-        <p style={{ color: tokens.color.textSecondary }}>Hairstyle</p>
+        <h1 style={headingStyle}>{t('Choose Your Style')}</h1>
+        <p style={{ color: tokens.color.textSecondary }}>{t('Hairstyle')}</p>
         <div
           style={{
             display: 'flex',
@@ -299,11 +302,11 @@ export default function AvatarCreatorPage() {
               onClick={() => set('hairstyle', h)}
               style={choiceButtonStyle(wizard.hairstyle === h)}
             >
-              {h}
+              {t(h)}
             </button>
           ))}
         </div>
-        <p style={{ color: tokens.color.textSecondary }}>Accessories (optional)</p>
+        <p style={{ color: tokens.color.textSecondary }}>{t('Accessories (optional)')}</p>
         <div style={{ display: 'flex', gap: tokens.spacing.sm, flexWrap: 'wrap' }}>
           {ACCESSORIES_OPTIONS.map((acc) => (
             <button
@@ -313,16 +316,16 @@ export default function AvatarCreatorPage() {
               onClick={() => toggleAccessory(acc)}
               style={choiceButtonStyle(wizard.accessories.includes(acc))}
             >
-              {acc}
+              {t(acc)}
             </button>
           ))}
         </div>
         <div style={navStyle}>
           <Button variant="secondary" onClick={back}>
-            Back
+            {t('Back')}
           </Button>
           <Button variant="primary" onClick={next}>
-            Next
+            {t('Next')}
           </Button>
         </div>
       </div>
@@ -332,8 +335,8 @@ export default function AvatarCreatorPage() {
   if (wizard.step === 4) {
     return (
       <div style={containerStyle}>
-        <h1 style={headingStyle}>Choose Clothing</h1>
-        <p style={{ color: tokens.color.textSecondary }}>Top colour</p>
+        <h1 style={headingStyle}>{t('Choose Clothing')}</h1>
+        <p style={{ color: tokens.color.textSecondary }}>{t('Top colour')}</p>
         <div
           style={{
             display: 'flex',
@@ -348,11 +351,11 @@ export default function AvatarCreatorPage() {
               color={c}
               selected={wizard.topColor === c}
               onSelect={(v) => set('topColor', v)}
-              label={`Top colour ${c}`}
+              label={t('Top colour {{color}}', { color: c })}
             />
           ))}
         </div>
-        <p style={{ color: tokens.color.textSecondary }}>Shorts colour</p>
+        <p style={{ color: tokens.color.textSecondary }}>{t('Shorts colour')}</p>
         <div style={{ display: 'flex', gap: tokens.spacing.sm, flexWrap: 'wrap' }}>
           {CLOTHES_COLORS.map((c) => (
             <ColorSwatch
@@ -360,16 +363,16 @@ export default function AvatarCreatorPage() {
               color={c}
               selected={wizard.bottomColor === c}
               onSelect={(v) => set('bottomColor', v)}
-              label={`Shorts colour ${c}`}
+              label={t('Shorts colour {{color}}', { color: c })}
             />
           ))}
         </div>
         <div style={navStyle}>
           <Button variant="secondary" onClick={back}>
-            Back
+            {t('Back')}
           </Button>
           <Button variant="primary" onClick={next}>
-            Next
+            {t('Next')}
           </Button>
         </div>
       </div>
@@ -380,10 +383,10 @@ export default function AvatarCreatorPage() {
   if (genError) {
     return (
       <div style={containerStyle}>
-        <p style={{ color: tokens.color.error }}>{genError}</p>
+        <p style={{ color: tokens.color.error }}>{t(genError)}</p>
         <div style={navStyle}>
           <Button variant="secondary" onClick={back}>
-            Back
+            {t('Back')}
           </Button>
           <Button
             variant="primary"
@@ -392,7 +395,7 @@ export default function AvatarCreatorPage() {
               void startGeneration();
             }}
           >
-            Try Again
+            {t('Try Again')}
           </Button>
         </div>
       </div>
@@ -401,7 +404,7 @@ export default function AvatarCreatorPage() {
 
   return (
     <div style={{ ...containerStyle, textAlign: 'center' }}>
-      <h1 style={headingStyle}>Creating Your Avatar…</h1>
+      <h1 style={headingStyle}>{t('Creating Your Avatar…')}</h1>
       <LoadingSpinner />
       <img
         src="/artwork/avatar_generation.jpeg"
@@ -417,7 +420,7 @@ export default function AvatarCreatorPage() {
       />
       {isGenerating && (
         <p style={{ color: tokens.color.textSecondary, marginTop: tokens.spacing.md }}>
-          Our AI artist is painting your character. This takes about 20 seconds.
+          {t('Our AI artist is painting your character. This takes about 20 seconds.')}
         </p>
       )}
     </div>

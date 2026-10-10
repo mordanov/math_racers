@@ -3,7 +3,7 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at `specs/014-audit-remediation/plan.md`.
+at `specs/015-ui-localization/plan.md`.
 <!-- SPECKIT END -->
 
 Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.

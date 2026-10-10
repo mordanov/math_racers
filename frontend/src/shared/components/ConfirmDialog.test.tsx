@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
+import { LocaleProvider, useLocale } from '../../infrastructure/localization/LocaleContext';
 import { ConfirmDialog } from './ConfirmDialog';
 
 function setup(open = true, onConfirm = vi.fn(), onClose = vi.fn()) {
@@ -18,6 +19,34 @@ function setup(open = true, onConfirm = vi.fn(), onClose = vi.fn()) {
 }
 
 describe('ConfirmDialog', () => {
+  it('keeps the language selector available and updates dialog copy while open', async () => {
+    const user = userEvent.setup();
+    function LocalizedDialog() {
+      const { t } = useLocale();
+      return (
+        <ConfirmDialog
+          open
+          title={t('Delete avatar?')}
+          message={t('This cannot be undone.')}
+          onConfirm={vi.fn()}
+          onClose={vi.fn()}
+        />
+      );
+    }
+
+    render(
+      <LocaleProvider>
+        <LocalizedDialog />
+      </LocaleProvider>,
+    );
+
+    expect(screen.getByRole('combobox')).toBeInTheDocument();
+    await user.selectOptions(screen.getByRole('combobox'), 'es');
+
+    expect(screen.getByRole('heading', { name: '¿Eliminar el avatar?' })).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'Idioma' })).toHaveValue('es');
+  });
+
   it('renders title and message when open', () => {
     setup();
     expect(screen.getByText('Delete avatar?')).toBeInTheDocument();

@@ -5,6 +5,8 @@ import {
   type HistoryResponse,
   type PlayerStats,
 } from '../features/statistics/statisticsApi';
+import { useLocale } from '../infrastructure/localization/LocaleContext';
+import { translateOperation, translateRaceMode } from '../infrastructure/localization/formatters';
 import tokens from '../shared/tokens';
 
 function fmtPct(value: number | null): string {
@@ -13,6 +15,7 @@ function fmtPct(value: number | null): string {
 }
 
 export default function StatisticsPage() {
+  const { t } = useLocale();
   const [stats, setStats] = useState<PlayerStats | null>(null);
   const [history, setHistory] = useState<HistoryResponse | null>(null);
   const [page, setPage] = useState(1);
@@ -39,15 +42,17 @@ export default function StatisticsPage() {
       data-testid="page-statistics"
       style={{ maxWidth: 700, margin: '0 auto', padding: tokens.spacing.xl }}
     >
-      <h1 style={{ fontSize: 28, fontWeight: 900, marginBottom: tokens.spacing.lg }}>Statistics</h1>
+      <h1 style={{ fontSize: 28, fontWeight: 900, marginBottom: tokens.spacing.lg }}>
+        {t('Statistics')}
+      </h1>
 
-      {loading && <p>Loading…</p>}
-      {error && <p>Failed to load statistics. Please try again.</p>}
+      {loading && <p>{t('Loading…')}</p>}
+      {error && <p>{t('Failed to load statistics. Please try again.')}</p>}
 
       {stats && (
-        <section aria-label="Player statistics" style={{ marginBottom: tokens.spacing.xl }}>
+        <section aria-label={t('Player statistics')} style={{ marginBottom: tokens.spacing.xl }}>
           <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: tokens.spacing.md }}>
-            All-Time
+            {t('All-Time')}
           </h2>
           <div
             style={{
@@ -57,17 +62,17 @@ export default function StatisticsPage() {
             }}
           >
             {[
-              { label: 'Races', value: String(stats.total_races) },
-              { label: 'Accuracy', value: fmtPct(stats.accuracy_all_time) },
+              { label: t('Races'), value: String(stats.total_races) },
+              { label: t('Accuracy'), value: fmtPct(stats.accuracy_all_time) },
               {
-                label: 'Favourite operation',
-                value: stats.favourite_operation ?? '—',
+                label: t('Favourite operation'),
+                value: translateOperation(stats.favourite_operation, t),
               },
               {
-                label: 'Avg response (ms)',
+                label: t('Avg response (ms)'),
                 value: stats.avg_response_ms !== null ? String(stats.avg_response_ms) : '—',
               },
-              { label: 'Best streak', value: String(stats.best_streak) },
+              { label: t('Best streak'), value: String(stats.best_streak) },
             ].map(({ label, value }) => (
               <div
                 key={label}
@@ -92,17 +97,17 @@ export default function StatisticsPage() {
       )}
 
       {history && (
-        <section aria-label="Race history">
+        <section aria-label={t('Race history')}>
           <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: tokens.spacing.md }}>
-            Recent Races
+            {t('Recent Races')}
           </h2>
           {history.results.length === 0 ? (
-            <p style={{ color: tokens.color.textSecondary }}>No races yet.</p>
+            <p style={{ color: tokens.color.textSecondary }}>{t('No races yet.')}</p>
           ) : (
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
               <thead>
                 <tr>
-                  {['Mode', 'Position', 'Score', 'Streak', 'XP'].map((h) => (
+                  {(['Mode', 'Position', 'Score', 'Streak', 'XP'] as const).map((h) => (
                     <th
                       key={h}
                       scope="col"
@@ -114,7 +119,7 @@ export default function StatisticsPage() {
                         fontWeight: 600,
                       }}
                     >
-                      {h}
+                      {t(h)}
                     </th>
                   ))}
                 </tr>
@@ -123,7 +128,7 @@ export default function StatisticsPage() {
                 {history.results.map((r) => (
                   <tr key={r.id}>
                     <td style={{ padding: `${tokens.spacing.xs}px ${tokens.spacing.sm}px` }}>
-                      {r.mode}
+                      {translateRaceMode(r.mode, t)}
                     </td>
                     <td style={{ padding: `${tokens.spacing.xs}px ${tokens.spacing.sm}px` }}>
                       {r.finishing_position ?? '—'}
@@ -151,10 +156,13 @@ export default function StatisticsPage() {
                 onClick={() => setPage((p) => p - 1)}
                 style={{ padding: `${tokens.spacing.xs}px ${tokens.spacing.sm}px` }}
               >
-                Previous
+                {t('Previous')}
               </button>
               <span style={{ color: tokens.color.textSecondary, alignSelf: 'center' }}>
-                Page {history.page} of {history.total_pages}
+                {t('Page {{page}} of {{total}}', {
+                  page: history.page,
+                  total: history.total_pages,
+                })}
               </span>
               <button
                 type="button"
@@ -162,7 +170,7 @@ export default function StatisticsPage() {
                 onClick={() => setPage((p) => p + 1)}
                 style={{ padding: `${tokens.spacing.xs}px ${tokens.spacing.sm}px` }}
               >
-                Next
+                {t('Next')}
               </button>
             </div>
           )}

@@ -15,6 +15,8 @@ import { useSfxPlayer } from '../shared/hooks/useSfxPlayer';
 import { useVoicePlayer } from '../shared/hooks/useVoicePlayer';
 import type { Species } from '../shared/hooks/useVoicePlayer';
 import tokens from '../shared/tokens';
+import { useLocale } from '../infrastructure/localization/LocaleContext';
+import { getAchievementTranslationKeys } from '../infrastructure/localization/formatters';
 
 interface ResultsRouteState {
   summary: RaceSummary;
@@ -40,6 +42,7 @@ export default function ResultsScreenPage() {
 
 function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
   const navigate = useNavigate();
+  const { t } = useLocale();
   const { summary, playerAvatarId, avatarSpecies, childProfileId, championshipId, raceIndex } =
     routeState;
 
@@ -54,6 +57,10 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
   const { playVoice } = useVoicePlayer((avatarSpecies as Species) || null);
 
   const playerEntry = summary.participants.find((p) => p.avatar_id === playerAvatarId);
+  const getAchievementTitle = (key: string, fallback: string): string => {
+    const translation = getAchievementTranslationKeys(key);
+    return translation ? t(translation.title) : fallback;
+  };
 
   useEffect(() => {
     playMusic('victory');
@@ -179,14 +186,21 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
             textAlign: 'center',
           }}
         >
-          <p style={{ fontSize: 28, fontWeight: 900, margin: 0 }}>Level Up!</p>
-          <p style={{ margin: `${tokens.spacing.xs}px 0 0` }}>You reached Level {currentLevel}!</p>
+          <p style={{ fontSize: 28, fontWeight: 900, margin: 0 }}>{t('Level Up!')}</p>
+          <p style={{ margin: `${tokens.spacing.xs}px 0 0` }}>
+            {t('You reached Level {{level}}!', { level: currentLevel })}
+          </p>
         </div>
       )}
 
       {achievements[toastIndex] && (
         <NotificationToast
-          message={`Achievement: ${achievements[toastIndex].title}`}
+          message={t('Achievement: {{title}}', {
+            title: getAchievementTitle(
+              achievements[toastIndex].key,
+              achievements[toastIndex].title,
+            ),
+          })}
           type="success"
           onClose={() => setToastIndex((i) => i + 1)}
         />
@@ -214,35 +228,38 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
             marginBottom: tokens.spacing.lg,
           }}
         >
-          {achievements.map((a) => (
-            <div key={a.key} style={{ textAlign: 'center' }}>
-              <img
-                src={getBadgeUrl(a.key)}
-                alt={a.title}
-                style={{ width: 64, height: 64, borderRadius: '50%' }}
-              />
-              <div
-                style={{
-                  fontSize: 12,
-                  color: tokens.color.textSecondary,
-                  marginTop: tokens.spacing.xs,
-                }}
-              >
-                {a.title}
+          {achievements.map((a) => {
+            const title = getAchievementTitle(a.key, a.title);
+            return (
+              <div key={a.key} style={{ textAlign: 'center' }}>
+                <img
+                  src={getBadgeUrl(a.key)}
+                  alt={title}
+                  style={{ width: 64, height: 64, borderRadius: '50%' }}
+                />
+                <div
+                  style={{
+                    fontSize: 12,
+                    color: tokens.color.textSecondary,
+                    marginTop: tokens.spacing.xs,
+                  }}
+                >
+                  {title}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
       <h1 style={{ color: tokens.color.textPrimary, marginBottom: tokens.spacing.lg }}>
-        {summary.mode === 'training' ? 'Training Complete' : 'Race Finished!'}
+        {summary.mode === 'training' ? t('Training Complete') : t('Race Finished!')}
       </h1>
 
       <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: tokens.spacing.lg }}>
         <thead>
           <tr>
-            {['Place', 'Runner', 'Distance', 'Correct', 'XP'].map((h) => (
+            {(['Place', 'Runner', 'Distance', 'Correct', 'XP'] as const).map((h) => (
               <th
                 key={h}
                 scope="col"
@@ -255,7 +272,7 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
                   fontWeight: 600,
                 }}
               >
-                {h}
+                {t(h)}
               </th>
             ))}
           </tr>
@@ -272,10 +289,10 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
                   {p.position ?? '—'}
                 </th>
                 <td style={{ padding: tokens.spacing.sm, fontWeight: isPlayer ? 700 : 400 }}>
-                  {isPlayer ? 'You' : `Runner ${i + 1}`}
+                  {isPlayer ? t('You') : t('Runner {{number}}', { number: i + 1 })}
                 </td>
                 <td style={{ padding: tokens.spacing.sm, textAlign: 'right' }}>
-                  {p.total_distance}m
+                  {t('{{distance}}m', { distance: p.total_distance })}
                 </td>
                 <td style={{ padding: tokens.spacing.sm, textAlign: 'right' }}>
                   {p.problems_correct}
@@ -302,7 +319,7 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
           role="alert"
           style={{ color: tokens.color.error, marginBottom: tokens.spacing.md, fontSize: 14 }}
         >
-          Couldn&apos;t save results.{' '}
+          {t('Couldn’t save results.')}
           <button
             type="button"
             onClick={retry}
@@ -315,30 +332,30 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
               fontSize: 14,
             }}
           >
-            Retry
+            {t('Retry')}
           </button>
         </div>
       )}
       {syncStatus === 'queued' && (
         <p role="status" aria-live="polite" style={{ marginBottom: tokens.spacing.md }}>
-          Training results are saved on this device and will sync when online.
+          {t('Training results are saved on this device and will sync when online.')}
         </p>
       )}
 
       <div style={{ display: 'flex', gap: tokens.spacing.md, flexWrap: 'wrap' }}>
         <Button variant="primary" onClick={() => void navigate('/race/setup')}>
-          Race Again
+          {t('Race Again')}
         </Button>
         {championshipId && (
           <Button
             variant="secondary"
             onClick={() => void navigate(`/championship/${championshipId}`)}
           >
-            View Championship
+            {t('View Championship')}
           </Button>
         )}
         <Button variant="secondary" onClick={() => void navigate('/')}>
-          Home
+          {t('Home')}
         </Button>
       </div>
     </div>

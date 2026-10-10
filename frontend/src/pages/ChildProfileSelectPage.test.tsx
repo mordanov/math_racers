@@ -59,7 +59,7 @@ describe('ChildProfileSelectPage', () => {
         <ChildProfileSelectPage />
       </MemoryRouter>,
     );
-    expect(await screen.findByRole('heading', { name: /who's playing/i })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /who.?s playing/i })).toBeInTheDocument();
   });
 
   it('shows empty state when no profiles exist', async () => {

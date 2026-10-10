@@ -63,9 +63,15 @@ Deliver every screen and component that a child, parent, or administrator intera
 
 | Screen | Purpose |
 |--------|---------|
-| Settings | Audio, accessibility, language preferences |
+| Settings | Audio and accessibility preferences |
 | Parent Dashboard | Weekly summary, difficulty settings, data management |
 | Account | Profile info, child management, deletion |
+
+### Localization
+
+- All application-authored interface text, validation feedback, errors, and accessibility labels are available in Russian, English, and Spanish.
+- The language selector is available on every route and inside modal dialogs. A chosen language is saved across reloads; first visits use a supported browser language or fall back to Russian.
+- Changing the language updates the current screen without navigating or resetting in-progress forms or races.
 
 ---
 
@@ -83,6 +89,7 @@ Deliver every screen and component that a child, parent, or administrator intera
 
 ### Common UI Components
 
+- **Language Selector** — persistent app-shell control for switching between Russian, English, and Spanish; remains available inside modal dialogs.
 - **Avatar Card** — portrait thumbnail, name, race count.
 - **XP Bar** — current XP progress toward next level.
 - **Achievement Badge** — circular, collectible, status-aware.

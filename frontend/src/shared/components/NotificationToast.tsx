@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import tokens from '../tokens';
 import { useReducedMotion } from '../hooks/useReducedMotion';
+import { useLocale } from '../../infrastructure/localization/LocaleContext';
 
 interface NotificationToastProps {
   message: string;
@@ -16,6 +17,7 @@ const typeColor: Record<NonNullable<NotificationToastProps['type']>, string> = {
 
 export function NotificationToast({ message, type = 'info', onClose }: NotificationToastProps) {
   const reduced = useReducedMotion();
+  const { t } = useLocale();
 
   useEffect(() => {
     const id = setTimeout(onClose, 3000);
@@ -48,7 +50,7 @@ export function NotificationToast({ message, type = 'info', onClose }: Notificat
       <span style={{ flex: 1, color: tokens.color.textPrimary }}>{message}</span>
       <button
         type="button"
-        aria-label="Dismiss notification"
+        aria-label={t('Dismiss notification')}
         onClick={onClose}
         style={{
           background: 'none',

@@ -2,9 +2,11 @@ import { Link } from 'react-router-dom';
 import { AvatarCard } from '../features/avatar/AvatarCard';
 import { useAvatarGallery } from '../features/avatar/useAvatarGallery';
 import { LoadingSpinner } from '../shared/components/LoadingSpinner';
+import { useLocale } from '../infrastructure/localization/LocaleContext';
 import tokens from '../shared/tokens';
 
 export default function AvatarGalleryPage() {
+  const { t } = useLocale();
   const {
     avatars,
     loading,
@@ -41,7 +43,7 @@ export default function AvatarGalleryPage() {
         <span style={{ fontSize: 32 }} aria-hidden="true">
           😕
         </span>
-        <p style={{ margin: 0 }}>{error}</p>
+        <p style={{ margin: 0 }}>{t(error)}</p>
       </div>
     );
   }
@@ -57,9 +59,9 @@ export default function AvatarGalleryPage() {
           padding: tokens.spacing.xl,
         }}
       >
-        <h1 style={{ color: tokens.color.textPrimary }}>Your Avatars</h1>
+        <h1 style={{ color: tokens.color.textPrimary }}>{t('Your Avatars')}</h1>
         <p style={{ color: tokens.color.textSecondary }}>
-          You don&apos;t have any avatars yet. Create your first one!
+          {t('You don’t have any avatars yet. Create your first one!')}
         </p>
         <Link
           to="/avatars/new"
@@ -72,7 +74,7 @@ export default function AvatarGalleryPage() {
             fontWeight: 600,
           }}
         >
-          Create Your First Avatar
+          {t('Create Your First Avatar')}
         </Link>
       </div>
     );
@@ -83,7 +85,7 @@ export default function AvatarGalleryPage() {
       {mutationError && (
         <div
           role="alert"
-          aria-label="mutation error"
+          aria-label={t('Avatar update error')}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -98,10 +100,10 @@ export default function AvatarGalleryPage() {
             fontSize: 14,
           }}
         >
-          <span>{mutationError}</span>
+          <span>{t(mutationError)}</span>
           <button
             type="button"
-            aria-label="Dismiss"
+            aria-label={t('Dismiss')}
             onClick={clearMutationError}
             style={{
               background: 'transparent',
@@ -126,7 +128,7 @@ export default function AvatarGalleryPage() {
           marginBottom: tokens.spacing.lg,
         }}
       >
-        <h1 style={{ color: tokens.color.textPrimary }}>Your Avatars</h1>
+        <h1 style={{ color: tokens.color.textPrimary }}>{t('Your Avatars')}</h1>
         <Link
           to="/avatars/new"
           style={{
@@ -138,7 +140,7 @@ export default function AvatarGalleryPage() {
             fontWeight: 600,
           }}
         >
-          + New Avatar
+          {t('+ New Avatar')}
         </Link>
       </div>
       <div
