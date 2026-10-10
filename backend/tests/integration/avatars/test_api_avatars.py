@@ -9,9 +9,11 @@ from __future__ import annotations
 import os
 import time
 import uuid
+from concurrent.futures import ThreadPoolExecutor
 
-import httpx
 import pytest
+
+from tests.integration import httpx_client as httpx
 
 BASE_URL = os.getenv("API_URL", "http://localhost:8000")
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "admin@example.com")
@@ -28,6 +30,14 @@ _CREATE_BODY = {
     "clothes_top_color": "#4169E1",
     "clothes_bottom_color": "#FFFFFF",
 }
+_CHILD_PROFILE_IDS: dict[str, str] = {}
+
+
+def _auth_headers(token: str) -> dict[str, str]:
+    return {
+        "Authorization": f"Bearer {token}",
+        "X-Child-Profile-ID": _CHILD_PROFILE_IDS[token],
+    }
 
 
 def _login(email: str, password: str) -> str:
@@ -70,7 +80,16 @@ def _register_and_approve() -> str:
         timeout=10.0,
     )
     time.sleep(0.2)
-    return _login(email, password)
+    token = _login(email, password)
+    child_resp = httpx.post(
+        f"{BASE_URL}/api/v1/child-profiles",
+        json={"display_name": "Avatar Test Child"},
+        headers={"Authorization": f"Bearer {token}"},
+        timeout=10.0,
+    )
+    assert child_resp.status_code == 201, child_resp.text
+    _CHILD_PROFILE_IDS[token] = child_resp.json()["id"]
+    return token
 
 
 # ── Scenario 1: Create avatar ──────────────────────────────────────────────────
@@ -81,7 +100,7 @@ def test_create_avatar_returns_201() -> None:
     resp = httpx.post(
         f"{BASE_URL}/api/v1/avatars",
         json=_CREATE_BODY,
-        headers={"Authorization": f"Bearer {token}"},
+        headers=_auth_headers(token),
         timeout=10.0,
     )
     assert resp.status_code == 201
@@ -89,6 +108,28 @@ def test_create_avatar_returns_201() -> None:
     assert "avatar_id" in data
     assert "job_id" in data
     assert data["status"] == "queued"
+
+
+def test_parallel_avatar_generation_respects_active_job_limit() -> None:
+    token = _register_and_approve()
+
+    def create_avatar(_: int) -> httpx.Response:
+        return httpx.post(
+            f"{BASE_URL}/api/v1/avatars",
+            json=_CREATE_BODY,
+            headers=_auth_headers(token),
+            timeout=10.0,
+        )
+
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        responses = list(executor.map(create_avatar, range(3)))
+
+    accepted = [response for response in responses if response.status_code == 201]
+    limited = [response for response in responses if response.status_code == 422]
+
+    assert len(accepted) == 2
+    assert len(limited) == 1
+    assert limited[0].json()["error_code"] == "CONCURRENCY_LIMIT_REACHED"
 
 
 # ── Scenario 2: Poll job status ────────────────────────────────────────────────
@@ -99,7 +140,7 @@ def test_poll_job_status() -> None:
     create_resp = httpx.post(
         f"{BASE_URL}/api/v1/avatars",
         json=_CREATE_BODY,
-        headers={"Authorization": f"Bearer {token}"},
+        headers=_auth_headers(token),
         timeout=10.0,
     )
     assert create_resp.status_code == 201
@@ -108,7 +149,7 @@ def test_poll_job_status() -> None:
 
     job_resp = httpx.get(
         f"{BASE_URL}/api/v1/avatars/{avatar_id}/jobs/{job_id}",
-        headers={"Authorization": f"Bearer {token}"},
+        headers=_auth_headers(token),
         timeout=10.0,
     )
     assert job_resp.status_code == 200
@@ -135,7 +176,7 @@ def test_list_avatars_includes_created() -> None:
     create_resp = httpx.post(
         f"{BASE_URL}/api/v1/avatars",
         json=_CREATE_BODY,
-        headers={"Authorization": f"Bearer {token}"},
+        headers=_auth_headers(token),
         timeout=10.0,
     )
     assert create_resp.status_code == 201
@@ -144,7 +185,7 @@ def test_list_avatars_includes_created() -> None:
     time.sleep(0.1)
     list_resp = httpx.get(
         f"{BASE_URL}/api/v1/avatars",
-        headers={"Authorization": f"Bearer {token}"},
+        headers=_auth_headers(token),
         timeout=10.0,
     )
     assert list_resp.status_code == 200
@@ -160,7 +201,7 @@ def test_get_avatar_detail() -> None:
     create_resp = httpx.post(
         f"{BASE_URL}/api/v1/avatars",
         json=_CREATE_BODY,
-        headers={"Authorization": f"Bearer {token}"},
+        headers=_auth_headers(token),
         timeout=10.0,
     )
     assert create_resp.status_code == 201
@@ -168,7 +209,7 @@ def test_get_avatar_detail() -> None:
 
     detail_resp = httpx.get(
         f"{BASE_URL}/api/v1/avatars/{avatar_id}",
-        headers={"Authorization": f"Bearer {token}"},
+        headers=_auth_headers(token),
         timeout=10.0,
     )
     assert detail_resp.status_code == 200
@@ -187,7 +228,7 @@ def test_get_nonexistent_avatar_returns_404() -> None:
 
     resp = httpx.get(
         f"{BASE_URL}/api/v1/avatars/{fake_id}",
-        headers={"Authorization": f"Bearer {token}"},
+        headers=_auth_headers(token),
         timeout=10.0,
     )
     assert resp.status_code == 404
@@ -203,7 +244,7 @@ def test_create_avatar_invalid_species_returns_422() -> None:
     resp = httpx.post(
         f"{BASE_URL}/api/v1/avatars",
         json=body,
-        headers={"Authorization": f"Bearer {token}"},
+        headers=_auth_headers(token),
         timeout=10.0,
     )
     assert resp.status_code == 422
@@ -215,7 +256,7 @@ def test_create_avatar_invalid_hex_color_returns_422() -> None:
     resp = httpx.post(
         f"{BASE_URL}/api/v1/avatars",
         json=body,
-        headers={"Authorization": f"Bearer {token}"},
+        headers=_auth_headers(token),
         timeout=10.0,
     )
     assert resp.status_code == 422
@@ -229,7 +270,7 @@ def test_regenerate_portrait() -> None:
     create_resp = httpx.post(
         f"{BASE_URL}/api/v1/avatars",
         json=_CREATE_BODY,
-        headers={"Authorization": f"Bearer {token}"},
+        headers=_auth_headers(token),
         timeout=10.0,
     )
     assert create_resp.status_code == 201
@@ -237,7 +278,7 @@ def test_regenerate_portrait() -> None:
 
     regen_resp = httpx.post(
         f"{BASE_URL}/api/v1/avatars/{avatar_id}/regenerate",
-        headers={"Authorization": f"Bearer {token}"},
+        headers=_auth_headers(token),
         timeout=10.0,
     )
     # Will succeed (queued) or fail with CONCURRENCY_LIMIT_REACHED / RATE_LIMIT_EXCEEDED
@@ -252,7 +293,7 @@ def test_patch_avatar_name() -> None:
     create_resp = httpx.post(
         f"{BASE_URL}/api/v1/avatars",
         json=_CREATE_BODY,
-        headers={"Authorization": f"Bearer {token}"},
+        headers=_auth_headers(token),
         timeout=10.0,
     )
     assert create_resp.status_code == 201
@@ -261,7 +302,7 @@ def test_patch_avatar_name() -> None:
     patch_resp = httpx.patch(
         f"{BASE_URL}/api/v1/avatars/{avatar_id}",
         json={"name": "Speedy Fox"},
-        headers={"Authorization": f"Bearer {token}"},
+        headers=_auth_headers(token),
         timeout=10.0,
     )
     assert patch_resp.status_code == 200
@@ -276,7 +317,7 @@ def test_delete_avatar() -> None:
     create_resp = httpx.post(
         f"{BASE_URL}/api/v1/avatars",
         json=_CREATE_BODY,
-        headers={"Authorization": f"Bearer {token}"},
+        headers=_auth_headers(token),
         timeout=10.0,
     )
     assert create_resp.status_code == 201, create_resp.text
@@ -284,14 +325,14 @@ def test_delete_avatar() -> None:
 
     del_resp = httpx.delete(
         f"{BASE_URL}/api/v1/avatars/{avatar_id}",
-        headers={"Authorization": f"Bearer {token}"},
+        headers=_auth_headers(token),
         timeout=10.0,
     )
     assert del_resp.status_code == 204, del_resp.text
 
     get_resp = httpx.get(
         f"{BASE_URL}/api/v1/avatars/{avatar_id}",
-        headers={"Authorization": f"Bearer {token}"},
+        headers=_auth_headers(token),
         timeout=10.0,
     )
     assert get_resp.status_code == 404

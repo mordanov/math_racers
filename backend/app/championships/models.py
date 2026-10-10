@@ -8,8 +8,10 @@ from sqlalchemy import (
     CheckConstraint,
     DateTime,
     ForeignKey,
+    Index,
     Integer,
     String,
+    UniqueConstraint,
     text,
 )
 from sqlalchemy.dialects.postgresql import UUID
@@ -21,6 +23,7 @@ from infrastructure.database.base import Base
 class Championship(Base):
     __tablename__ = "championships"
     __table_args__ = (
+        Index("idx_championships_child_profile_id", "child_profile_id"),
         CheckConstraint("total_races BETWEEN 3 AND 7", name="ck_championships_total_races"),
         CheckConstraint("status IN ('active', 'completed')", name="ck_championships_status"),
     )
@@ -30,6 +33,11 @@ class Championship(Base):
         UUID(as_uuid=True),
         ForeignKey("accounts.id", ondelete="CASCADE"),
         nullable=False,
+    )
+    child_profile_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("child_profiles.id", ondelete="CASCADE"),
+        nullable=True,
     )
     total_races: Mapped[int] = mapped_column(Integer, nullable=False)
     races_completed: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
@@ -58,6 +66,12 @@ class ChampionshipRace(Base):
         ),
         CheckConstraint(
             "points_earned BETWEEN 0 AND 10", name="ck_championship_races_points_earned"
+        ),
+        UniqueConstraint(
+            "championship_id", "race_index", name="uq_championship_races_championship_index"
+        ),
+        UniqueConstraint(
+            "championship_id", "race_id", name="uq_championship_races_championship_race"
         ),
     )
 

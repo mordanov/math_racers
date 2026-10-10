@@ -14,9 +14,14 @@ function delay(ms: number): Promise<void> {
 export class APIClient {
   private baseURL = '/api/v1';
   private authToken: string | null = null;
+  private activeChildId: string | null = null;
 
   setAuthToken(token: string | null): void {
     this.authToken = token;
+  }
+
+  setActiveChildId(childId: string | null): void {
+    this.activeChildId = childId;
   }
 
   async get<T>(path: string): Promise<T> {
@@ -38,7 +43,12 @@ export class APIClient {
   private async request<T>(method: string, path: string, body?: unknown, attempt = 1): Promise<T> {
     const headers: Record<string, string> = {};
     if (body !== undefined) headers['Content-Type'] = 'application/json';
+    if (this.activeChildId) headers['X-Child-Profile-ID'] = this.activeChildId;
     if (this.authToken) headers['Authorization'] = `Bearer ${this.authToken}`;
+    if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method.toUpperCase())) {
+      const csrfToken = await this.ensureCsrfToken();
+      headers['X-CSRF-Token'] = csrfToken;
+    }
 
     const response = await fetch(this.baseURL + path, {
       method,
@@ -59,6 +69,33 @@ export class APIClient {
     }
 
     return response.json() as Promise<T>;
+  }
+
+  private async ensureCsrfToken(): Promise<string> {
+    const current = this.readCsrfCookie();
+    if (current) return current;
+
+    const response = await fetch(`${this.baseURL}/auth/csrf`, {
+      method: 'GET',
+      credentials: 'same-origin',
+    });
+    if (!response.ok) {
+      throw new APIError(response.status, await response.json().catch(() => ({})));
+    }
+    const issued = this.readCsrfCookie();
+    if (!issued) {
+      throw new Error('The server did not issue a CSRF token.');
+    }
+    return issued;
+  }
+
+  private readCsrfCookie(): string | null {
+    if (typeof document === 'undefined') return null;
+    const token = document.cookie
+      .split('; ')
+      .find((cookie) => cookie.startsWith('csrf_token='))
+      ?.slice('csrf_token='.length);
+    return token ? decodeURIComponent(token) : null;
   }
 }
 

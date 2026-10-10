@@ -32,6 +32,17 @@ function advanceToRacing(engine: ReturnType<typeof createRaceEngine>) {
   engine.tick(16);
 }
 
+function answerQuestion(
+  engine: ReturnType<typeof createRaceEngine>,
+  correct = true,
+): ReturnType<ReturnType<typeof createRaceEngine>['submitAnswer']> {
+  const state = engine.getState();
+  const problem = state.problemSet!.problems[state.currentObstacle]!;
+  return engine.submitAnswer({
+    answer: String(correct ? problem.answer : problem.answer + 1),
+  });
+}
+
 describe('Race Engine — full race loop (human only)', () => {
   it('follows the legal state sequence IDLE → LOBBY → COUNTDOWN → RACING', () => {
     const engine = createRaceEngine(BASE_CONFIG);
@@ -48,7 +59,7 @@ describe('Race Engine — full race loop (human only)', () => {
     const engine = createRaceEngine(BASE_CONFIG);
     advanceToRacing(engine);
     // Obstacle clock is 16ms after two ticks — well under 2000ms threshold
-    const result = engine.submitAnswer({ isCorrect: true });
+    const result = answerQuestion(engine);
     expect(result.tier).toBe('perfect');
     expect(result.distanceMetres).toBe(18);
   });
@@ -61,7 +72,7 @@ describe('Race Engine — full race loop (human only)', () => {
     engine.tick(0);
     // Advance clock past 6000ms threshold
     for (let t = 16; t <= 6016; t += 16) engine.tick(t);
-    const result = engine.submitAnswer({ isCorrect: true });
+    const result = answerQuestion(engine);
     expect(result.tier).toBe('slow');
     expect(result.distanceMetres).toBe(9);
   });
@@ -69,7 +80,7 @@ describe('Race Engine — full race loop (human only)', () => {
   it('applies 0 m for incorrect answer', () => {
     const engine = createRaceEngine(BASE_CONFIG);
     advanceToRacing(engine);
-    const result = engine.submitAnswer({ isCorrect: false });
+    const result = answerQuestion(engine, false);
     expect(result.distanceMetres).toBe(0);
     expect(result.tier).toBe('incorrect');
   });
@@ -80,7 +91,7 @@ describe('Race Engine — full race loop (human only)', () => {
     let prev = 0;
     for (let i = 0; i < OBSTACLE_COUNT; i++) {
       engine.tick(i * 16);
-      engine.submitAnswer({ isCorrect: i % 2 === 0 }); // alternate correct / incorrect
+      answerQuestion(engine, i % 2 === 0); // alternate correct / incorrect
       const dist = engine.getState().runners[0].totalDistanceMetres;
       expect(dist).toBeGreaterThanOrEqual(prev);
       prev = dist;
@@ -92,7 +103,7 @@ describe('Race Engine — full race loop (human only)', () => {
     advanceToRacing(engine);
     for (let i = 0; i < OBSTACLE_COUNT; i++) {
       engine.tick(i * 16);
-      engine.submitAnswer({ isCorrect: true });
+      answerQuestion(engine);
     }
     expect(engine.getState().state).toBe('RESULTS');
     expect(engine.getState().runners[0].obstaclesCompleted).toBe(OBSTACLE_COUNT);
@@ -103,16 +114,18 @@ describe('Race Engine — full race loop (human only)', () => {
     advanceToRacing(engine);
     for (let i = 0; i < OBSTACLE_COUNT; i++) {
       engine.tick(i * 16);
-      engine.submitAnswer({ isCorrect: true });
+      answerQuestion(engine);
     }
     const summary = engine.getSummary();
     expect(summary.race_id).toBe('test-race-1');
-    expect(summary.difficulty_tier).toBe(1);
     expect(summary.mode).toBe('quick');
+    expect(summary.human_avatar_id).toBe('avatar-1');
     expect(summary.participants).toHaveLength(1);
     expect(summary.participants[0].problems_correct).toBe(OBSTACLE_COUNT);
     expect(summary.participants[0].total_distance).toBe(OBSTACLE_COUNT * 18); // all Perfect
     expect(summary.participants[0].position).toBe(1);
+    expect(summary.answers).toHaveLength(OBSTACLE_COUNT);
+    expect(summary).not.toHaveProperty('difficulty_tier');
   });
 
   it('getSummary() throws if not in RESULTS state', () => {
@@ -146,7 +159,7 @@ describe('Race Engine — AI determinism', () => {
     engine.tick(0);
     for (let i = 0; i < OBSTACLE_COUNT; i++) {
       engine.tick(i * 16 + 16);
-      engine.submitAnswer({ isCorrect: true });
+      answerQuestion(engine);
     }
     return engine.getState().runners;
   }
@@ -184,7 +197,7 @@ describe('Race Engine — per-opponent RNG independence', () => {
     engine.tick(0);
     for (let i = 0; i < OBSTACLE_COUNT; i++) {
       engine.tick(i * 16 + 16);
-      engine.submitAnswer({ isCorrect: true });
+      answerQuestion(engine);
     }
     const runners = engine.getState().runners.filter((r) => !r.isHuman);
     // At least one obstacle where not all 3 AI runners produced identical distance
@@ -200,7 +213,7 @@ describe('Race Engine — per-opponent RNG independence', () => {
   });
 });
 
-describe('Race Engine — XP calculation', () => {
+describe('Race Engine — server-authoritative XP', () => {
   function runAllCorrect(mode: RaceConfig['mode']): ReturnType<typeof createRaceEngine> {
     const cfg: RaceConfig = {
       raceId: `xp-test-${mode}`,
@@ -213,46 +226,18 @@ describe('Race Engine — XP calculation', () => {
     advanceToRacing(engine);
     for (let i = 0; i < OBSTACLE_COUNT; i++) {
       engine.tick(i * 16 + 16);
-      engine.submitAnswer({ isCorrect: true });
+      answerQuestion(engine);
     }
     return engine;
   }
 
-  it('quick mode: 10 XP per correct answer', () => {
-    const engine = runAllCorrect('quick');
-    const summary = engine.getSummary();
-    expect(summary.participants[0].xp_earned).toBe(OBSTACLE_COUNT * 10);
-  });
-
-  it('duel mode: 10 XP per correct answer', () => {
-    const engine = runAllCorrect('duel');
-    const summary = engine.getSummary();
-    expect(summary.participants[0].xp_earned).toBe(OBSTACLE_COUNT * 10);
-  });
-
-  it('championship mode 1st place: (10*10) + correct*5', () => {
-    const engine = runAllCorrect('championship');
-    const summary = engine.getSummary();
-    expect(summary.participants[0].xp_earned).toBe(100 + OBSTACLE_COUNT * 5);
-  });
-
-  it('quick mode with partial correct: 10 XP per correct only', () => {
-    const cfg: RaceConfig = {
-      raceId: 'xp-partial',
-      seed: 11,
-      tier: 1,
-      mode: 'quick',
-      participants: [{ runnerId: 'player', isHuman: true, avatarId: 'a0' }],
-    };
-    const engine = createRaceEngine(cfg);
-    advanceToRacing(engine);
-    for (let i = 0; i < OBSTACLE_COUNT; i++) {
-      engine.tick(i * 16 + 16);
-      engine.submitAnswer({ isCorrect: i % 2 === 0 }); // 4 correct, 4 incorrect
-    }
-    const summary = engine.getSummary();
-    expect(summary.participants[0].xp_earned).toBe(4 * 10);
-  });
+  it.each(['quick', 'duel', 'championship'] as const)(
+    '%s results do not include a client-computed XP total',
+    (mode) => {
+      const summary = runAllCorrect(mode).getSummary();
+      expect(summary.participants[0]).not.toHaveProperty('xp_earned');
+    },
+  );
 });
 
 describe('Race Engine — training mode', () => {
@@ -283,32 +268,33 @@ describe('Race Engine — training mode', () => {
     const engine = makeTrainingEngine();
     for (let i = 0; i < 3; i++) {
       engine.tick(i * 16 + 16);
-      engine.submitAnswer({ isCorrect: true });
+      answerQuestion(engine);
     }
     engine.forceComplete();
     const summary = engine.getSummary();
     expect(summary.participants[0].position).toBeNull();
+    expect(summary.participants[0]).not.toHaveProperty('xp_earned');
   });
 
-  it('training XP: 5 XP per correct answer, no completion bonus', () => {
+  it('training does not include a client-computed XP total', () => {
     const engine = makeTrainingEngine();
     for (let i = 0; i < 5; i++) {
       engine.tick(i * 16 + 16);
-      engine.submitAnswer({ isCorrect: true });
+      answerQuestion(engine);
     }
     engine.forceComplete();
     const summary = engine.getSummary();
-    expect(summary.participants[0].xp_earned).toBe(5 * 5);
     expect(summary.participants[0].problems_correct).toBe(5);
+    expect(summary.participants[0]).not.toHaveProperty('xp_earned');
   });
 
-  it('forceComplete on completed full race is a no-op (stays RESULTS)', () => {
+  it('Training stays open after eight answers until the player exits', () => {
     const engine = makeTrainingEngine();
     for (let i = 0; i < OBSTACLE_COUNT; i++) {
       engine.tick(i * 16 + 16);
-      engine.submitAnswer({ isCorrect: true });
+      answerQuestion(engine);
     }
-    expect(engine.getState().state).toBe('RESULTS');
+    expect(engine.getState().state).toBe('RACING');
     engine.forceComplete();
     expect(engine.getState().state).toBe('RESULTS');
   });
@@ -346,7 +332,7 @@ describe('Race Engine — tiebreaker determinism', () => {
       engine.tick(0);
       for (let i = 0; i < OBSTACLE_COUNT; i++) {
         engine.tick(i * 16 + 16);
-        engine.submitAnswer({ isCorrect: true });
+        answerQuestion(engine);
       }
       return engine.getSummary().participants.map((p) => p.avatar_id);
     }
@@ -359,9 +345,9 @@ describe('Race Engine — tiebreaker determinism', () => {
 describe('Race Engine — state guard', () => {
   it('rejects submitAnswer when not in RACING state', () => {
     const engine = createRaceEngine(BASE_CONFIG);
-    expect(() => engine.submitAnswer({ isCorrect: true })).toThrow(RaceStateError);
+    expect(() => engine.submitAnswer({ answer: '1' })).toThrow(RaceStateError);
     engine.transition('LOBBY');
-    expect(() => engine.submitAnswer({ isCorrect: true })).toThrow(RaceStateError);
+    expect(() => engine.submitAnswer({ answer: '1' })).toThrow(RaceStateError);
   });
 
   it('rejects illegal transition IDLE → RACING from engine', () => {
@@ -375,7 +361,7 @@ describe('Race Engine — state guard', () => {
     advanceToRacing(engine);
     for (let i = 0; i < OBSTACLE_COUNT; i++) {
       engine.tick(i * 16);
-      engine.submitAnswer({ isCorrect: true });
+      answerQuestion(engine);
     }
     expect(engine.getState().state).toBe('RESULTS');
     expect(() => engine.transition('RACING')).toThrow(RaceStateError);

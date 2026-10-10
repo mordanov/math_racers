@@ -16,6 +16,6 @@ def test_migration_has_upgrade_and_downgrade() -> None:
     assert spec is not None
     module = importlib.util.module_from_spec(spec)
     assert spec.loader is not None
-    spec.loader.exec_module(module)  # type: ignore[union-attr]
+    spec.loader.exec_module(module)
     assert callable(getattr(module, "upgrade", None))
     assert callable(getattr(module, "downgrade", None))

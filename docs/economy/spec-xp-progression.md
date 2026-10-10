@@ -46,10 +46,15 @@
 | Race completion | +100 |
 | Correct answer | +20 |
 | Perfect-answer streak (5 consecutive) | +10 bonus |
-| Daily challenge completion | +200 |
-| Championship race completion | +500 |
+| Daily Challenge completion (future; not v1.0) | +200 |
+| Championship completion (once) | +500 |
 
 XP is never deducted (FR-062).
+
+For v1.0, Training awards +20 XP for a correct answer and no race-completion
+XP. Award the +500 championship bonus once when the championship is completed.
+Daily Challenge and its XP are outside v1.0; do not expose its endpoint or
+award until the feature is approved.
 
 ---
 
@@ -58,6 +63,10 @@ XP is never deducted (FR-062).
 ```
 level(total_xp) = floor(sqrt(total_xp / 100))
 ```
+
+The implemented rule is
+`max(1, floor(sqrt(total_xp / 100)))`, so Level 1 begins at 0 XP and Level 2
+begins at 400 XP.
 
 Inverse (XP required to reach a level):
 
@@ -88,14 +97,14 @@ Triggered by `POST /api/v1/races/{id}/results`.
 1. Receive RaceResult (validate idempotency_key)
 2. If idempotency_key already processed → return cached result
 3. Calculate XP components:
-     race_xp     = 100 (always on completion)
+     race_xp     = 100 for a completed competitive race; 0 for Training
      answer_xp   = result.correct_answers × 20
      streak_xp   = floor(result.longest_streak / 5) × 10
-     mode_bonus  = 500 if mode == championship else 0
+     mode_bonus  = 500 once when the championship changes to completed
      total       = race_xp + answer_xp + streak_xp + mode_bonus
 4. Credit XP: INSERT XPEvent(source=race_completion, amount=total, race_id=...)
    (or split into individual events per source — implementation choice)
-5. Recompute current_level = floor(sqrt(new_total_xp / 100))
+5. Recompute current_level = max(1, floor(sqrt(new_total_xp / 100)))
 6. If current_level > previous_level → emit LevelUpEvent(player_id, new_level)
 7. Persist: UPDATE PlayerProgression SET total_xp, current_level, updated_at
 8. Return updated PlayerProgression in response

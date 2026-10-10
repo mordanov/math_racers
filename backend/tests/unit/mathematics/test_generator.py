@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 from app.mathematics.generator import generate_problem_set
 from app.mathematics.types import Operation
 
@@ -46,13 +48,11 @@ def test_tier1_operands_in_range() -> None:
         assert 1 <= p.operand_b <= 10
 
 
-def test_tier4_all_four_operations_present() -> None:
+def test_tier4_generates_only_division() -> None:
     result = generate_problem_set(4, 333, 200)
     ops = {p.operation for p in result.problems}
-    assert Operation.addition in ops
-    assert Operation.subtraction in ops
-    assert Operation.multiplication in ops
     assert Operation.division in ops
+    assert ops == {Operation.division}
 
 
 def test_division_integer_answers() -> None:
@@ -87,9 +87,6 @@ def test_no_consecutive_duplicates() -> None:
         assert not identical
 
 
-def test_tier6_fallback_uses_tier5_range() -> None:
-    result = generate_problem_set(6, 1, 50)
-    for p in result.problems:
-        assert 1 <= p.operand_a <= 100
-        assert 1 <= p.operand_b <= 100
-    assert result.tier == 6
+def test_tier6_requires_parent_configured_settings() -> None:
+    with pytest.raises(ValueError, match="parent-configured"):
+        generate_problem_set(6, 1, 1)

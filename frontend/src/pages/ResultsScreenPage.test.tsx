@@ -1,11 +1,12 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as raceApiModule from '../engine/race/raceApi';
 import * as progressionApiModule from '../features/race/progressionApi';
 import * as championshipApiModule from '../engine/race/championshipApi';
 import * as sfxModule from '../shared/hooks/useSfxPlayer';
 import * as voiceModule from '../shared/hooks/useVoicePlayer';
+import * as offlineStoreModule from '../infrastructure/offline/offlineStore';
 import ResultsScreenPage from './ResultsScreenPage';
 import type { RaceSummary } from '../engine/race/types';
 
@@ -14,12 +15,15 @@ vi.mock('../features/race/progressionApi');
 vi.mock('../engine/race/championshipApi');
 vi.mock('../shared/hooks/useSfxPlayer');
 vi.mock('../shared/hooks/useVoicePlayer');
+vi.mock('../infrastructure/offline/offlineStore', () => ({
+  queueTrainingResult: vi.fn().mockResolvedValue(undefined),
+}));
 
-const makeSummary = (xpEarned = 80): RaceSummary => ({
+const makeSummary = (): RaceSummary => ({
   race_id: 'r1',
-  seed: '1',
-  difficulty_tier: 1,
+  idempotency_key: 'r1',
   mode: 'quick',
+  human_avatar_id: 'av1',
   started_at: '',
   completed_at: '',
   participants: [
@@ -30,7 +34,6 @@ const makeSummary = (xpEarned = 80): RaceSummary => ({
       longest_streak: 5,
       average_response_ms: 1500,
       total_distance: 126,
-      xp_earned: xpEarned,
     },
     {
       avatar_id: 'ai-1',
@@ -39,9 +42,9 @@ const makeSummary = (xpEarned = 80): RaceSummary => ({
       longest_streak: 3,
       average_response_ms: 3000,
       total_distance: 90,
-      xp_earned: 60,
     },
   ],
+  answers: [],
 });
 
 function renderPage(state: unknown) {
@@ -58,9 +61,16 @@ function renderPage(state: unknown) {
 }
 
 describe('ResultsScreenPage', () => {
+  afterEach(() => {
+    Object.defineProperty(navigator, 'onLine', { configurable: true, value: true });
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(raceApiModule.postRaceSummary).mockResolvedValue({ new_achievements: [] });
+    vi.mocked(raceApiModule.postRaceSummary).mockResolvedValue({
+      new_achievements: [],
+      progression: { xp_earned_this_race: 80 },
+    });
     vi.mocked(progressionApiModule.fetchProgression).mockResolvedValue({
       player_id: 'p1',
       total_xp: 200,
@@ -100,7 +110,7 @@ describe('ResultsScreenPage', () => {
       current_level: 2,
       xp_to_next_level: 500,
     });
-    renderPage({ summary: makeSummary(80), playerAvatarId: 'av1' });
+    renderPage({ summary: makeSummary(), playerAvatarId: 'av1' });
     await waitFor(() => expect(screen.getByText(/level up/i)).toBeInTheDocument());
   });
 
@@ -150,6 +160,26 @@ describe('ResultsScreenPage', () => {
     expect(screen.getByRole('button', { name: /view championship/i })).toBeInTheDocument();
   });
 
+  it('includes the one-time championship completion bonus in the XP reward', async () => {
+    vi.mocked(championshipApiModule.recordChampionshipRace).mockResolvedValue({
+      championship_id: 'ch1',
+      total_races: 3,
+      races_completed: 3,
+      status: 'completed',
+      standings: [],
+      completion_xp_awarded: 500,
+    });
+
+    renderPage({
+      summary: { ...makeSummary(), mode: 'championship' },
+      playerAvatarId: 'av1',
+      championshipId: 'ch1',
+      raceIndex: 2,
+    });
+
+    await waitFor(() => expect(screen.getByText('+580')).toBeInTheDocument());
+  });
+
   it('plays celebrating voice on mount', async () => {
     const playVoice = vi.fn();
     vi.mocked(voiceModule.useVoicePlayer).mockReturnValue({ playVoice });
@@ -166,7 +196,46 @@ describe('ResultsScreenPage', () => {
       current_level: 2,
       xp_to_next_level: 500,
     });
-    renderPage({ summary: makeSummary(80), playerAvatarId: 'av1', avatarSpecies: 'cat' });
+    renderPage({ summary: makeSummary(), playerAvatarId: 'av1', avatarSpecies: 'cat' });
     await waitFor(() => expect(playSfx).toHaveBeenCalledWith('levelup'));
+  });
+
+  it('queues Training results locally while offline', async () => {
+    Object.defineProperty(navigator, 'onLine', { configurable: true, value: false });
+    const summary = { ...makeSummary(), mode: 'training' as const };
+    renderPage({
+      summary,
+      playerAvatarId: 'av1',
+      avatarSpecies: 'fox',
+      childProfileId: 'child-1',
+    });
+
+    await waitFor(() => expect(screen.getByText(/saved on this device/i)).toBeInTheDocument());
+    expect(offlineStoreModule.queueTrainingResult).toHaveBeenCalledWith(
+      expect.objectContaining({
+        child_profile_id: 'child-1',
+        idempotency_key: summary.idempotency_key,
+      }),
+    );
+    expect(raceApiModule.postRaceSummary).not.toHaveBeenCalled();
+    Object.defineProperty(navigator, 'onLine', { configurable: true, value: true });
+    act(() => {
+      window.dispatchEvent(
+        new CustomEvent('training-result-synced', {
+          detail: {
+            idempotency_key: summary.idempotency_key,
+            result: {
+              new_achievements: [],
+              progression: { xp_earned_this_race: 20 },
+            },
+          },
+        }),
+      );
+    });
+    await waitFor(() =>
+      expect(screen.queryByText(/saved on this device/i)).not.toBeInTheDocument(),
+    );
+    expect(screen.queryByText(/saved on this device/i)).not.toBeInTheDocument();
+    Object.defineProperty(navigator, 'onLine', { configurable: true, value: true });
   });
 });

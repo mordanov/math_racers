@@ -282,6 +282,9 @@ Generated content must never include:
 
 Every generated asset must be suitable for children aged 6–12.
 
+Every required technical and content check is a blocking gate before storage
+and publication. A failed or unavailable check keeps the image private.
+
 ---
 
 ## Observability

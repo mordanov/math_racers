@@ -10,8 +10,16 @@ import os
 import time
 import uuid
 
-import httpx
 import pytest
+
+from tests.integration import httpx_client as httpx
+from tests.integration.races.helpers import (
+    build_result_payload,
+    create_child_and_avatar,
+    create_race_session,
+    submit_answers,
+    submit_result,
+)
 
 BASE_URL = os.getenv("API_URL", "http://localhost:8000")
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "admin@example.com")
@@ -64,36 +72,36 @@ def _register_and_approve() -> str:
     return _login(email, password)
 
 
-def _post_race(
+def _post_session_race(
     token: str,
     *,
-    race_id: str | None = None,
     problems_correct: int = 7,
     longest_streak: int = 5,
     mode: str = "quick",
+    child_id: str | None = None,
+    avatar_id: str | None = None,
 ) -> httpx.Response:
-    return httpx.post(
-        f"{BASE_URL}/api/v1/races",
-        json={
-            "race_id": race_id or str(uuid.uuid4()),
-            "seed": "42",
-            "difficulty_tier": 2,
-            "mode": mode,
-            "started_at": "2026-08-12T10:00:00Z",
-            "completed_at": "2026-08-12T10:05:00Z",
-            "participants": [
-                {
-                    "avatar_id": "a1",
-                    "position": 1,
-                    "problems_correct": problems_correct,
-                    "longest_streak": longest_streak,
-                    "average_response_ms": 1200,
-                    "total_distance": 126,
-                    "xp_earned": 70,
-                }
-            ],
+    if child_id is None or avatar_id is None:
+        child_id, avatar_id = create_child_and_avatar(BASE_URL, token)
+    race_session = create_race_session(BASE_URL, token, child_id, avatar_id, mode=mode)
+    payload = build_result_payload(
+        race_session,
+        avatar_id,
+        mode=mode,
+        problems_correct=problems_correct,
+        longest_streak=longest_streak,
+    )
+    submit_answers(BASE_URL, token, child_id, str(race_session["race_id"]), payload["answers"])
+    return submit_result(BASE_URL, token, child_id, str(race_session["race_id"]), payload)
+
+
+def _get_progression(token: str, child_id: str) -> httpx.Response:
+    return httpx.get(
+        f"{BASE_URL}/api/v1/progression",
+        headers={
+            "Authorization": f"Bearer {token}",
+            "X-Child-Profile-ID": child_id,
         },
-        headers={"Authorization": f"Bearer {token}"},
         timeout=10.0,
     )
 
@@ -103,8 +111,8 @@ def _post_race(
 
 def test_xp_awarded_on_race_submission() -> None:
     token = _register_and_approve()
-    resp = _post_race(token, problems_correct=7, longest_streak=5, mode="quick")
-    assert resp.status_code == 201, resp.text
+    resp = _post_session_race(token, problems_correct=7, longest_streak=5, mode="quick")
+    assert resp.status_code == 200, resp.text
     body = resp.json()
 
     assert "progression" in body
@@ -113,27 +121,25 @@ def test_xp_awarded_on_race_submission() -> None:
     assert prog["xp_earned_this_race"] == 250
     assert prog["total_xp"] == 250
     assert prog["current_level"] == 1
-    assert prog["level_up"] is not None
-    assert prog["level_up"]["previous_level"] == 0
-    assert prog["level_up"]["new_level"] == 1
+    assert prog["level_up"] is None
 
 
 def test_duplicate_race_returns_409_and_no_double_xp() -> None:
     token = _register_and_approve()
-    race_id = str(uuid.uuid4())
-
-    first = _post_race(token, race_id=race_id, problems_correct=0, longest_streak=0)
-    assert first.status_code == 201, first.text
+    child_id, avatar_id = create_child_and_avatar(BASE_URL, token)
+    race_session = create_race_session(BASE_URL, token, child_id, avatar_id)
+    payload = build_result_payload(race_session, avatar_id, problems_correct=0, longest_streak=0)
+    race_id = str(race_session["race_id"])
+    submit_answers(BASE_URL, token, child_id, race_id, payload["answers"])
+    first = submit_result(BASE_URL, token, child_id, race_id, payload)
+    assert first.status_code == 200, first.text
     first_xp = first.json()["progression"]["total_xp"]
 
-    second = _post_race(token, race_id=race_id, problems_correct=0, longest_streak=0)
-    assert second.status_code == 409, second.text
+    second = submit_result(BASE_URL, token, child_id, race_id, payload)
+    assert second.status_code == 200, second.text
+    assert second.json() == first.json()
 
-    get_resp = httpx.get(
-        f"{BASE_URL}/api/v1/progression",
-        headers={"Authorization": f"Bearer {token}"},
-        timeout=10.0,
-    )
+    get_resp = _get_progression(token, child_id)
     assert get_resp.status_code == 200
     assert get_resp.json()["total_xp"] == first_xp
 
@@ -143,29 +149,25 @@ def test_duplicate_race_returns_409_and_no_double_xp() -> None:
 
 def test_get_progression_zero_state() -> None:
     token = _register_and_approve()
-    resp = httpx.get(
-        f"{BASE_URL}/api/v1/progression",
-        headers={"Authorization": f"Bearer {token}"},
-        timeout=10.0,
-    )
+    child_id, _avatar_id = create_child_and_avatar(BASE_URL, token)
+    resp = _get_progression(token, child_id)
     assert resp.status_code == 200, resp.text
     body = resp.json()
     assert body["total_xp"] == 0
-    assert body["current_level"] == 0
-    assert body["xp_to_next_level"] == 100
+    assert body["current_level"] == 1
+    assert body["xp_to_next_level"] == 400
 
 
 def test_get_progression_after_race() -> None:
     token = _register_and_approve()
-    race_resp = _post_race(token, problems_correct=7, longest_streak=5)
-    assert race_resp.status_code == 201, race_resp.text
+    child_id, avatar_id = create_child_and_avatar(BASE_URL, token)
+    race_resp = _post_session_race(
+        token, problems_correct=7, longest_streak=5, child_id=child_id, avatar_id=avatar_id
+    )
+    assert race_resp.status_code == 200, race_resp.text
     race_prog = race_resp.json()["progression"]
 
-    get_resp = httpx.get(
-        f"{BASE_URL}/api/v1/progression",
-        headers={"Authorization": f"Bearer {token}"},
-        timeout=10.0,
-    )
+    get_resp = _get_progression(token, child_id)
     assert get_resp.status_code == 200
     get_prog = get_resp.json()
     assert get_prog["total_xp"] == race_prog["total_xp"]
@@ -183,8 +185,8 @@ def test_progression_unauthenticated() -> None:
 
 def test_championship_bonus_xp() -> None:
     token = _register_and_approve()
-    resp = _post_race(token, problems_correct=5, longest_streak=0, mode="championship")
-    assert resp.status_code == 201, resp.text
+    resp = _post_session_race(token, problems_correct=5, longest_streak=1, mode="championship")
+    assert resp.status_code == 200, resp.text
     prog = resp.json()["progression"]
-    # 100 (race) + 5*20 (correct) + 0 (streak) + 500 (championship) = 700
-    assert prog["xp_earned_this_race"] == 700
+    # Championship completion XP is awarded once when the last race is recorded.
+    assert prog["xp_earned_this_race"] == 200

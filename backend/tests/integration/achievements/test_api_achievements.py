@@ -10,8 +10,16 @@ import os
 import time
 import uuid
 
-import httpx
 import pytest
+
+from tests.integration import httpx_client as httpx
+from tests.integration.races.helpers import (
+    build_result_payload,
+    create_child_and_avatar,
+    create_race_session,
+    submit_answers,
+    submit_result,
+)
 
 BASE_URL = os.getenv("API_URL", "http://localhost:8000")
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "admin@example.com")
@@ -66,38 +74,24 @@ def _register_and_approve() -> tuple[str, str]:
     return token, account_id
 
 
-def _post_race(
+def _post_session_race(
     token: str,
     *,
-    race_id: str | None = None,
     problems_correct: int = 5,
     position: int = 1,
     mode: str = "quick",
 ) -> httpx.Response:
-    return httpx.post(
-        f"{BASE_URL}/api/v1/races",
-        json={
-            "race_id": race_id or str(uuid.uuid4()),
-            "seed": "42",
-            "difficulty_tier": 2,
-            "mode": mode,
-            "started_at": "2026-08-12T10:00:00Z",
-            "completed_at": "2026-08-12T10:05:00Z",
-            "participants": [
-                {
-                    "avatar_id": "a1",
-                    "position": position,
-                    "problems_correct": problems_correct,
-                    "longest_streak": 0,
-                    "average_response_ms": 1200,
-                    "total_distance": 126,
-                    "xp_earned": 70,
-                }
-            ],
-        },
-        headers={"Authorization": f"Bearer {token}"},
-        timeout=10.0,
+    child_id, avatar_id = create_child_and_avatar(BASE_URL, token)
+    race_session = create_race_session(BASE_URL, token, child_id, avatar_id, mode=mode)
+    payload = build_result_payload(
+        race_session,
+        avatar_id,
+        mode=mode,
+        problems_correct=problems_correct,
+        position=position,
     )
+    submit_answers(BASE_URL, token, child_id, str(race_session["race_id"]), payload["answers"])
+    return submit_result(BASE_URL, token, child_id, str(race_session["race_id"]), payload)
 
 
 # ── Scenario 1: first race unlocks first_race ─────────────────────────────────
@@ -105,8 +99,12 @@ def _post_race(
 
 def test_first_race_achievement_unlocked() -> None:
     token, account_id = _register_and_approve()
-    resp = _post_race(token)
-    assert resp.status_code == 201, resp.text
+    child_id, avatar_id = create_child_and_avatar(BASE_URL, token)
+    race_session = create_race_session(BASE_URL, token, child_id, avatar_id)
+    payload = build_result_payload(race_session, avatar_id)
+    submit_answers(BASE_URL, token, child_id, str(race_session["race_id"]), payload["answers"])
+    resp = submit_result(BASE_URL, token, child_id, str(race_session["race_id"]), payload)
+    assert resp.status_code == 200, resp.text
 
     body = resp.json()
     assert "new_achievements" in body
@@ -116,7 +114,10 @@ def test_first_race_achievement_unlocked() -> None:
     # Also appears in the player's unlock list
     list_resp = httpx.get(
         f"{BASE_URL}/api/v1/players/{account_id}/achievements",
-        headers={"Authorization": f"Bearer {token}"},
+        headers={
+            "Authorization": f"Bearer {token}",
+            "X-Child-Profile-ID": child_id,
+        },
         timeout=10.0,
     )
     assert list_resp.status_code == 200
@@ -129,18 +130,25 @@ def test_first_race_achievement_unlocked() -> None:
 
 def test_duplicate_race_no_duplicate_achievement() -> None:
     token, account_id = _register_and_approve()
-    race_id = str(uuid.uuid4())
-
-    first = _post_race(token, race_id=race_id)
-    assert first.status_code == 201, first.text
+    child_id, avatar_id = create_child_and_avatar(BASE_URL, token)
+    race_session = create_race_session(BASE_URL, token, child_id, avatar_id)
+    payload = build_result_payload(race_session, avatar_id)
+    race_id = str(race_session["race_id"])
+    submit_answers(BASE_URL, token, child_id, race_id, payload["answers"])
+    first = submit_result(BASE_URL, token, child_id, race_id, payload)
+    assert first.status_code == 200, first.text
     assert "first_race" in [a["key"] for a in first.json()["new_achievements"]]
 
-    second = _post_race(token, race_id=race_id)
-    assert second.status_code == 409, second.text
+    second = submit_result(BASE_URL, token, child_id, race_id, payload)
+    assert second.status_code == 200, second.text
+    assert second.json() == first.json()
 
     list_resp = httpx.get(
         f"{BASE_URL}/api/v1/players/{account_id}/achievements",
-        headers={"Authorization": f"Bearer {token}"},
+        headers={
+            "Authorization": f"Bearer {token}",
+            "X-Child-Profile-ID": child_id,
+        },
         timeout=10.0,
     )
     assert list_resp.status_code == 200
@@ -153,8 +161,8 @@ def test_duplicate_race_no_duplicate_achievement() -> None:
 
 def test_perfect_race_and_first_race_both_unlocked() -> None:
     token, _ = _register_and_approve()
-    resp = _post_race(token, problems_correct=8, position=1)
-    assert resp.status_code == 201, resp.text
+    resp = _post_session_race(token, problems_correct=8, position=1)
+    assert resp.status_code == 200, resp.text
 
     keys = [a["key"] for a in resp.json()["new_achievements"]]
     assert "first_race" in keys
@@ -185,10 +193,14 @@ def test_catalogue_returns_visible_achievements() -> None:
 def test_cannot_view_another_players_achievements() -> None:
     token_a, _ = _register_and_approve()
     _, account_b_id = _register_and_approve()
+    child_a_id, _ = create_child_and_avatar(BASE_URL, token_a)
 
     resp = httpx.get(
         f"{BASE_URL}/api/v1/players/{account_b_id}/achievements",
-        headers={"Authorization": f"Bearer {token_a}"},
+        headers={
+            "Authorization": f"Bearer {token_a}",
+            "X-Child-Profile-ID": child_a_id,
+        },
         timeout=10.0,
     )
     assert resp.status_code == 403

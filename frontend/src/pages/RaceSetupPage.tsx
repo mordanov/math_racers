@@ -4,8 +4,17 @@ import { listAvatars } from '../engine/avatar/avatarApi';
 import type { AvatarListItem } from '../engine/avatar/types';
 import { createChampionship } from '../engine/race/championshipApi';
 import type { RaceMode } from '../engine/race/types';
-import type { Tier } from '../engine/math/types';
+import type { Operation, Tier, TierConfig } from '../engine/math/types';
 import { createRaceSession } from '../features/race/raceSessionApi';
+import { fetchTier6Settings, saveTier6Settings } from '../features/race/tier6SettingsApi';
+import { fetchPlayerStats } from '../features/statistics/statisticsApi';
+import {
+  cacheChildData,
+  getCachedChildData,
+  type CachedChildData,
+  type CachedTrainingSession,
+} from '../infrastructure/offline/offlineStore';
+import { useAuth } from '../infrastructure/auth/AuthContext';
 import { Button } from '../shared/components/Button';
 import { LoadingSpinner } from '../shared/components/LoadingSpinner';
 import { useOffline } from '../shared/hooks/useOffline';
@@ -23,11 +32,13 @@ const MODES: Array<{ mode: RaceMode; label: string; defaultOpponents: number }> 
   { mode: 'training', label: 'Training', defaultOpponents: 0 },
   { mode: 'duel', label: 'Duel', defaultOpponents: 1 },
 ];
+const OPERATIONS: Operation[] = ['addition', 'subtraction', 'multiplication', 'division'];
 
 export default function RaceSetupPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const routeState = (location.state ?? {}) as SetupRouteState;
+  const { account, activeChildId } = useAuth();
 
   const [avatars, setAvatars] = useState<AvatarListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -35,37 +46,161 @@ export default function RaceSetupPage() {
     routeState.continueChampionshipId ? 'championship' : 'quick',
   );
   const [tier, setTier] = useState<Tier>(1);
+  const [customTierConfig, setCustomTierConfig] = useState<TierConfig>({
+    tier: 6,
+    operations: ['addition'],
+    minOperand: 1,
+    maxOperand: 20,
+  });
+  const [tier6SettingsSaved, setTier6SettingsSaved] = useState(false);
+  const [savingTier6Settings, setSavingTier6Settings] = useState(false);
+  const [tier6SettingsError, setTier6SettingsError] = useState<string | null>(null);
   const [opponentCount, setOpponentCount] = useState(3);
   const [champRaces, setChampRaces] = useState(3);
   const [selectedAvatarId, setSelectedAvatarId] = useState<string | null>(null);
   const [starting, setStarting] = useState(false);
+  const [cachedChildData, setCachedChildData] = useState<CachedChildData | null>(null);
+  const [offlineError, setOfflineError] = useState<string | null>(null);
   const continueChampionshipId = routeState.continueChampionshipId;
   const continueRaceIndex = routeState.continueRaceIndex ?? 0;
   const isOffline = useOffline();
   const { playSfx } = useSfxPlayer();
 
   useEffect(() => {
+    if (!account?.id) return;
+    let cancelled = false;
+    void fetchTier6Settings(account.id)
+      .then((saved) => {
+        if (cancelled) return;
+        if (saved) {
+          setCustomTierConfig(saved);
+          setTier6SettingsSaved(true);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setTier6SettingsError('Saved Tier 6 settings could not be loaded.');
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [account?.id]);
+
+  useEffect(() => {
+    if (!activeChildId) void navigate('/child-profiles', { replace: true });
+  }, [activeChildId, navigate]);
+
+  useEffect(() => {
     if (isOffline) setMode('training');
   }, [isOffline]);
 
   useEffect(() => {
-    listAvatars()
-      .then((list) => {
-        const published = list.filter((a) => a.status === 'published');
+    let cancelled = false;
+    void (async () => {
+      try {
+        if (isOffline) {
+          if (!activeChildId) throw new Error('Select a child profile before Training.');
+          const cached = await getCachedChildData(activeChildId);
+          const published = cached?.avatars.filter((avatar) => avatar.status === 'published') ?? [];
+          if (!cached || published.length === 0 || !cached.training_session) {
+            throw new Error('No saved avatar or offline Training session is available.');
+          }
+          if (!cancelled) {
+            setCachedChildData(cached);
+            setAvatars(published);
+            setSelectedAvatarId(cached.training_session.avatar_id);
+          }
+          return;
+        }
+
+        const published = (await listAvatars()).filter((avatar) => avatar.status === 'published');
         if (published.length === 0) {
           void navigate('/avatars/new', { replace: true });
           return;
         }
-        setAvatars(published);
-        setSelectedAvatarId(published[0].avatar_id);
-      })
-      .catch(() => void navigate('/avatars/new', { replace: true }))
-      .finally(() => setLoading(false));
-  }, [navigate]);
+        const selected = published[0];
+        if (!cancelled) {
+          setAvatars(published);
+          setSelectedAvatarId(selected.avatar_id);
+        }
+
+        if (!activeChildId) return;
+        const existing = await getCachedChildData(activeChildId).catch(() => null);
+        let trainingSession: CachedTrainingSession | null = existing?.training_session ?? null;
+        if (!trainingSession) {
+          try {
+            const session = await createRaceSession({
+              mode: 'training',
+              tier: 1,
+              avatar_id: selected.avatar_id,
+              opponent_count: 0,
+            });
+            trainingSession = {
+              ...session,
+              tier: 1,
+              avatar_id: selected.avatar_id,
+              avatar_species: selected.species,
+            };
+          } catch {
+            trainingSession = null;
+          }
+        }
+
+        let statistics = existing?.statistics ?? null;
+        try {
+          statistics = await fetchPlayerStats();
+        } catch {
+          if (!cancelled) setOfflineError('Statistics could not be refreshed for offline use.');
+        }
+        const data: CachedChildData = {
+          child_profile_id: activeChildId,
+          avatars: published,
+          statistics,
+          training_session: trainingSession,
+        };
+        await cacheChildData(data);
+        if (!cancelled) {
+          setCachedChildData(data);
+          if (!trainingSession) {
+            setOfflineError('Offline Training is not ready. You can still play while online.');
+          }
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setOfflineError(
+            error instanceof Error ? error.message : 'Could not load saved child data.',
+          );
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [activeChildId, isOffline, navigate]);
 
   function handleModeChange(m: RaceMode) {
     setMode(m);
     setOpponentCount(MODES.find((x) => x.mode === m)?.defaultOpponents ?? 0);
+  }
+
+  async function handleSaveTier6Settings(): Promise<void> {
+    if (!account?.id || savingTier6Settings) return;
+    setSavingTier6Settings(true);
+    setTier6SettingsError(null);
+    try {
+      const saved = await saveTier6Settings(account.id, customTierConfig);
+      setCustomTierConfig(saved);
+      setTier6SettingsSaved(true);
+    } catch (error) {
+      setTier6SettingsError(
+        error instanceof Error ? error.message : 'Settings could not be saved.',
+      );
+    } finally {
+      setSavingTier6Settings(false);
+    }
   }
 
   async function handleStart() {
@@ -73,6 +208,9 @@ export default function RaceSetupPage() {
     playSfx('ui_avatar_select');
     setStarting(true);
     try {
+      const cachedTraining =
+        mode === 'training' ? (cachedChildData?.training_session ?? null) : null;
+      const sessionTier = isOffline && mode === 'training' ? (cachedTraining?.tier ?? 1) : tier;
       let championship_id = continueChampionshipId;
       let raceIndex = continueRaceIndex;
 
@@ -83,22 +221,36 @@ export default function RaceSetupPage() {
         localStorage.setItem('activeChampionshipId', championship_id);
       }
 
-      const session = await createRaceSession({
-        mode,
-        tier,
-        avatar_id: selectedAvatarId,
-        opponent_count: opponentCount,
-        championship_id,
-      });
+      const raceAvatarId = cachedTraining?.avatar_id ?? selectedAvatarId;
+      const session =
+        isOffline && mode === 'training' && cachedTraining
+          ? cachedTraining
+          : await createRaceSession({
+              mode,
+              tier: sessionTier,
+              avatar_id: raceAvatarId,
+              opponent_count: opponentCount,
+              championship_id,
+            });
+      if (isOffline && mode === 'training' && activeChildId && cachedChildData) {
+        const updated = { ...cachedChildData, training_session: null };
+        await cacheChildData(updated);
+        setCachedChildData(updated);
+      }
 
       void navigate(`/race/${session.race_id}`, {
         state: {
           mode,
-          tier,
+          tier: sessionTier,
+          ...(sessionTier === 6 ? { customTierConfig } : {}),
           seed: session.seed,
-          avatarId: selectedAvatarId,
-          avatarSpecies: avatars.find((a) => a.avatar_id === selectedAvatarId)?.species ?? '',
+          avatarId: raceAvatarId,
+          avatarSpecies:
+            cachedTraining?.avatar_species ??
+            avatars.find((a) => a.avatar_id === raceAvatarId)?.species ??
+            '',
           opponentCount,
+          childProfileId: activeChildId,
           championshipId: championship_id,
           raceIndex,
         },
@@ -239,7 +391,12 @@ export default function RaceSetupPage() {
             </label>
             <select
               id="tier-select"
-              value={tier}
+              value={
+                isOffline && mode === 'training'
+                  ? (cachedChildData?.training_session?.tier ?? 1)
+                  : tier
+              }
+              disabled={isOffline && mode === 'training'}
               onChange={(e) => setTier(Number(e.target.value) as Tier)}
               style={{
                 padding: tokens.spacing.sm,
@@ -248,13 +405,85 @@ export default function RaceSetupPage() {
                 fontSize: 16,
               }}
             >
-              {([1, 2, 3, 4, 5] as Tier[]).map((t) => (
+              {([1, 2, 3, 4, 5, 6] as Tier[]).map((t) => (
                 <option key={t} value={t}>
                   Tier {t}
                 </option>
               ))}
             </select>
           </section>
+
+          {tier === 6 && (
+            <fieldset style={{ marginBottom: tokens.spacing.lg }}>
+              <legend>Custom Tier 6 settings</legend>
+              <p>Select one or more operations and an operand range from 1 to 100.</p>
+              {OPERATIONS.map((operation) => (
+                <label key={operation} style={{ display: 'block' }}>
+                  <input
+                    type="checkbox"
+                    checked={customTierConfig.operations.includes(operation)}
+                    onChange={(event) => {
+                      setTier6SettingsSaved(false);
+                      setCustomTierConfig((current) => ({
+                        ...current,
+                        operations: event.target.checked
+                          ? [...current.operations, operation]
+                          : current.operations.filter((item) => item !== operation),
+                      }));
+                    }}
+                  />{' '}
+                  {operation}
+                </label>
+              ))}
+              <label>
+                Minimum operand
+                <input
+                  type="number"
+                  min={1}
+                  max={100}
+                  value={customTierConfig.minOperand}
+                  onChange={(event) => {
+                    setTier6SettingsSaved(false);
+                    setCustomTierConfig((current) => ({
+                      ...current,
+                      minOperand: Number(event.target.value),
+                    }));
+                  }}
+                />
+              </label>
+              <label>
+                Maximum operand
+                <input
+                  type="number"
+                  min={1}
+                  max={100}
+                  value={customTierConfig.maxOperand}
+                  onChange={(event) => {
+                    setTier6SettingsSaved(false);
+                    setCustomTierConfig((current) => ({
+                      ...current,
+                      maxOperand: Number(event.target.value),
+                    }));
+                  }}
+                />
+              </label>
+              <Button
+                variant="secondary"
+                disabled={
+                  savingTier6Settings ||
+                  customTierConfig.operations.length === 0 ||
+                  customTierConfig.minOperand < 1 ||
+                  customTierConfig.minOperand > customTierConfig.maxOperand ||
+                  customTierConfig.maxOperand > 100
+                }
+                onClick={() => void handleSaveTier6Settings()}
+              >
+                {savingTier6Settings ? 'Saving…' : 'Save Tier 6 settings'}
+              </Button>
+              {tier6SettingsSaved && <p>Tier 6 settings saved.</p>}
+              {tier6SettingsError && <p role="alert">{tier6SettingsError}</p>}
+            </fieldset>
+          )}
 
           {avatars.length > 1 && (
             <section style={{ marginBottom: tokens.spacing.lg }}>
@@ -288,10 +517,25 @@ export default function RaceSetupPage() {
             </section>
           )}
 
+          {offlineError && (
+            <p role="alert" style={{ color: tokens.color.error, marginBottom: tokens.spacing.md }}>
+              {offlineError}
+            </p>
+          )}
           <div style={{ width: '100%' }}>
             <Button
               variant="primary"
-              disabled={!selectedAvatarId || starting}
+              disabled={
+                !selectedAvatarId ||
+                starting ||
+                (isOffline && !cachedChildData?.training_session) ||
+                (tier === 6 && !tier6SettingsSaved) ||
+                (tier === 6 &&
+                  (customTierConfig.operations.length === 0 ||
+                    customTierConfig.minOperand < 1 ||
+                    customTierConfig.minOperand > customTierConfig.maxOperand ||
+                    customTierConfig.maxOperand > 100))
+              }
               onClick={() => void handleStart()}
             >
               {starting ? 'Setting up…' : 'Start Race'}

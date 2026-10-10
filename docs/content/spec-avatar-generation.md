@@ -116,7 +116,17 @@ def validate_image(image_bytes: bytes) -> ValidationResult:
     return ValidationResult(passed=all(checks.values()), checks=checks)
 ```
 
-Content-level checks (no text, single character) require either a secondary vision-model call or heuristic analysis. In v1.0, these are logged but not blocking (flag for future manual review).
+Content-level checks (no text, single character) require a secondary
+vision-model call or heuristic analysis. Required checks block publication in
+v1.0.
+
+### Approved v1.0 safety rule
+
+All required technical and child-safety checks block storage and publication.
+This includes checks for unsafe content, a single character, cropped body
+parts, text, and watermarks. If a required check fails or is unavailable, keep
+the image private and return a safe message. Parental approval is not required
+in v1.0.
 
 ---
 

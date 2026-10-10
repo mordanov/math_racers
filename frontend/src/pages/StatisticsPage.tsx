@@ -60,6 +60,10 @@ export default function StatisticsPage() {
               { label: 'Races', value: String(stats.total_races) },
               { label: 'Accuracy', value: fmtPct(stats.accuracy_all_time) },
               {
+                label: 'Favourite operation',
+                value: stats.favourite_operation ?? '—',
+              },
+              {
                 label: 'Avg response (ms)',
                 value: stats.avg_response_ms !== null ? String(stats.avg_response_ms) : '—',
               },

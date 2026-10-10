@@ -8,8 +8,9 @@ from __future__ import annotations
 
 import os
 
-import httpx
 import pytest
+
+from tests.integration import httpx_client as httpx
 
 BASE_URL = os.getenv("API_URL", "http://localhost:8000")
 
@@ -27,13 +28,13 @@ def test_unauthenticated_get_returns_401(
 
 
 @pytest.mark.integration
-def test_unknown_player_returns_404(parent_token: str) -> None:
-    fake_id = "00000000-0000-0000-0000-000000000099"
+def test_other_player_returns_403(parent_token: str) -> None:
+    other_player_id = "00000000-0000-0000-0000-000000000099"
     response = httpx.get(
-        f"{BASE_URL}/api/v1/players/{fake_id}/difficulty",
+        f"{BASE_URL}/api/v1/players/{other_player_id}/difficulty",
         headers=_auth_headers(parent_token),
     )
-    assert response.status_code == 404
+    assert response.status_code == 403
 
 
 @pytest.mark.integration

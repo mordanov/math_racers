@@ -1,6 +1,7 @@
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { useRaceEngine } from './useRaceEngine';
+import { createRaceEngine } from '../raceEngine';
 import type { RaceConfig } from '../types';
 
 const config: RaceConfig = {
@@ -52,5 +53,32 @@ describe('useRaceEngine', () => {
   it('does not expose summaryStatus', () => {
     const { result } = renderHook(() => useRaceEngine(config));
     expect((result.current as Record<string, unknown>)['summaryStatus']).toBeUndefined();
+  });
+
+  it('keeps Training active beyond eight problems and generates more problems', () => {
+    const trainingConfig: RaceConfig = {
+      ...config,
+      mode: 'training',
+    };
+    const engine = createRaceEngine(trainingConfig);
+    engine.transition('LOBBY');
+    engine.transition('COUNTDOWN');
+    engine.transition('RACING');
+
+    for (let index = 0; index < 10; index += 1) {
+      const state = engine.getState();
+      const problemSet = state.problemSet;
+      if (!problemSet) throw new Error('Training problem set is missing.');
+      const problem = problemSet.problems[state.currentObstacle];
+      if (!problem) throw new Error('Training problem is missing.');
+      engine.submitAnswer({
+        answer: String(index % 2 === 0 ? problem.answer : problem.answer + 1),
+      });
+    }
+
+    const state = engine.getState();
+    expect(state.state).toBe('RACING');
+    expect(state.currentObstacle).toBe(10);
+    expect(state.problemSet?.problems).toHaveLength(11);
   });
 });

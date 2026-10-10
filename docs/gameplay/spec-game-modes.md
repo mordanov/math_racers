@@ -75,10 +75,10 @@
 | Finishing Position | Points |
 |-------------------|--------|
 | 1st | 10 |
-| 2nd | 6 |
-| 3rd | 3 |
-| 4th | 1 |
-| 5th | 0 |
+| 2nd | 8 |
+| 3rd | 6 |
+| 4th | 4 |
+| 5th | 2 |
 
 Points are cumulative across all races in the championship series.
 
@@ -122,6 +122,9 @@ Training Setup → Create RaceSession (mode: training, opponent_count: 0)
 
 Training runs until the player exits. There is no finish line. Statistics are recorded for problems attempted.
 
+Training has no timer or opponents. Each correct answer awards +20 XP. It does
+not award race-completion XP.
+
 ### Duel
 
 ```
@@ -141,10 +144,28 @@ Duel always creates exactly one AI opponent. The opponent's tier is matched to t
 | Method | Path | Purpose |
 |--------|------|---------|
 | `POST` | `/api/v1/races` | Create a RaceSession; returns `race_id` and `seed` |
+| `POST` | `/api/v1/races/{id}/answers` | Save and validate one answer with server timing |
 | `POST` | `/api/v1/races/{id}/results` | Submit a RaceResult (idempotent via `idempotency_key`) |
+| `GET` | `/api/v1/players/{account_id}/tier-6-settings` | Read saved parent Tier 6 settings |
+| `PATCH` | `/api/v1/players/{account_id}/tier-6-settings` | Save parent Tier 6 settings |
 | `POST` | `/api/v1/championships` | Create a ChampionshipState |
 | `GET` | `/api/v1/championships/{id}` | Retrieve current championship standings |
 | `PATCH` | `/api/v1/championships/{id}/races/{race_id}` | Record race result within a championship |
+
+Competitive answers are sent to the answer endpoint in order. The server
+checks each answer against the saved seed and records server timing. The result
+request sends the participant IDs and claimed positions. It does not send
+competitive answers, timing, XP, correctness, or participant statistics. The
+server calculates player statistics and AI results, then checks the claimed
+positions. It rejects a result if the positions do not match. Offline Training
+may include queued answers when it syncs. The server validates those answers
+before it records them.
+
+Tier 6 settings belong to the parent account. Save them before starting a Tier
+6 session. The session request cannot override the saved configuration.
+
+Daily Challenge is outside v1.0. Do not expose its award endpoint or award
+daily-challenge XP until the feature is approved for a release.
 
 ---
 

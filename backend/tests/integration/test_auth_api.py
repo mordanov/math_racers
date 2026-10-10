@@ -10,12 +10,21 @@ import os
 import time
 import uuid
 
-import httpx
 import pytest
+
+from tests.integration import httpx_client as httpx
 
 BASE_URL = os.getenv("API_URL", "http://localhost:8000")
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "admin@example.com")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "adminpassword123")
+
+
+@pytest.mark.integration
+def test_csrf_bootstrap_returns_cookie_and_no_content() -> None:
+    response = httpx.get(f"{BASE_URL}/api/v1/auth/csrf", timeout=10.0)
+
+    assert response.status_code == 204
+    assert response.cookies.get("csrf_token")
 
 
 def _register(email: str, password: str) -> httpx.Response:

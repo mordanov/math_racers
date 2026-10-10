@@ -1,4 +1,4 @@
-import type { ProblemSet, Tier } from '../math/types';
+import type { ProblemSet, Tier, TierConfig } from '../math/types';
 
 export type RaceState = 'IDLE' | 'LOBBY' | 'COUNTDOWN' | 'RACING' | 'FINISHING' | 'RESULTS';
 
@@ -14,6 +14,7 @@ export interface TierResult {
 export interface ObstacleResult {
   obstacleIndex: number;
   isCorrect: boolean;
+  answer: string;
   responseTimeMs: number;
   distanceMetres: number;
   tier: MovementTier;
@@ -49,6 +50,7 @@ export interface RaceConfig {
   raceId: string;
   seed: number;
   tier: Tier;
+  customTierConfig?: TierConfig;
   mode: RaceMode;
   participants: ParticipantConfig[];
 }
@@ -70,15 +72,21 @@ export interface ParticipantSummary {
   longest_streak: number;
   average_response_ms: number;
   total_distance: number;
-  xp_earned: number;
+}
+
+export interface OperationAnswerSummary {
+  operation: ProblemSet['problems'][number]['operation'];
+  answer: string;
+  response_time_ms: number;
 }
 
 export interface RaceSummary {
   race_id: string;
-  seed: string;
-  difficulty_tier: Tier;
+  idempotency_key: string;
   mode: RaceMode;
+  human_avatar_id: string;
   started_at: string;
   completed_at: string;
   participants: ParticipantSummary[];
+  answers: OperationAnswerSummary[];
 }

@@ -4699,7 +4699,15 @@ Example scoring system:
 | 4th | 4 |
 | 5th | 2 |
 
-The exact values may change during balancing.
+These point values are fixed for v1.0.
+
+### Approved v1.0 rules
+
+Championship points are fixed at 10, 8, 6, 4, and 2 for first through fifth
+place. A completed championship awards +500 XP once. Training has unlimited
+problems, no opponents, timer, or finish line. Correct Training answers award
++20 XP; Training does not award race-completion XP. Daily Challenge remains
+outside v1.0.
 
 ---
 
@@ -4857,6 +4865,9 @@ Characteristics:
 Statistics compare today's performance only against the player's previous attempts.
 
 No global leaderboards are displayed.
+
+Daily Challenge is not part of v1.0. The game must not offer daily-challenge
+XP or an endpoint until the feature is approved for a release.
 
 ---
 
@@ -8843,6 +8854,10 @@ Every generated asset should be suitable for young children.
 Version 1.0 performs automatic validation only.
 
 Future versions may introduce optional parental approval before new avatars become visible.
+
+Every required technical and child-safety check blocks storage and publication.
+If a check fails or is unavailable, the image stays private. Parental approval
+is not a v1.0 validation step.
 
 ---
 

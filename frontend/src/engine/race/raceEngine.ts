@@ -15,14 +15,6 @@ import type {
   RunnerState,
 } from './types';
 
-const CHAMPIONSHIP_POINTS = [10, 6, 3, 1, 0] as const;
-
-function calcXp(mode: RaceConfig['mode'], posIdx: number, correct: number): number {
-  if (mode === 'training') return correct * 5;
-  if (mode === 'championship') return (CHAMPIONSHIP_POINTS[posIdx] ?? 0) * 10 + correct * 5;
-  return correct * 10;
-}
-
 export class RaceSummaryError extends Error {
   constructor() {
     super('Race summary is only available in RESULTS state');
@@ -46,7 +38,11 @@ export interface RaceEngine {
   tick(timestamp: number): void;
   pause(): void;
   resume(): void;
-  submitAnswer(input: { isCorrect: boolean }): ObstacleResult;
+  submitAnswer(input: {
+    answer: string;
+    isCorrect?: boolean;
+    responseTimeMs?: number;
+  }): ObstacleResult;
   forceComplete(): void;
   getState(): RaceEngineState;
   getSummary(): RaceSummary;
@@ -58,7 +54,12 @@ export function createRaceEngine(config: RaceConfig): RaceEngine {
   let startedAt: Date | null = null;
   let completedAt: Date | null = null;
 
-  const problemSet = generateProblemSet(config.tier, config.seed, OBSTACLE_COUNT);
+  let problemSet = generateProblemSet(
+    config.tier,
+    config.seed,
+    config.mode === 'training' ? 1 : OBSTACLE_COUNT,
+    config.customTierConfig,
+  );
   const runners: RunnerState[] = config.participants.map((p) => makeRunner(p.runnerId, p.isHuman));
 
   const humanIdx = runners.findIndex((r) => r.isHuman);
@@ -66,6 +67,43 @@ export function createRaceEngine(config: RaceConfig): RaceEngine {
   const aiRngs = config.participants.map((p, i) =>
     p.isHuman ? null : createRng(config.seed + i + 1),
   );
+
+  function ensureTrainingProblem(index: number): void {
+    if (config.mode !== 'training' || index < problemSet.problems.length) return;
+
+    const last = problemSet.problems[problemSet.problems.length - 1];
+    let next = generateProblemSet(config.tier, config.seed + index, 1, config.customTierConfig)
+      .problems[0];
+    let attempt = 0;
+    while (
+      last !== undefined &&
+      next.operation === last.operation &&
+      next.operand_a === last.operand_a &&
+      next.operand_b === last.operand_b &&
+      attempt < 100
+    ) {
+      attempt += 1;
+      next = generateProblemSet(
+        config.tier,
+        config.seed + index + attempt * 104729,
+        1,
+        config.customTierConfig,
+      ).problems[0];
+    }
+    if (
+      last !== undefined &&
+      next.operation === last.operation &&
+      next.operand_a === last.operand_a &&
+      next.operand_b === last.operand_b
+    ) {
+      throw new Error('Unable to generate a distinct Training problem.');
+    }
+    problemSet = {
+      ...problemSet,
+      count: problemSet.problems.length + 1,
+      problems: [...problemSet.problems, next],
+    };
+  }
 
   function doTransition(toState: RaceState): void {
     transition(state, toState);
@@ -80,18 +118,31 @@ export function createRaceEngine(config: RaceConfig): RaceEngine {
     }
   }
 
-  function submitAnswer(input: { isCorrect: boolean }): ObstacleResult {
+  function submitAnswer(input: {
+    answer: string;
+    isCorrect?: boolean;
+    responseTimeMs?: number;
+  }): ObstacleResult {
     if (state !== 'RACING') {
       throw new RaceStateError(state, 'RACING');
     }
     const runner = runners[humanIdx];
     const obstacleIndex = runner.obstaclesCompleted;
-    const responseTimeMs = clock.getObstacleMs();
-    const { tier, distanceMetres } = calculateMovement(input.isCorrect, responseTimeMs);
+    ensureTrainingProblem(obstacleIndex);
+    const problem = problemSet.problems[obstacleIndex];
+    const numericAnswer = Number(input.answer.trim());
+    const isCorrect =
+      input.isCorrect ??
+      (input.answer.trim() !== '' &&
+        Number.isSafeInteger(numericAnswer) &&
+        numericAnswer === problem.answer);
+    const responseTimeMs = input.responseTimeMs ?? clock.getObstacleMs();
+    const { tier, distanceMetres } = calculateMovement(isCorrect, responseTimeMs);
 
     const result: ObstacleResult = {
       obstacleIndex,
-      isCorrect: input.isCorrect,
+      isCorrect,
+      answer: input.answer,
       responseTimeMs,
       distanceMetres,
       tier,
@@ -117,6 +168,7 @@ export function createRaceEngine(config: RaceConfig): RaceEngine {
       const aiResult: ObstacleResult = {
         obstacleIndex,
         isCorrect: aiCorrect,
+        answer: '',
         responseTimeMs: aiTime,
         distanceMetres: aiDist,
         tier: aiTier,
@@ -129,7 +181,7 @@ export function createRaceEngine(config: RaceConfig): RaceEngine {
       }
     }
 
-    if (runner.obstaclesCompleted === OBSTACLE_COUNT) {
+    if (runner.obstaclesCompleted === OBSTACLE_COUNT && config.mode !== 'training') {
       runner.finishTime = clock.getMs();
       const allFinished = runners.every((r) => r.obstaclesCompleted === OBSTACLE_COUNT);
       if (allFinished) {
@@ -146,6 +198,9 @@ export function createRaceEngine(config: RaceConfig): RaceEngine {
   }
 
   function getState(): RaceEngineState {
+    if (state === 'RACING') {
+      ensureTrainingProblem(runners[humanIdx]?.obstaclesCompleted ?? 0);
+    }
     return {
       state,
       config,
@@ -208,18 +263,23 @@ export function createRaceEngine(config: RaceConfig): RaceEngine {
         longest_streak: longestStreak,
         average_response_ms: avgMs,
         total_distance: runner.totalDistanceMetres,
-        xp_earned: calcXp(config.mode, posIdx, correct),
       };
     });
 
+    const humanRunner = runners[humanIdx];
     return {
       race_id: config.raceId,
-      seed: String(config.seed),
-      difficulty_tier: config.tier,
+      idempotency_key: config.raceId,
       mode: config.mode,
+      human_avatar_id: config.participants[humanIdx].avatarId,
       started_at: startedAt!.toISOString(),
       completed_at: completedAt!.toISOString(),
       participants,
+      answers: humanRunner.obstacleResults.map((result) => ({
+        operation: problemSet.problems[result.obstacleIndex].operation,
+        answer: result.answer,
+        response_time_ms: result.responseTimeMs,
+      })),
     };
   }
 

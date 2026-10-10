@@ -18,7 +18,7 @@ interface AuthState {
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  selectChild: (childId: string) => void;
+  selectChild: (childId: string | null) => void;
 }
 
 interface JwtPayload {
@@ -70,6 +70,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    apiClient.setActiveChildId(activeChildId);
+  }, [activeChildId]);
+
+  useEffect(() => {
     refreshToken()
       .then(({ access_token }) => applyToken(access_token))
       .catch(() => {})
@@ -95,7 +99,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setActiveChildId(null);
   }, []);
 
-  const selectChild = useCallback((childId: string) => {
+  const selectChild = useCallback((childId: string | null) => {
     setActiveChildId(childId);
   }, []);
 

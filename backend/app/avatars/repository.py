@@ -4,7 +4,7 @@ import uuid
 from datetime import UTC, datetime, timedelta
 from typing import Any, Protocol
 
-from sqlalchemy import func, select
+from sqlalchemy import func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -15,12 +15,21 @@ _TERMINAL_STATUSES = ("complete", "failed")
 
 
 class AvatarRepository(Protocol):
-    async def create(self, account_id: uuid.UUID, fields: dict[str, Any]) -> Avatar: ...
+    async def lock_generation_quota(self, account_id: uuid.UUID) -> None: ...
+    async def create(
+        self,
+        account_id: uuid.UUID,
+        fields: dict[str, Any],
+        child_profile_id: uuid.UUID | None = None,
+    ) -> Avatar: ...
     async def get(self, avatar_id: uuid.UUID) -> Avatar: ...
-    async def list_by_account(self, account_id: uuid.UUID) -> list[Avatar]: ...
+    async def list_by_account(
+        self, account_id: uuid.UUID, child_profile_id: uuid.UUID | None = None
+    ) -> list[Avatar]: ...
     async def update(self, avatar: Avatar) -> Avatar: ...
     async def delete(self, avatar: Avatar) -> None: ...
     async def count_by_account(self, account_id: uuid.UUID) -> int: ...
+    async def count_by_child(self, child_profile_id: uuid.UUID) -> int: ...
 
     async def create_portrait(self, fields: dict[str, Any]) -> AvatarPortrait: ...
     async def get_portrait(self, portrait_id: uuid.UUID) -> AvatarPortrait | None: ...
@@ -38,10 +47,21 @@ class SQLAlchemyAvatarRepository:
     def __init__(self, session: AsyncSession) -> None:
         self._session = session
 
+    async def lock_generation_quota(self, account_id: uuid.UUID) -> None:
+        await self._session.execute(
+            text("SELECT pg_advisory_xact_lock(hashtextextended(:account_id, 0))"),
+            {"account_id": str(account_id)},
+        )
+
     # ── Avatar ────────────────────────────────────────────────────────────────
 
-    async def create(self, account_id: uuid.UUID, fields: dict[str, Any]) -> Avatar:
-        avatar = Avatar(account_id=account_id, **fields)
+    async def create(
+        self,
+        account_id: uuid.UUID,
+        fields: dict[str, Any],
+        child_profile_id: uuid.UUID | None = None,
+    ) -> Avatar:
+        avatar = Avatar(account_id=account_id, child_profile_id=child_profile_id, **fields)
         self._session.add(avatar)
         await self._session.flush()
         return await self.get(avatar.id)
@@ -64,10 +84,15 @@ class SQLAlchemyAvatarRepository:
             )
         return avatar
 
-    async def list_by_account(self, account_id: uuid.UUID) -> list[Avatar]:
+    async def list_by_account(
+        self, account_id: uuid.UUID, child_profile_id: uuid.UUID | None = None
+    ) -> list[Avatar]:
         result = await self._session.execute(
             select(Avatar)
-            .where(Avatar.account_id == account_id)
+            .where(
+                Avatar.account_id == account_id,
+                Avatar.child_profile_id == child_profile_id,
+            )
             .options(selectinload(Avatar.active_portrait))
             .order_by(Avatar.created_at.desc())
         )
@@ -84,6 +109,14 @@ class SQLAlchemyAvatarRepository:
     async def count_by_account(self, account_id: uuid.UUID) -> int:
         result = await self._session.execute(
             select(func.count()).select_from(Avatar).where(Avatar.account_id == account_id)
+        )
+        return int(result.scalar_one())
+
+    async def count_by_child(self, child_profile_id: uuid.UUID) -> int:
+        result = await self._session.execute(
+            select(func.count())
+            .select_from(Avatar)
+            .where(Avatar.child_profile_id == child_profile_id)
         )
         return int(result.scalar_one())
 

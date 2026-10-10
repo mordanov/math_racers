@@ -9,6 +9,7 @@ from sqlalchemy import (
     CheckConstraint,
     DateTime,
     ForeignKey,
+    Index,
     Integer,
     String,
     Text,
@@ -24,6 +25,7 @@ from infrastructure.database.base import Base
 class Avatar(Base):
     __tablename__ = "avatars"
     __table_args__ = (
+        Index("idx_avatars_child_profile_id", "child_profile_id"),
         CheckConstraint(
             "species IN ('fox','rabbit','bear','cat','mouse','panda')",
             name="ck_avatars_species",
@@ -40,6 +42,11 @@ class Avatar(Base):
         ForeignKey("accounts.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
+    )
+    child_profile_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("child_profiles.id", ondelete="CASCADE"),
+        nullable=True,
     )
     species: Mapped[str] = mapped_column(String, nullable=False)
     fur_color: Mapped[str] = mapped_column(String(7), nullable=False)

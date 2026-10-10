@@ -14,10 +14,14 @@
 | Race completed | +100 |
 | Correct answer | +20 |
 | Perfect answer streak | +10 |
-| Daily challenge | +200 |
+| Daily challenge (future; not v1.0) | +200 |
 | Championship completed | +500 |
 
 XP is **never** deducted.
+
+In v1.0, Training awards +20 XP per correct answer and no race-completion XP.
+The +500 championship award is granted once when the championship completes,
+not for each race. Daily Challenge and its +200 XP are outside v1.0.
 
 ---
 
@@ -37,6 +41,9 @@ XP(level) = 100 × level²
 | 20 | 40,000 |
 
 The quadratic curve slows naturally without becoming excessively grindy.
+
+Level 1 starts at 0 XP. The implementation formula is
+`max(1, floor(sqrt(total_xp / 100)))`; Level 2 starts at 400 XP.
 
 ---
 

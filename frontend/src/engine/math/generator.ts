@@ -61,8 +61,15 @@ export function generateProblemSet(
   count: number,
   customTierConfig?: TierConfig,
 ): ProblemSet {
-  const config: TierConfig =
-    tier === 6 ? (customTierConfig ?? { ...TIER_CONFIGS[5], tier: 6 }) : TIER_CONFIGS[tier];
+  let config: TierConfig;
+  if (tier === 6) {
+    if (customTierConfig === undefined) {
+      throw new Error('Tier 6 requires parent-configured settings.');
+    }
+    config = customTierConfig;
+  } else {
+    config = TIER_CONFIGS[tier];
+  }
 
   const rng = createRng(seed);
   const problems: Problem[] = [];

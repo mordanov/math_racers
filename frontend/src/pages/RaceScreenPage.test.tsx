@@ -4,6 +4,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import RaceScreenPage from './RaceScreenPage';
 import * as useRaceEngineModule from '../engine/race/hooks/useRaceEngine';
+import * as raceApiModule from '../engine/race/raceApi';
 import * as reduceMotionModule from '../shared/hooks/useReducedMotion';
 import * as sfxModule from '../shared/hooks/useSfxPlayer';
 import * as ambienceModule from '../shared/hooks/useAmbienceManager';
@@ -16,6 +17,7 @@ vi.mock('../shared/hooks/useAmbienceManager');
 vi.mock('../shared/hooks/useVoicePlayer');
 
 vi.mock('../engine/race/hooks/useRaceEngine');
+vi.mock('../engine/race/raceApi');
 
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
@@ -52,7 +54,7 @@ function makeEngineReturn(overrides: Partial<EngineReturn> = {}): EngineReturn {
     ...baseState,
     startCountdown: vi.fn(),
     startRacing: vi.fn(),
-    submitAnswer: vi.fn(),
+    submitAnswer: vi.fn().mockReturnValue({ isCorrect: false }),
     forceComplete: vi.fn(),
     getSummary: vi.fn(),
     ...overrides,
@@ -74,6 +76,11 @@ beforeEach(() => {
   vi.mocked(sfxModule.useSfxPlayer).mockReturnValue({ playSfx: vi.fn() });
   vi.mocked(ambienceModule.useAmbienceManager).mockReturnValue({ triggerAmbience: vi.fn() });
   vi.mocked(voiceModule.useVoicePlayer).mockReturnValue({ playVoice: vi.fn() });
+  vi.mocked(raceApiModule.submitRaceAnswer).mockResolvedValue({
+    answer_index: 0,
+    is_correct: true,
+    response_time_ms: 500,
+  });
 });
 
 function renderPage(state: unknown = routeState) {
@@ -197,9 +204,9 @@ describe('RaceScreenPage', () => {
     expect(screen.getByRole('spinbutton')).toBeInTheDocument();
   });
 
-  it('calls submitAnswer with isCorrect: true when correct answer submitted', async () => {
+  it('submits the player answer and uses its result for feedback', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
-    const submitAnswer = vi.fn();
+    const submitAnswer = vi.fn().mockReturnValue({ isCorrect: true });
     vi.mocked(useRaceEngineModule.useRaceEngine).mockReturnValue(
       makeEngineReturn({
         state: 'RACING',
@@ -227,7 +234,14 @@ describe('RaceScreenPage', () => {
     renderPage();
     await user.type(screen.getByRole('spinbutton'), '7');
     await user.keyboard('{Enter}');
-    expect(submitAnswer).toHaveBeenCalledWith({ isCorrect: true });
+    await waitFor(() =>
+      expect(submitAnswer).toHaveBeenCalledWith({
+        answer: '7',
+        isCorrect: true,
+        responseTimeMs: 500,
+      }),
+    );
+    expect(raceApiModule.submitRaceAnswer).toHaveBeenCalledWith('r1', 0, 'addition', '7');
   });
 
   it('navigates to /race/:id/results when engine reaches RESULTS', async () => {
@@ -285,6 +299,32 @@ describe('RaceScreenPage — reduced motion', () => {
       count: 8,
       problems: Array.from({ length: 8 }, () => problem),
     },
+  });
+
+  it('keeps Training free of the race track and timer and saves on exit', async () => {
+    const forceComplete = vi.fn();
+    vi.mocked(useRaceEngineModule.useRaceEngine).mockReturnValue(
+      makeEngineReturn({
+        state: 'RACING',
+        currentObstacle: 9,
+        runners: [],
+        problemSet: {
+          seed: 42,
+          tier: 1,
+          count: 10,
+          problems: Array.from({ length: 10 }, (_, index) => ({ ...problem, id: `p${index}` })),
+        },
+        forceComplete,
+      }),
+    );
+
+    renderPage({ ...routeState, mode: 'training', opponentCount: 0 });
+
+    expect(screen.getByText('Problems answered: 9')).toBeInTheDocument();
+    expect(screen.queryByRole('list', { name: 'Race track' })).not.toBeInTheDocument();
+    expect(screen.queryByText(/of 8/)).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Finish Training' }));
+    expect(forceComplete).toHaveBeenCalledOnce();
   });
 
   it('runner row has accessible aria-label combining identity and distance', () => {
@@ -383,6 +423,7 @@ describe('RaceScreenPage — audio', () => {
             finishTime: null,
           },
         ],
+        submitAnswer: vi.fn().mockReturnValue({ isCorrect: true }),
         problemSet: {
           seed: 1,
           tier: 1 as const,
@@ -449,6 +490,7 @@ describe('RaceScreenPage — audio', () => {
             finishTime: null,
           },
         ],
+        submitAnswer: vi.fn().mockReturnValue({ isCorrect: true }),
         problemSet: {
           seed: 1,
           tier: 1 as const,
@@ -531,6 +573,7 @@ describe('RaceScreenPage — audio', () => {
             finishTime: null,
           },
         ],
+        submitAnswer: vi.fn().mockReturnValue({ isCorrect: true }),
         problemSet: {
           seed: 1,
           tier: 1 as const,

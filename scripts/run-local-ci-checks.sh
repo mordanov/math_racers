@@ -223,6 +223,7 @@ step "Integration tests"
   export ADMIN_EMAIL="admin@example.com"
   export ADMIN_PASSWORD="adminpassword123"
   export ENVIRONMENT="development"
+  export INTEGRATION_TESTING="1"
   export VERSION="$VERSION"
   export LOG_LEVEL="WARNING"
 
@@ -356,4 +357,3 @@ echo "HSTS OK: $HSTS"
 
 echo
 echo "All local CI checks passed."
-

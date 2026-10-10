@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import hashlib
+import secrets
+
 from fastapi import APIRouter, Depends, Request, Response
 from fastapi.responses import Response as PlainResponse
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -22,15 +25,36 @@ from infrastructure.database.session import get_session
 
 _REFRESH_COOKIE = "refresh_token"
 _REFRESH_COOKIE_PATH = "/api/v1/auth/refresh"
+_CSRF_COOKIE = "csrf_token"
 
 router = APIRouter(prefix="/api/v1/auth", tags=["auth"])
+
+
+@router.get("/csrf", status_code=204, response_class=PlainResponse, response_model=None)
+async def issue_csrf_token(response: Response, settings: Config = Depends(get_config)) -> None:
+    response.set_cookie(
+        key=_CSRF_COOKIE,
+        value=secrets.token_urlsafe(32),
+        httponly=False,
+        secure=settings.ENVIRONMENT.value == "production",
+        samesite="strict",
+        path="/",
+        max_age=settings.JWT_REFRESH_TTL_DAYS * 86400,
+    )
 
 
 @router.post("/register", status_code=201)
 async def register(
     body: RegisterRequest,
+    request: Request,
     session: AsyncSession = Depends(get_session),
 ) -> dict[str, str]:
+    client_host = request.client.host if request.client else "unknown"
+    await request.app.state.rate_limiter.enforce(
+        f"auth:register:ip:{client_host}",
+        limit=3,
+        window_seconds=3600,
+    )
     account_repo = SQLAlchemyAccountRepository(session)
     use_case = RegisterAccountUseCase(account_repo, AccountDomainService())
     await use_case.execute(body.email, body.password)
@@ -40,10 +64,23 @@ async def register(
 @router.post("/login", response_model=TokenResponse)
 async def login(
     body: LoginRequest,
+    request: Request,
     response: Response,
     settings: Config = Depends(get_config),
     session: AsyncSession = Depends(get_session),
 ) -> TokenResponse:
+    client_host = request.client.host if request.client else "unknown"
+    identity_hash = hashlib.sha256(body.email.strip().lower().encode()).hexdigest()
+    await request.app.state.rate_limiter.enforce(
+        f"auth:login:ip:{client_host}",
+        limit=20,
+        window_seconds=60,
+    )
+    await request.app.state.rate_limiter.enforce(
+        f"auth:login:{client_host}:{identity_hash}",
+        limit=5,
+        window_seconds=60,
+    )
     account_repo = SQLAlchemyAccountRepository(session)
     refresh_token_repo = SQLAlchemyRefreshTokenRepository(session)
     use_case = LoginUseCase(account_repo, refresh_token_repo, AccountDomainService())
@@ -58,6 +95,15 @@ async def login(
         secure=True,
         samesite="lax",
         path=_REFRESH_COOKIE_PATH,
+        max_age=ttl_seconds,
+    )
+    response.set_cookie(
+        key=_CSRF_COOKIE,
+        value=secrets.token_urlsafe(32),
+        httponly=False,
+        secure=settings.ENVIRONMENT.value == "production",
+        samesite="strict",
+        path="/",
         max_age=ttl_seconds,
     )
     return TokenResponse(access_token=access_token)
@@ -90,12 +136,22 @@ async def refresh_tokens(
         path=_REFRESH_COOKIE_PATH,
         max_age=ttl_seconds,
     )
+    response.set_cookie(
+        key=_CSRF_COOKIE,
+        value=secrets.token_urlsafe(32),
+        httponly=False,
+        secure=settings.ENVIRONMENT.value == "production",
+        samesite="strict",
+        path="/",
+        max_age=ttl_seconds,
+    )
     return TokenResponse(access_token=new_access)
 
 
 @router.post("/logout", status_code=204, response_class=PlainResponse)
 async def logout(
     account: Account = Depends(get_current_account),
+    settings: Config = Depends(get_config),
     session: AsyncSession = Depends(get_session),
 ) -> PlainResponse:
     refresh_token_repo = SQLAlchemyRefreshTokenRepository(session)
@@ -111,5 +167,11 @@ async def logout(
         samesite="lax",
         path=_REFRESH_COOKIE_PATH,
         max_age=0,
+    )
+    response.delete_cookie(
+        key=_CSRF_COOKIE,
+        secure=settings.ENVIRONMENT.value == "production",
+        samesite="strict",
+        path="/",
     )
     return response

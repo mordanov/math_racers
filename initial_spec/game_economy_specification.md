@@ -383,3 +383,15 @@ Math Racers uses a **mastery-based progression system** centred on learning rath
 XP, levels, achievements and cosmetics celebrate effort and improvement, while adaptive difficulty keeps mathematical challenges within each child's "zone of proximal development."
 
 The result is a progression model that remains motivating, fair, deterministic and educational, supporting long-term engagement without introducing pay-to-win mechanics or unnecessary complexity.
+
+## Approved v1.0 clarifications
+
+- Level 1 starts at 0 XP. Calculate the level as
+  `max(1, floor(sqrt(total_xp / 100)))`; Level 2 starts at 400 XP.
+- Training awards +20 XP for each correct answer and no race-completion XP.
+- A completed championship awards +500 XP once, not for each championship
+  race.
+- Daily Challenge is outside v1.0. Do not award its XP until the feature is
+  approved for a release.
+- Tiers 3 and 4 use multiplication and division, respectively. Tier 6 uses
+  custom settings saved by the parent.

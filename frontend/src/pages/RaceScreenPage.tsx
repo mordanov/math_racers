@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { useBlocker, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useRaceEngine } from '../engine/race/hooks/useRaceEngine';
+import { submitRaceAnswer } from '../engine/race/raceApi';
 import { MAX_TRACK_DISTANCE, OBSTACLE_COUNT } from '../engine/race/constants';
 import { PERSONALITIES } from '../engine/race/personalities';
 import type { ParticipantConfig, RaceConfig, RaceMode } from '../engine/race/types';
-import type { Tier } from '../engine/math/types';
+import type { Tier, TierConfig } from '../engine/math/types';
 import { ConfirmDialog } from '../shared/components/ConfirmDialog';
 import { useAudioManager } from '../shared/hooks/useAudioManager';
 import { useAmbienceManager } from '../shared/hooks/useAmbienceManager';
@@ -12,15 +13,18 @@ import { useSfxPlayer } from '../shared/hooks/useSfxPlayer';
 import { useVoicePlayer } from '../shared/hooks/useVoicePlayer';
 import type { Species } from '../shared/hooks/useVoicePlayer';
 import { useReducedMotion } from '../shared/hooks/useReducedMotion';
+import { useOffline } from '../shared/hooks/useOffline';
 import tokens from '../shared/tokens';
 
 interface RaceScreenRouteState {
   mode: RaceMode;
   tier: Tier;
+  customTierConfig?: TierConfig;
   seed: number;
   avatarId: string;
   avatarSpecies: string;
   opponentCount: number;
+  childProfileId?: string;
   championshipId?: string;
   raceIndex: number;
 }
@@ -47,8 +51,12 @@ export default function RaceScreenPage() {
     raceId: id,
     seed: routeState.seed,
     tier: routeState.tier,
+    customTierConfig: routeState.customTierConfig,
     mode: routeState.mode,
-    participants: buildParticipants(routeState.avatarId, routeState.opponentCount),
+    participants: buildParticipants(
+      routeState.avatarId,
+      routeState.mode === 'training' ? 0 : routeState.opponentCount,
+    ),
   };
 
   return <RaceScreen raceId={id} config={config} routeState={routeState} />;
@@ -80,19 +88,23 @@ function RaceScreen({
     startCountdown,
     startRacing,
     submitAnswer,
+    forceComplete,
     getSummary,
   } = useRaceEngine(config);
 
   const [countdownNum, setCountdownNum] = useState(3);
   const [answerInput, setAnswerInput] = useState('');
+  const [submittingAnswer, setSubmittingAnswer] = useState(false);
+  const [answerError, setAnswerError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const { playMusic, stopMusic } = useAudioManager();
   const { playSfx } = useSfxPlayer();
   const { triggerAmbience } = useAmbienceManager();
   const { playVoice } = useVoicePlayer((routeState.avatarSpecies as Species) || null);
   const reduced = useReducedMotion();
+  const isOffline = useOffline();
 
-  const blocker = useBlocker(state === 'RACING');
+  const blocker = useBlocker(state === 'RACING' && config.mode !== 'training');
 
   useEffect(() => {
     startCountdown();
@@ -135,6 +147,7 @@ function RaceScreen({
         summary: getSummary(),
         playerAvatarId: routeState.avatarId,
         avatarSpecies: routeState.avatarSpecies,
+        childProfileId: routeState.childProfileId,
         championshipId: routeState.championshipId,
         raceIndex: routeState.raceIndex,
       },
@@ -142,22 +155,39 @@ function RaceScreen({
     });
   }, [state]); // intentionally omits stable refs: navigate, getSummary, routeState
 
-  function handleSubmit() {
-    if (state !== 'RACING') return;
+  async function handleSubmit(): Promise<void> {
+    if (state !== 'RACING' || submittingAnswer) return;
     const problem = problemSet?.problems[currentObstacle];
     if (!problem) return;
-    const parsed = parseInt(answerInput, 10);
-    const isCorrect = !isNaN(parsed) && parsed === problem.answer;
-    submitAnswer({ isCorrect });
-    if (isCorrect) {
-      playSfx('correct');
-      triggerAmbience('cheer');
-      playVoice('happy');
-    } else {
-      playSfx('incorrect');
-      playVoice('surprised');
+    setSubmittingAnswer(true);
+    setAnswerError(null);
+    try {
+      const serverAnswer = isOffline
+        ? null
+        : await submitRaceAnswer(raceId, currentObstacle, problem.operation, answerInput);
+      const result = submitAnswer({
+        answer: answerInput,
+        ...(serverAnswer
+          ? {
+              isCorrect: serverAnswer.is_correct,
+              responseTimeMs: serverAnswer.response_time_ms,
+            }
+          : {}),
+      });
+      if (result.isCorrect) {
+        playSfx('correct');
+        triggerAmbience('cheer');
+        playVoice('happy');
+      } else {
+        playSfx('incorrect');
+        playVoice('surprised');
+      }
+      setAnswerInput('');
+    } catch (error) {
+      setAnswerError(error instanceof Error ? error.message : 'The answer could not be saved.');
+    } finally {
+      setSubmittingAnswer(false);
     }
-    setAnswerInput('');
   }
 
   const problem = problemSet?.problems[currentObstacle];
@@ -214,75 +244,79 @@ function RaceScreen({
       />
 
       {/* Runner track */}
-      <div role="list" style={{ marginBottom: tokens.spacing.lg }} aria-label="Race track">
-        {runners.map((runner) => {
-          const pct = Math.min(100, (runner.totalDistanceMetres / MAX_TRACK_DISTANCE) * 100);
-          return (
-            <div
-              key={runner.runnerId}
-              role="listitem"
-              aria-label={`${runner.isHuman ? 'You' : `CPU ${runner.runnerId.replace('ai-', '')}`}: ${runner.totalDistanceMetres}m`}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: tokens.spacing.sm,
-                marginBottom: tokens.spacing.xs,
-              }}
-            >
-              <span
-                aria-hidden="true"
-                style={{
-                  width: 24,
-                  fontSize: 12,
-                  color: tokens.color.textSecondary,
-                  textAlign: 'center',
-                }}
-              >
-                {runner.isHuman ? '★' : runner.runnerId.replace('ai-', '')}
-              </span>
+      {config.mode !== 'training' && (
+        <div role="list" style={{ marginBottom: tokens.spacing.lg }} aria-label="Race track">
+          {runners.map((runner) => {
+            const pct = Math.min(100, (runner.totalDistanceMetres / MAX_TRACK_DISTANCE) * 100);
+            return (
               <div
+                key={runner.runnerId}
+                role="listitem"
+                aria-label={`${runner.isHuman ? 'You' : `CPU ${runner.runnerId.replace('ai-', '')}`}: ${runner.totalDistanceMetres}m`}
                 style={{
-                  flex: 1,
-                  height: 24,
-                  background: tokens.color.background,
-                  borderRadius: 999,
-                  border: `1px solid ${tokens.color.border}`,
-                  position: 'relative',
-                  overflow: 'hidden',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: tokens.spacing.sm,
+                  marginBottom: tokens.spacing.xs,
                 }}
               >
+                <span
+                  aria-hidden="true"
+                  style={{
+                    width: 24,
+                    fontSize: 12,
+                    color: tokens.color.textSecondary,
+                    textAlign: 'center',
+                  }}
+                >
+                  {runner.isHuman ? '★' : runner.runnerId.replace('ai-', '')}
+                </span>
                 <div
                   style={{
-                    position: 'absolute',
-                    left: `${pct}%`,
-                    top: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    width: 20,
-                    height: 20,
-                    borderRadius: '50%',
-                    background: runner.isHuman ? tokens.color.primary : tokens.color.textSecondary,
-                    transition: reduced ? undefined : `left ${tokens.animation.micro} ease-out`,
+                    flex: 1,
+                    height: 24,
+                    background: tokens.color.background,
+                    borderRadius: 999,
+                    border: `1px solid ${tokens.color.border}`,
+                    position: 'relative',
+                    overflow: 'hidden',
                   }}
-                />
+                >
+                  <div
+                    style={{
+                      position: 'absolute',
+                      left: `${pct}%`,
+                      top: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      width: 20,
+                      height: 20,
+                      borderRadius: '50%',
+                      background: runner.isHuman
+                        ? tokens.color.primary
+                        : tokens.color.textSecondary,
+                      transition: reduced ? undefined : `left ${tokens.animation.micro} ease-out`,
+                    }}
+                  />
+                </div>
+                <span
+                  aria-hidden="true"
+                  style={{
+                    width: 40,
+                    fontSize: 12,
+                    color: tokens.color.textSecondary,
+                    textAlign: 'right',
+                  }}
+                >
+                  {runner.totalDistanceMetres}m
+                </span>
               </div>
-              <span
-                aria-hidden="true"
-                style={{
-                  width: 40,
-                  fontSize: 12,
-                  color: tokens.color.textSecondary,
-                  textAlign: 'right',
-                }}
-              >
-                {runner.totalDistanceMetres}m
-              </span>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* Timer bar */}
-      {state === 'RACING' && (
+      {state === 'RACING' && config.mode !== 'training' && (
         <div style={{ marginBottom: tokens.spacing.md }}>
           <div
             style={{
@@ -339,7 +373,7 @@ function RaceScreen({
             value={answerInput}
             onChange={(e) => setAnswerInput(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter') handleSubmit();
+              if (e.key === 'Enter') void handleSubmit();
             }}
             style={{
               fontSize: 32,
@@ -353,7 +387,8 @@ function RaceScreen({
           <div style={{ marginTop: tokens.spacing.md }}>
             <button
               type="button"
-              onClick={handleSubmit}
+              onClick={() => void handleSubmit()}
+              disabled={submittingAnswer}
               style={{
                 padding: `${tokens.spacing.sm}px ${tokens.spacing.lg}px`,
                 background: tokens.color.primary,
@@ -369,6 +404,7 @@ function RaceScreen({
               Submit
             </button>
           </div>
+          {answerError && <p role="alert">{answerError}</p>}
           <p
             style={{
               color: tokens.color.textSecondary,
@@ -376,7 +412,9 @@ function RaceScreen({
               fontSize: 14,
             }}
           >
-            Obstacle {currentObstacle + 1} of {OBSTACLE_COUNT}
+            {config.mode === 'training'
+              ? `Problems answered: ${currentObstacle}`
+              : `Obstacle ${currentObstacle + 1} of ${OBSTACLE_COUNT}`}
           </p>
         </div>
       )}
@@ -384,7 +422,13 @@ function RaceScreen({
       {state === 'RACING' && (
         <button
           type="button"
-          onClick={() => void navigate('/race/setup')}
+          onClick={() => {
+            if (config.mode === 'training') {
+              forceComplete();
+            } else {
+              void navigate('/race/setup');
+            }
+          }}
           style={{
             background: 'none',
             border: 'none',
@@ -393,7 +437,7 @@ function RaceScreen({
             fontSize: 14,
           }}
         >
-          Leave Race
+          {config.mode === 'training' ? 'Finish Training' : 'Leave Race'}
         </button>
       )}
     </div>

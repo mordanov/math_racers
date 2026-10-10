@@ -10,8 +10,16 @@ import os
 import time
 import uuid
 
-import httpx
 import pytest
+
+from tests.integration import httpx_client as httpx
+from tests.integration.races.helpers import (
+    build_result_payload,
+    create_child_and_avatar,
+    create_race_session,
+    submit_answers,
+    submit_result,
+)
 
 BASE_URL = os.getenv("API_URL", "http://localhost:8000")
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "admin@example.com")
@@ -103,13 +111,30 @@ def _post_race(token: str, mode: str = "championship") -> str:
     return race_id
 
 
+def _post_session_race(token: str, child_id: str, avatar_id: str, championship_id: str) -> str:
+    race_session = create_race_session(
+        BASE_URL,
+        token,
+        child_id,
+        avatar_id,
+        mode="championship",
+        championship_id=championship_id,
+    )
+    payload = build_result_payload(race_session, avatar_id, mode="championship")
+    submit_answers(BASE_URL, token, child_id, str(race_session["race_id"]), payload["answers"])
+    result = submit_result(BASE_URL, token, child_id, str(race_session["race_id"]), payload)
+    assert result.status_code == 200, result.text
+    return str(race_session["race_id"])
+
+
 @pytest.mark.integration
 def test_create_championship_returns_201() -> None:
     token = _register_and_approve()
+    child_id, _avatar_id = create_child_and_avatar(BASE_URL, token)
     resp = httpx.post(
         f"{BASE_URL}/api/v1/championships",
         json={"total_races": 3},
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {token}", "X-Child-Profile-ID": child_id},
         timeout=10.0,
     )
     assert resp.status_code == 201, resp.text
@@ -133,10 +158,11 @@ def test_create_championship_returns_401_without_auth() -> None:
 @pytest.mark.integration
 def test_create_championship_returns_422_for_invalid_total_races() -> None:
     token = _register_and_approve()
+    child_id, _avatar_id = create_child_and_avatar(BASE_URL, token)
     resp = httpx.post(
         f"{BASE_URL}/api/v1/championships",
         json={"total_races": 2},
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {token}", "X-Child-Profile-ID": child_id},
         timeout=10.0,
     )
     assert resp.status_code == 422
@@ -145,10 +171,11 @@ def test_create_championship_returns_422_for_invalid_total_races() -> None:
 @pytest.mark.integration
 def test_get_championship_returns_current_state() -> None:
     token = _register_and_approve()
+    child_id, _avatar_id = create_child_and_avatar(BASE_URL, token)
     create_resp = httpx.post(
         f"{BASE_URL}/api/v1/championships",
         json={"total_races": 3},
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {token}", "X-Child-Profile-ID": child_id},
         timeout=10.0,
     )
     assert create_resp.status_code == 201
@@ -156,7 +183,7 @@ def test_get_championship_returns_current_state() -> None:
 
     get_resp = httpx.get(
         f"{BASE_URL}/api/v1/championships/{champ_id}",
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {token}", "X-Child-Profile-ID": child_id},
         timeout=10.0,
     )
     assert get_resp.status_code == 200
@@ -164,14 +191,19 @@ def test_get_championship_returns_current_state() -> None:
 
 
 @pytest.mark.integration
-def test_get_championship_returns_403_for_other_account() -> None:
+def test_get_championship_hides_other_child_data() -> None:
     owner_token = _register_and_approve()
     other_token = _register_and_approve()
+    owner_child_id, _owner_avatar_id = create_child_and_avatar(BASE_URL, owner_token)
+    other_child_id, _other_avatar_id = create_child_and_avatar(BASE_URL, other_token)
 
     create_resp = httpx.post(
         f"{BASE_URL}/api/v1/championships",
         json={"total_races": 3},
-        headers={"Authorization": f"Bearer {owner_token}"},
+        headers={
+            "Authorization": f"Bearer {owner_token}",
+            "X-Child-Profile-ID": owner_child_id,
+        },
         timeout=10.0,
     )
     assert create_resp.status_code == 201
@@ -179,37 +211,44 @@ def test_get_championship_returns_403_for_other_account() -> None:
 
     get_resp = httpx.get(
         f"{BASE_URL}/api/v1/championships/{champ_id}",
-        headers={"Authorization": f"Bearer {other_token}"},
+        headers={
+            "Authorization": f"Bearer {other_token}",
+            "X-Child-Profile-ID": other_child_id,
+        },
         timeout=10.0,
     )
-    assert get_resp.status_code == 403
+    assert get_resp.status_code == 404
 
 
 @pytest.mark.integration
 def test_patch_race_updates_standings_and_auto_completes() -> None:
     token = _register_and_approve()
+    child_id, avatar_id = create_child_and_avatar(BASE_URL, token)
 
     create_resp = httpx.post(
         f"{BASE_URL}/api/v1/championships",
         json={"total_races": 3},
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {token}", "X-Child-Profile-ID": child_id},
         timeout=10.0,
     )
     assert create_resp.status_code == 201
     champ_id = create_resp.json()["championship_id"]
 
     for race_index in range(3):
-        race_id = _post_race(token)
+        race_id = _post_session_race(token, child_id, avatar_id, champ_id)
         patch_resp = httpx.patch(
             f"{BASE_URL}/api/v1/championships/{champ_id}/races/{race_id}",
             json={
                 "race_index": race_index,
                 "participants": [
-                    {"avatar_id": "a1", "is_player": True, "finishing_position": 1},
-                    {"avatar_id": "a2", "is_player": False, "finishing_position": 2},
+                    {
+                        "avatar_id": avatar_id,
+                        "is_player": True,
+                        "finishing_position": 1,
+                    },
                 ],
             },
-            headers={"Authorization": f"Bearer {token}"},
+            headers={"Authorization": f"Bearer {token}", "X-Child-Profile-ID": child_id},
             timeout=10.0,
         )
         assert patch_resp.status_code == 200, patch_resp.text
@@ -218,7 +257,7 @@ def test_patch_race_updates_standings_and_auto_completes() -> None:
 
     assert body["status"] == "completed"
     standings = body["standings"]
-    assert standings[0]["avatar_id"] == "a1"
+    assert standings[0]["avatar_id"] == avatar_id
     assert standings[0]["points"] == 30
     assert standings[0]["position"] == 1
 
@@ -226,24 +265,25 @@ def test_patch_race_updates_standings_and_auto_completes() -> None:
 @pytest.mark.integration
 def test_patch_race_returns_409_on_duplicate_race_id() -> None:
     token = _register_and_approve()
+    child_id, avatar_id = create_child_and_avatar(BASE_URL, token)
     create_resp = httpx.post(
         f"{BASE_URL}/api/v1/championships",
         json={"total_races": 3},
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {token}", "X-Child-Profile-ID": child_id},
         timeout=10.0,
     )
     assert create_resp.status_code == 201, create_resp.text
     champ_id = create_resp.json()["championship_id"]
-    race_id = _post_race(token)
+    race_id = _post_session_race(token, child_id, avatar_id, champ_id)
 
     patch_body = {
         "race_index": 0,
-        "participants": [{"avatar_id": "a1", "is_player": True, "finishing_position": 1}],
+        "participants": [{"avatar_id": avatar_id, "is_player": True, "finishing_position": 1}],
     }
     first = httpx.patch(
         f"{BASE_URL}/api/v1/championships/{champ_id}/races/{race_id}",
         json=patch_body,
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {token}", "X-Child-Profile-ID": child_id},
         timeout=10.0,
     )
     assert first.status_code == 200, first.text
@@ -251,7 +291,7 @@ def test_patch_race_returns_409_on_duplicate_race_id() -> None:
     second = httpx.patch(
         f"{BASE_URL}/api/v1/championships/{champ_id}/races/{race_id}",
         json=patch_body,
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {token}", "X-Child-Profile-ID": child_id},
         timeout=10.0,
     )
     assert second.status_code == 409

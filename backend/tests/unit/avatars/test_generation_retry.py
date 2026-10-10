@@ -85,6 +85,8 @@ async def test_run_generation_job_processes_retrying_jobs() -> None:
         patch("app.avatars.repository.SQLAlchemyAvatarRepository", return_value=mock_repo),
         patch("sqlalchemy.ext.asyncio.create_async_engine", return_value=mock_engine),
         patch("sqlalchemy.ext.asyncio.AsyncSession", mock_session_cls),
+        patch("infrastructure.ai.openai_provider.OpenAIAvatarGenerationProvider"),
+        patch("infrastructure.storage.s3_storage.S3ObjectStorage"),
         patch("app.avatars.generation_service._run_pipeline") as mock_pipeline,
     ):
         mock_pipeline.return_value = None

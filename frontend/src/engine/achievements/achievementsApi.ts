@@ -9,11 +9,8 @@ interface PlayerAchievementListResponse {
   achievements: PlayerAchievement[];
 }
 
-export async function fetchAchievements(accountId?: string): Promise<Achievement[]> {
-  const path = accountId
-    ? `/achievements?account_id=${encodeURIComponent(accountId)}`
-    : '/achievements';
-  const data = await apiClient.get<AchievementListResponse>(path);
+export async function fetchAchievements(): Promise<Achievement[]> {
+  const data = await apiClient.get<AchievementListResponse>('/achievements');
   return data.achievements;
 }
 

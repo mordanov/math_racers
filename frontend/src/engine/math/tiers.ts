@@ -5,13 +5,13 @@ export const TIER_CONFIGS: Record<Exclude<Tier, 6>, TierConfig> = {
   2: { tier: 2, operations: ['addition', 'subtraction'], minOperand: 1, maxOperand: 20 },
   3: {
     tier: 3,
-    operations: ['addition', 'subtraction', 'multiplication'],
+    operations: ['multiplication'],
     minOperand: 1,
     maxOperand: 12,
   },
   4: {
     tier: 4,
-    operations: ['addition', 'subtraction', 'multiplication', 'division'],
+    operations: ['division'],
     minOperand: 1,
     maxOperand: 25,
   },
