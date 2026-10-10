@@ -29,6 +29,9 @@ class Config(BaseSettings):
 
     # AI Provider
     OPENAI_API_KEY: SecretStr
+    OPENAI_AVATAR_METADATA_MODEL: str = "gpt-4o-mini"
+    OPENAI_AVATAR_IMAGE_MODEL: str = "gpt-image-1"
+    OPENAI_AVATAR_SAFETY_MODEL: str = "gpt-4o"
 
     # Object Storage
     STORAGE_ENDPOINT: str

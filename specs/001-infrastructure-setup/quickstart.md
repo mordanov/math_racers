@@ -103,6 +103,9 @@ See `.env.example` for all required environment variables. Key variables:
 | `REDIS_URL` | Redis URL — e.g., `redis://redis:6379/0` |
 | `JWT_SECRET` | Random 32-byte hex string (rotate to invalidate all sessions) |
 | `OPENAI_API_KEY` | OpenAI API key (can be invalid locally to test graceful degradation) |
+| `OPENAI_AVATAR_METADATA_MODEL` | OpenAI model used to create avatar character metadata |
+| `OPENAI_AVATAR_IMAGE_MODEL` | OpenAI model used to generate avatar images |
+| `OPENAI_AVATAR_SAFETY_MODEL` | OpenAI model used to check generated images |
 | `STORAGE_ENDPOINT` | S3-compatible endpoint |
 | `STORAGE_ACCESS_KEY` | Storage credentials |
 | `STORAGE_SECRET_KEY` | Storage credentials |

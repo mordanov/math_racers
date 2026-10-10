@@ -72,7 +72,6 @@ describe('ResultsScreenPage', () => {
       progression: { xp_earned_this_race: 80 },
     });
     vi.mocked(progressionApiModule.fetchProgression).mockResolvedValue({
-      player_id: 'p1',
       total_xp: 200,
       current_level: 1,
       xp_to_next_level: 200,
@@ -105,7 +104,6 @@ describe('ResultsScreenPage', () => {
     // Player earned 80 XP. total_xp now = 400 (level 2). Before = 320 (still level 1).
     // level(400) = floor(sqrt(4)) = 2; level(320) = floor(sqrt(3.2)) = 1
     vi.mocked(progressionApiModule.fetchProgression).mockResolvedValue({
-      player_id: 'p1',
       total_xp: 400,
       current_level: 2,
       xp_to_next_level: 500,
@@ -193,7 +191,6 @@ describe('ResultsScreenPage', () => {
     const playSfx = vi.fn();
     vi.mocked(sfxModule.useSfxPlayer).mockReturnValue({ playSfx });
     vi.mocked(progressionApiModule.fetchProgression).mockResolvedValue({
-      player_id: 'p1',
       total_xp: 400,
       current_level: 2,
       xp_to_next_level: 500,

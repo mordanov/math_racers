@@ -8,7 +8,9 @@ from infrastructure.config import get_config
 
 
 class OpenAIAvatarGenerationProvider:
-    image_model_version = "gpt-image-1"
+    @property
+    def image_model_version(self) -> str:
+        return get_config().OPENAI_AVATAR_IMAGE_MODEL
 
     async def generate_metadata(self, prompt: str) -> dict[str, Any]:
         from openai import AsyncOpenAI
@@ -16,7 +18,7 @@ class OpenAIAvatarGenerationProvider:
         cfg = get_config()
         client = AsyncOpenAI(api_key=cfg.OPENAI_API_KEY.get_secret_value())
         response = await client.chat.completions.create(
-            model="gpt-4o-mini",
+            model=cfg.OPENAI_AVATAR_METADATA_MODEL,
             messages=[
                 {
                     "role": "system",
@@ -41,7 +43,7 @@ class OpenAIAvatarGenerationProvider:
         cfg = get_config()
         client = AsyncOpenAI(api_key=cfg.OPENAI_API_KEY.get_secret_value())
         response = await client.images.generate(
-            model=self.image_model_version,
+            model=cfg.OPENAI_AVATAR_IMAGE_MODEL,
             prompt=prompt,
             n=1,
             size="1024x1024",
@@ -60,7 +62,7 @@ class OpenAIAvatarGenerationProvider:
         client = AsyncOpenAI(api_key=cfg.OPENAI_API_KEY.get_secret_value())
         encoded = base64.b64encode(image_bytes).decode("ascii")
         response = await client.chat.completions.create(
-            model="gpt-4o",
+            model=cfg.OPENAI_AVATAR_SAFETY_MODEL,
             messages=[
                 {
                     "role": "system",

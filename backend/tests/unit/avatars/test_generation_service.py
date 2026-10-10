@@ -85,6 +85,53 @@ def test_thumbnails_are_png() -> None:
 
 
 @pytest.mark.asyncio
+async def test_metadata_generation_uses_configured_model() -> None:
+    completion = SimpleNamespace(
+        choices=[SimpleNamespace(message=SimpleNamespace(content='{"name":"Racer"}'))]
+    )
+    client = SimpleNamespace(
+        chat=SimpleNamespace(completions=SimpleNamespace(create=AsyncMock(return_value=completion)))
+    )
+    config = SimpleNamespace(
+        OPENAI_API_KEY=SimpleNamespace(get_secret_value=lambda: "key"),
+        OPENAI_AVATAR_METADATA_MODEL="custom-metadata-model",
+    )
+
+    with (
+        patch("openai.AsyncOpenAI", return_value=client),
+        patch("infrastructure.ai.openai_provider.get_config", return_value=config),
+    ):
+        result = await OpenAIAvatarGenerationProvider().generate_metadata("prompt")
+
+    assert result == {"name": "Racer"}
+    assert client.chat.completions.create.await_args.kwargs["model"] == "custom-metadata-model"
+
+
+@pytest.mark.asyncio
+async def test_image_generation_uses_configured_model() -> None:
+    generated_image = SimpleNamespace(data=[SimpleNamespace(b64_json="aW1hZ2U=")])
+    client = SimpleNamespace(
+        images=SimpleNamespace(generate=AsyncMock(return_value=generated_image))
+    )
+    config = SimpleNamespace(
+        OPENAI_API_KEY=SimpleNamespace(get_secret_value=lambda: "key"),
+        OPENAI_AVATAR_IMAGE_MODEL="custom-image-model",
+    )
+    provider = OpenAIAvatarGenerationProvider()
+
+    with (
+        patch("openai.AsyncOpenAI", return_value=client),
+        patch("infrastructure.ai.openai_provider.get_config", return_value=config),
+    ):
+        image = await provider.generate_image("prompt")
+        image_model_version = provider.image_model_version
+
+    assert image == b"image"
+    assert image_model_version == "custom-image-model"
+    assert client.images.generate.await_args.kwargs["model"] == "custom-image-model"
+
+
+@pytest.mark.asyncio
 async def test_child_safety_requires_every_approved_check() -> None:
     checks = {
         "safe": True,
@@ -99,7 +146,10 @@ async def test_child_safety_requires_every_approved_check() -> None:
     client = SimpleNamespace(
         chat=SimpleNamespace(completions=SimpleNamespace(create=AsyncMock(return_value=completion)))
     )
-    config = SimpleNamespace(OPENAI_API_KEY=SimpleNamespace(get_secret_value=lambda: "key"))
+    config = SimpleNamespace(
+        OPENAI_API_KEY=SimpleNamespace(get_secret_value=lambda: "key"),
+        OPENAI_AVATAR_SAFETY_MODEL="custom-safety-model",
+    )
 
     with (
         patch("openai.AsyncOpenAI", return_value=client),
@@ -108,6 +158,7 @@ async def test_child_safety_requires_every_approved_check() -> None:
         result = await OpenAIAvatarGenerationProvider().validate_child_safety(b"image")
 
     assert result == checks
+    assert client.chat.completions.create.await_args.kwargs["model"] == "custom-safety-model"
 
 
 @pytest.mark.asyncio
@@ -118,7 +169,10 @@ async def test_child_safety_rejects_incomplete_provider_result() -> None:
     client = SimpleNamespace(
         chat=SimpleNamespace(completions=SimpleNamespace(create=AsyncMock(return_value=completion)))
     )
-    config = SimpleNamespace(OPENAI_API_KEY=SimpleNamespace(get_secret_value=lambda: "key"))
+    config = SimpleNamespace(
+        OPENAI_API_KEY=SimpleNamespace(get_secret_value=lambda: "key"),
+        OPENAI_AVATAR_SAFETY_MODEL="custom-safety-model",
+    )
 
     with (
         patch("openai.AsyncOpenAI", return_value=client),

@@ -27,6 +27,20 @@ class TestConfigValidation:
         cfg = Config.model_validate(env)
         assert cfg.ENVIRONMENT.value == "development"
 
+    def test_avatar_model_names_can_be_overridden(self) -> None:
+        from infrastructure.config import Config
+
+        env = self._make_valid_env()
+        env["OPENAI_AVATAR_METADATA_MODEL"] = "custom-metadata-model"
+        env["OPENAI_AVATAR_IMAGE_MODEL"] = "custom-image-model"
+        env["OPENAI_AVATAR_SAFETY_MODEL"] = "custom-safety-model"
+
+        cfg = Config.model_validate(env)
+
+        assert cfg.OPENAI_AVATAR_METADATA_MODEL == "custom-metadata-model"
+        assert cfg.OPENAI_AVATAR_IMAGE_MODEL == "custom-image-model"
+        assert cfg.OPENAI_AVATAR_SAFETY_MODEL == "custom-safety-model"
+
     def test_invalid_database_url_raises(self) -> None:
         from infrastructure.config import Config
 
