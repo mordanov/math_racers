@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#17286e" />
+      <stop offset="1" stop-color="#5630b6" />
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="42%" r="62%">
+      <stop offset="0" stop-color="#7667ff" stop-opacity=".58" />
+      <stop offset="1" stop-color="#7667ff" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="star" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff27a" />
+      <stop offset="1" stop-color="#ffad45" />
+    </linearGradient>
+    <filter id="shadow" x="-.3" y="-.3" width="1.6" height="1.7">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="5" />
+      <feOffset dx="3" dy="5" />
+      <feComponentTransfer>
+        <feFuncA type="linear" slope=".32" />
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <path id="star-shape" d="m0-70 18 45 49 4-38 31 12 48L0 32l-41 26 12-48-38-31 49-4z" />
+  </defs>
+  <rect width="512" height="512" fill="url(#background)" />
+  <circle cx="256" cy="240" r="245" fill="url(#glow)" />
+  <g fill="none" stroke-linecap="round">
+    <path d="M44 205h74" stroke="#47e8f6" stroke-opacity=".7" stroke-width="10" />
+    <path d="M31 235h48" stroke="#47e8f6" stroke-opacity=".42" stroke-width="7" />
+    <path d="M397 372h79" stroke="#ffb25e" stroke-opacity=".7" stroke-width="9" />
+    <path d="M425 397h48" stroke="#ffb25e" stroke-opacity=".4" stroke-width="6" />
+  </g>
+  <g transform="translate(390 136)" filter="url(#shadow)">
+    <use href="#star-shape" fill="#ffb443" stroke="#fff3a0" stroke-linejoin="round" stroke-width="5" />
+    <path d="m-1-54 14 36 29 3-23 18" fill="none" stroke="#fff9c8" stroke-linecap="round" stroke-width="7" />
+  </g>
+  <path d="m117 363 8-17 8 17 18 2-14 11 4 18-16-10-15 10 4-18-14-11z" fill="#70f1ec" opacity=".9" />
+  <text
+    x="249"
+    y="343"
+    text-anchor="middle"
+    fill="#17245f"
+    font-family="Arial Rounded MT Bold, Arial Rounded, system-ui, sans-serif"
+    font-size="164"
+    font-weight="700"
+    letter-spacing="-9"
+    stroke="#17245f"
+    stroke-linejoin="round"
+    stroke-width="12"
+    transform="translate(0 6)"
+  >1+1</text>
+  <text
+    x="249"
+    y="343"
+    text-anchor="middle"
+    fill="#fffdf5"
+    font-family="Arial Rounded MT Bold, Arial Rounded, system-ui, sans-serif"
+    font-size="164"
+    font-weight="700"
+    letter-spacing="-9"
+  >1+1</text>
+</svg>
