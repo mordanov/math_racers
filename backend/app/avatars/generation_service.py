@@ -76,6 +76,7 @@ async def run_generation_job(job_id: uuid.UUID) -> None:
     """Execute the full avatar generation pipeline for a queued job."""
     from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
+    import infrastructure.database.models  # noqa: F401
     from app.avatars.repository import SQLAlchemyAvatarRepository
     from infrastructure.ai.openai_provider import OpenAIAvatarGenerationProvider
     from infrastructure.storage.s3_storage import S3ObjectStorage
