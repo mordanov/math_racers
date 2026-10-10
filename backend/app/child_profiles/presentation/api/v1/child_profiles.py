@@ -49,6 +49,7 @@ async def create_child_profile(
     profile = await ManageChildProfilesUseCase(SQLAlchemyChildProfileRepository(session)).create(
         account.id, body.display_name
     )
+    await session.commit()
     return ChildProfileResponse.model_validate(profile)
 
 
@@ -66,6 +67,7 @@ async def delete_child_profile(
     await ManageChildProfilesUseCase(SQLAlchemyChildProfileRepository(session)).delete(
         account.id, profile_id
     )
+    await session.commit()
 
 
 @router.get("/api/v1/child-profiles/{profile_id}/legacy-data")
