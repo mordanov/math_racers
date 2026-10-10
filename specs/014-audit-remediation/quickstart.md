@@ -127,15 +127,36 @@ audit item open until the checks in the last column pass.
   for the stylesheet (278 bytes). These network timings do not measure browser
   paint or authenticated race loading. Race loading and FPS remain unverified:
   those require a designated test account and an active race on target hardware.
-- **T065 still open:** the documented matrix is current stable Chrome, Edge,
-  Firefox, and Safari on desktop/laptop/tablet (large-screen mobile secondary).
-  The focused RaceSetup/RaceScreen frontend tests passed (32 tests, including
-  keyboard submission and reduced-motion behavior), but manual keyboard,
-  screen-reader, contrast, reduced-motion, and cross-browser checks were not
-  performed. No tablet or screen-reader acceptance environment was available.
-- Follow-up regression checks passed: backend unit tests (123), frontend Vitest
-  tests (378), mypy, Ruff, Black, TypeScript, ESLint, and Prettier. The targeted
-  race domain/repository tests also passed (26).
+- **T065 still open; partial browser evidence only:** on 2026-10-10, Chrome
+  154.0.8037.98 was used through the DevTools protocol against the deployed
+  public login page and the local Vite login page. No form was submitted. The
+  browser accessibility tree exposed the page heading, labelled Email and
+  Password fields, Log In button, and Register link. Keyboard focus advanced
+  through Email, Password, Log In, and Register in order. With reduced motion
+  emulated, the media query was active; existing `RaceSetupPage` and
+  `RaceScreenPage` tests cover keyboard submission and reduced-motion logic.
+  This did not validate race animations in an authenticated browser session.
+- The browser contrast smoke check found the deployed primary button text and
+  Register link at 3.34:1, and the input border at 1.29:1. On this branch the
+  shared primary, focus, and border tokens were darkened to pass their
+  applicable checks: primary button text 4.82:1 (hover 5.36:1, active 6.71:1),
+  focus indicator 6.71:1, and input border 3.54:1 against white. Five
+  `tokens.test.ts` assertions and the targeted RaceSetup/RaceScreen/token tests
+  passed (37 tests total). These fixes are not deployed yet.
+- The full documented matrix remains incomplete. Safari WebDriver could not be
+  authorized in the unattended macOS session; Edge and Firefox drivers were
+  unavailable. No tablet or screen-reader acceptance environment or
+  designated test account was available, so VoiceOver/manual announcements,
+  contrast and keyboard acceptance on authenticated changed screens, and
+  cross-browser race-flow checks remain unverified. The Chrome accessibility
+  tree is not a substitute for a screen-reader pass. Keep T065 unchecked.
+- Before the accessibility color-token update, follow-up regression checks
+  passed: backend unit tests (123), frontend Vitest tests (378), mypy, Ruff,
+  Black, TypeScript, ESLint, and Prettier. The targeted race domain/repository
+  tests also passed (26).
+- After the color-token update, the full frontend Vitest suite passed (383
+  tests in 54 files), the frontend production build passed, and the targeted
+  RaceSetup/RaceScreen/token suite passed (37 tests). `git diff --check` passed.
 - **T068 complete:** PR #25 was merged after the full implementation diff was
   reviewed. That review identified the partial-offline-answer persistence bug
   fixed in this follow-up; the frontend callback typing was also tightened to
