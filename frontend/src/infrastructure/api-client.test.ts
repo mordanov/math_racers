@@ -15,6 +15,10 @@ describe('APIClient', () => {
   beforeEach(() => {
     client = new APIClient();
     vi.useFakeTimers();
+    Object.defineProperty(document, 'cookie', {
+      configurable: true,
+      value: 'csrf_token=test-csrf',
+    });
   });
 
   afterEach(() => {
@@ -74,7 +78,7 @@ describe('APIClient', () => {
     await client.post('/items', { name: 'test' });
     expect(fake).toHaveBeenCalledWith('/api/v1/items', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': 'test-csrf' },
       body: JSON.stringify({ name: 'test' }),
       credentials: 'same-origin',
     });
@@ -88,8 +92,55 @@ describe('APIClient', () => {
       '/api/v1/items/1',
       expect.objectContaining({
         method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': 'test-csrf',
+        },
       }),
     );
+  });
+
+  it('fetches a CSRF cookie before the first state-changing request', async () => {
+    Object.defineProperty(document, 'cookie', {
+      configurable: true,
+      value: '',
+    });
+    const fake = vi
+      .fn<typeof fetch>()
+      .mockImplementationOnce(() => {
+        Object.defineProperty(document, 'cookie', {
+          configurable: true,
+          value: 'csrf_token=issued-token',
+        });
+        return Promise.resolve(new Response(null, { status: 204 }));
+      })
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ ok: true }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      );
+    vi.stubGlobal('fetch', fake);
+
+    await client.post('/races', {});
+
+    const [csrfUrl, csrfOptions] = fake.mock.calls[0];
+    expect(csrfUrl).toBe('/api/v1/auth/csrf');
+    expect(csrfOptions?.method).toBe('GET');
+
+    const [raceUrl, raceOptions] = fake.mock.calls[1];
+    expect(raceUrl).toBe('/api/v1/races');
+    expect(new Headers(raceOptions?.headers).get('X-CSRF-Token')).toBe('issued-token');
+  });
+
+  it('sends the active child profile header', async () => {
+    const fake = mockFetch(200, {});
+    vi.stubGlobal('fetch', fake);
+    client.setActiveChildId('child-1');
+    await client.post('/races', {});
+    const [, options] = fake.mock.calls[0] as [string, RequestInit];
+    expect((options.headers as Record<string, string>)['X-Child-Profile-ID']).toBe('child-1');
+    expect((options.headers as Record<string, string>)['X-CSRF-Token']).toBe('test-csrf');
   });
 
   describe('auth token', () => {

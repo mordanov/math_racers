@@ -7,7 +7,7 @@ export interface PlayerStats {
   correct_answers: number;
   accuracy_all_time: number | null;
   avg_response_ms: number | null;
-  favourite_operation: null;
+  favourite_operation: string | null;
   best_streak: number;
   updated_at: string;
 }
@@ -52,8 +52,8 @@ export interface WeeklySummary {
   correct_answers: number;
   accuracy: number | null;
   avg_response_ms: number | null;
-  strongest_operation: null;
-  weakest_operation: null;
+  strongest_operation: string | null;
+  weakest_operation: string | null;
   races_completed: number;
   xp_earned: number;
 }

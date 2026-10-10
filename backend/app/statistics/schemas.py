@@ -12,7 +12,7 @@ class PlayerStatsResponse(BaseModel):
     correct_answers: int
     accuracy_all_time: float | None
     avg_response_ms: int | None
-    favourite_operation: None = None  # deferred: no per-operation data in Sprint 5
+    favourite_operation: str | None
     best_streak: int
     updated_at: datetime
 
@@ -57,8 +57,8 @@ class WeeklySummaryResponse(BaseModel):
     correct_answers: int
     accuracy: float | None
     avg_response_ms: int | None
-    strongest_operation: None = None  # deferred: no per-operation data in Sprint 5
-    weakest_operation: None = None  # deferred: no per-operation data in Sprint 5
+    strongest_operation: str | None
+    weakest_operation: str | None
     races_completed: int
     xp_earned: int
 

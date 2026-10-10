@@ -36,14 +36,14 @@ describe('generateProblemSet — determinism', () => {
 describe('generateProblemSet — Tier 1 constraints', () => {
   it('produces only addition problems', () => {
     const set = generateProblemSet(1, 7, 100);
-    set.problems.forEach(p => {
+    set.problems.forEach((p) => {
       expect(p.operation).toBe('addition');
     });
   });
 
   it('keeps operands in [1, 10]', () => {
     const set = generateProblemSet(1, 7, 100);
-    set.problems.forEach(p => {
+    set.problems.forEach((p) => {
       expect(p.operand_a).toBeGreaterThanOrEqual(1);
       expect(p.operand_a).toBeLessThanOrEqual(10);
       expect(p.operand_b).toBeGreaterThanOrEqual(1);
@@ -55,9 +55,9 @@ describe('generateProblemSet — Tier 1 constraints', () => {
 describe('generateProblemSet — division safety (Tier 4)', () => {
   it('all division answers are integers', () => {
     const set = generateProblemSet(4, 99, 200);
-    const divisions = set.problems.filter(p => p.operation === 'division');
+    const divisions = set.problems.filter((p) => p.operation === 'division');
     expect(divisions.length).toBeGreaterThan(0);
-    divisions.forEach(p => {
+    divisions.forEach((p) => {
       expect(p.operand_b).not.toBe(0);
       expect(p.answer).toBe(Math.floor(p.answer));
       expect(p.operand_a % p.operand_b).toBe(0);
@@ -68,9 +68,9 @@ describe('generateProblemSet — division safety (Tier 4)', () => {
 describe('generateProblemSet — subtraction result ≥ 0', () => {
   it('all subtraction results are non-negative', () => {
     const set = generateProblemSet(2, 55, 200);
-    const subtractions = set.problems.filter(p => p.operation === 'subtraction');
+    const subtractions = set.problems.filter((p) => p.operation === 'subtraction');
     expect(subtractions.length).toBeGreaterThan(0);
-    subtractions.forEach(p => {
+    subtractions.forEach((p) => {
       expect(p.operand_a).toBeGreaterThanOrEqual(p.operand_b);
       expect(p.answer).toBeGreaterThanOrEqual(0);
     });
@@ -93,24 +93,34 @@ describe('generateProblemSet — duplicate prevention', () => {
 });
 
 describe('generateProblemSet — Tier 6 fallback', () => {
-  it('uses Tier 5 config when no customTierConfig provided', () => {
-    const tier5 = generateProblemSet(5, 1, 50);
-    const tier6 = generateProblemSet(6, 1, 50);
-    tier6.problems.forEach(p => {
-      expect(p.operand_a).toBeGreaterThanOrEqual(1);
-      expect(p.operand_a).toBeLessThanOrEqual(100);
+  it('requires parent-configured settings', () => {
+    expect(() => generateProblemSet(6, 1, 50)).toThrow(
+      'Tier 6 requires parent-configured settings.',
+    );
+  });
+
+  it('uses the selected operations and operand range', () => {
+    const set = generateProblemSet(6, 1, 50, {
+      tier: 6,
+      operations: ['addition'],
+      minOperand: 2,
+      maxOperand: 4,
     });
-    expect(tier6.tier).toBe(6);
+
+    for (const problem of set.problems) {
+      expect(problem.operation).toBe('addition');
+      expect(problem.operand_a).toBeGreaterThanOrEqual(2);
+      expect(problem.operand_a).toBeLessThanOrEqual(4);
+      expect(problem.operand_b).toBeGreaterThanOrEqual(2);
+      expect(problem.operand_b).toBeLessThanOrEqual(4);
+    }
   });
 });
 
 describe('generateProblemSet — Tier 4 includes all four operations', () => {
-  it('all four operations appear in a large set', () => {
+  it('generates division problems only', () => {
     const set = generateProblemSet(4, 333, 200);
-    const ops = new Set(set.problems.map(p => p.operation));
-    expect(ops.has('addition')).toBe(true);
-    expect(ops.has('subtraction')).toBe(true);
-    expect(ops.has('multiplication')).toBe(true);
-    expect(ops.has('division')).toBe(true);
+    const ops = new Set(set.problems.map((p) => p.operation));
+    expect([...ops]).toEqual(['division']);
   });
 });

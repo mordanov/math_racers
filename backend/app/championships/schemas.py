@@ -37,3 +37,4 @@ class ChampionshipResponse(BaseModel):
     status: str
     standings: list[StandingEntry]
     created_at: datetime | None = None
+    completion_xp_awarded: int = 0

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import uuid
 
-from fastapi import Depends
+from fastapi import Depends, Header
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.accounts.models import Account, AccountRole
@@ -36,3 +36,13 @@ async def get_child_profile(
     """FastAPI dependency: resolves and validates child profile ownership."""
     repo = SQLAlchemyChildProfileRepository(session)
     return await get_child_profile_dependency(profile_id, account, repo)
+
+
+async def get_active_child_profile(
+    child_profile_id: uuid.UUID = Header(alias="X-Child-Profile-ID"),
+    account: Account = Depends(get_current_account),
+    session: AsyncSession = Depends(get_session),
+) -> ChildProfile:
+    """Resolve the active child from the shared API header."""
+    repo = SQLAlchemyChildProfileRepository(session)
+    return await get_child_profile_dependency(child_profile_id, account, repo)

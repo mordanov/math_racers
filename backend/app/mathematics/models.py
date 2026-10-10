@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 
 from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Integer, text
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from infrastructure.database.base import Base
@@ -27,6 +27,7 @@ class PlayerDifficulty(Base):
     )
     current_tier: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     parent_override: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    custom_tier_config: Mapped[dict[str, object] | None] = mapped_column(JSONB, nullable=True)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,

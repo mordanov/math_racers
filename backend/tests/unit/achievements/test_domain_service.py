@@ -83,6 +83,55 @@ async def test_first_race_already_unlocked_skipped() -> None:
     assert not any(r.key == "first_race" for r in results)
 
 
+@pytest.mark.asyncio
+async def test_achievement_unlock_is_scoped_to_the_selected_child() -> None:
+    account_id = uuid.uuid4()
+    child_profile_id = uuid.uuid4()
+    repo = _make_repo(unlock_returns=_make_achievement("level_5"))
+    service = AchievementDomainService(repo)
+
+    await service.evaluate_level_up(account_id, 5, _make_session(), child_profile_id)
+
+    repo.unlock.assert_awaited_once_with(account_id, "level_5", child_profile_id)
+
+
+@pytest.mark.asyncio
+async def test_hidden_speedster_requires_a_fast_race_win() -> None:
+    account_id = uuid.uuid4()
+    record = _make_achievement("hidden_speedster")
+    repo = _make_repo(unlock_returns=record)
+    service = AchievementDomainService(repo)
+
+    results = await service.evaluate_race_completed(
+        account_id,
+        {
+            "position": 1,
+            "average_response_ms": 499,
+            "mode": "quick",
+            "problems_correct": 8,
+        },
+        _make_session(),
+    )
+
+    assert "hidden_speedster" in [result.key for result in results]
+    repo.unlock.assert_any_await(account_id, "hidden_speedster", None)
+
+
+@pytest.mark.asyncio
+async def test_hidden_speedster_does_not_unlock_for_slow_wins_or_training() -> None:
+    account_id = uuid.uuid4()
+    repo = _make_repo(unlock_returns=_make_achievement("hidden_speedster"))
+    service = AchievementDomainService(repo)
+
+    for event_data in (
+        {"position": 1, "average_response_ms": 500, "mode": "quick"},
+        {"position": 1, "average_response_ms": 400, "mode": "training"},
+    ):
+        await service.evaluate_race_completed(account_id, event_data, _make_session())
+
+    assert not any(call.args[1] == "hidden_speedster" for call in repo.unlock.await_args_list)
+
+
 # ── perfect_race ──────────────────────────────────────────────────────────────
 
 
@@ -139,7 +188,7 @@ async def test_level_5_fires_at_level_5_not_4() -> None:
 
 
 @pytest.mark.asyncio
-async def test_predicate_exception_does_not_abort_other_evaluations() -> None:
+async def test_predicate_exception_is_reported_to_abort_result_processing() -> None:
     account_id = uuid.uuid4()
 
     # Make unlock raise for "first_race" but return normally for others
@@ -161,11 +210,7 @@ async def test_predicate_exception_does_not_abort_other_evaluations() -> None:
     session = _make_session()
     service = AchievementDomainService(repo)
 
-    # Should not raise; other achievements may still come through
-    results = await service.evaluate_race_completed(
-        account_id, {"problems_correct": 8, "position": 1}, session
-    )
-    # perfect_race should still be evaluated (position=1 makes champion too)
-    assert isinstance(results, list)
-    # first_race failed silently; perfect_race and others may succeed
-    assert not any(r.key == "first_race" for r in results)
+    with pytest.raises(RuntimeError, match="simulated DB error"):
+        await service.evaluate_race_completed(
+            account_id, {"problems_correct": 8, "position": 1}, session
+        )

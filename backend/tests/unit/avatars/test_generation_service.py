@@ -3,13 +3,18 @@
 from __future__ import annotations
 
 import io
+import json
+from types import SimpleNamespace
+from unittest.mock import AsyncMock, patch
 
+import pytest
 from PIL import Image
 
 from app.avatars.generation_service import (
     _generate_thumbnails,
     _validate_image,
 )
+from infrastructure.ai.openai_provider import OpenAIAvatarGenerationProvider
 
 
 def _make_png_bytes(size: int = 1024, mode: str = "RGBA") -> bytes:
@@ -77,3 +82,47 @@ def test_thumbnails_are_png() -> None:
     for label, data in result.items():
         img = Image.open(io.BytesIO(data))
         assert img.format == "PNG", f"{label} not PNG"
+
+
+@pytest.mark.asyncio
+async def test_child_safety_requires_every_approved_check() -> None:
+    checks = {
+        "safe": True,
+        "single_character": True,
+        "full_body": True,
+        "no_text": True,
+        "no_watermark": True,
+    }
+    completion = SimpleNamespace(
+        choices=[SimpleNamespace(message=SimpleNamespace(content=json.dumps(checks)))]
+    )
+    client = SimpleNamespace(
+        chat=SimpleNamespace(completions=SimpleNamespace(create=AsyncMock(return_value=completion)))
+    )
+    config = SimpleNamespace(OPENAI_API_KEY=SimpleNamespace(get_secret_value=lambda: "key"))
+
+    with (
+        patch("openai.AsyncOpenAI", return_value=client),
+        patch("infrastructure.ai.openai_provider.get_config", return_value=config),
+    ):
+        result = await OpenAIAvatarGenerationProvider().validate_child_safety(b"image")
+
+    assert result == checks
+
+
+@pytest.mark.asyncio
+async def test_child_safety_rejects_incomplete_provider_result() -> None:
+    completion = SimpleNamespace(
+        choices=[SimpleNamespace(message=SimpleNamespace(content='{"safe": true}'))]
+    )
+    client = SimpleNamespace(
+        chat=SimpleNamespace(completions=SimpleNamespace(create=AsyncMock(return_value=completion)))
+    )
+    config = SimpleNamespace(OPENAI_API_KEY=SimpleNamespace(get_secret_value=lambda: "key"))
+
+    with (
+        patch("openai.AsyncOpenAI", return_value=client),
+        patch("infrastructure.ai.openai_provider.get_config", return_value=config),
+        pytest.raises(ValueError, match="invalid result"),
+    ):
+        await OpenAIAvatarGenerationProvider().validate_child_safety(b"image")

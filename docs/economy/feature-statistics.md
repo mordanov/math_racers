@@ -33,6 +33,9 @@ Track per player account:
 - Longest session streak
 - Total learning time
 
+Favourite operation is the most played operation. Strongest and weakest
+operations use accuracy from recorded answers. Ties use alphabetical order.
+
 These statistics are private to the player and their parent.
 
 ---

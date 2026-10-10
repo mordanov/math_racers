@@ -45,8 +45,8 @@
 |------|-----------|---------------|-------|
 | 1 | Addition only | 1–10 | Intro level |
 | 2 | Addition, Subtraction | 1–20 | No negative results |
-| 3 | Addition, Subtraction, Multiplication | 1–12 | ×1–×12 tables |
-| 4 | All four operations | 1–25 | Division: exact divisors only |
+| 3 | Multiplication only | 1–12 | ×1–×12 tables |
+| 4 | Division only | 1–25 | Exact divisors only |
 | 5 | All four operations | 1–100 | Mixed sets |
 | 6 | All four operations | Custom per parent setting | Teacher/parent-configured |
 
@@ -145,7 +145,8 @@ The backend exposes a reference generator for seed verification and parent-confi
 
 ## Edge Cases
 
-1. **Tier 6 with no parent configuration** — fall back to Tier 5 behaviour; do not error.
+1. **Tier 6 with no parent configuration** — do not start the session. Ask the
+   parent to save custom settings; never substitute Tier 5 behaviour.
 2. **Seed produces the same problem twice in a row** — retry loop regenerates; maximum 10 retries per slot before accepting the duplicate (prevents infinite loop on extremely constrained tiers).
 3. **Operand overflow for large tier ranges** — clamp operands to the tier's documented max; do not panic.
 4. **`parseInt` on non-numeric input** — return `correct: false`; never throw.
@@ -174,7 +175,8 @@ The backend exposes a reference generator for seed verification and parent-confi
 - [ ] No two consecutive problems in a set are identical.
 - [ ] Division problems always have integer answers.
 - [ ] Division by zero never occurs.
-- [ ] Tier 1 contains only addition; Tier 4+ includes all four operations.
+- [ ] Tier 1 contains only addition; Tier 3 contains multiplication; Tier 4
+  contains division; Tier 5 is mixed; Tier 6 uses saved parent settings.
 - [ ] Answer validation completes in < 1 ms.
 - [ ] Tier is never changed during an active race.
 - [ ] Parent override is respected and clamped to [1, 6].

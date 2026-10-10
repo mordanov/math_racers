@@ -16,18 +16,8 @@ class TierConfig:
 TIER_CONFIGS: dict[int, TierConfig] = {
     1: TierConfig(1, (Operation.addition,), 1, 10),
     2: TierConfig(2, (Operation.addition, Operation.subtraction), 1, 20),
-    3: TierConfig(3, (Operation.addition, Operation.subtraction, Operation.multiplication), 1, 12),
-    4: TierConfig(
-        4,
-        (
-            Operation.addition,
-            Operation.subtraction,
-            Operation.multiplication,
-            Operation.division,
-        ),
-        1,
-        25,
-    ),
+    3: TierConfig(3, (Operation.multiplication,), 1, 12),
+    4: TierConfig(4, (Operation.division,), 1, 25),
     5: TierConfig(
         5,
         (

@@ -9,8 +9,9 @@ import os
 import time
 import uuid
 
-import httpx
 import pytest
+
+from tests.integration import httpx_client as httpx
 
 BASE_URL = os.getenv("API_URL", "http://localhost:8000")
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "admin@example.com")

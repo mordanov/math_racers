@@ -93,7 +93,11 @@ The game should fail gracefully offline: Training Mode, previously generated ava
 
 - HTTPS only; no HTTP connections accepted.
 - Secure cookies (HttpOnly, Secure, SameSite=Lax).
-- CSRF protection on state-changing endpoints.
+- CSRF protection on state-changing endpoints. Set `CSRF_ALLOWED_ORIGINS` to
+  the comma-separated browser origins that may call the API.
+- Every `POST`, `PUT`, `PATCH`, and `DELETE` request must include a matching
+  `csrf_token` cookie and `X-CSRF-Token` header, plus an allowed `Origin`.
+  The frontend gets the cookie from `GET /api/v1/auth/csrf`.
 - Input validation at every API boundary.
 - Output encoding on all user-supplied content.
 - Rate limiting on generation and authentication endpoints.
@@ -113,6 +117,22 @@ The application stores data about children.
 - No educational analytics shared publicly.
 - Parents retain full control of all stored data.
 - COPPA-aware data practices.
+
+Each child profile owns its avatars and play data. Parent access must be
+validated for the selected profile. Existing account-owned records remain
+unassigned and unavailable to children until a parent assigns an owner.
+
+## Approved v1.0 API and offline rules
+
+- Create a race session and submit its result through separate API requests.
+- Bind the human participant and every new child-owned record to the validated
+  child profile. Process a result, rewards, statistics, and achievements
+  atomically and idempotently.
+- Protect state-changing requests with CSRF checks. Apply shared rate limits
+  to login, registration, and avatar generation.
+- When required child data is cached, Training works offline. Keep queued
+  results until the server confirms a successful, idempotent sync.
+- Keep AI and object-storage providers behind infrastructure interfaces.
 
 ---
 

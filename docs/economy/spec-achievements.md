@@ -47,12 +47,16 @@ Once created, `PlayerAchievement` records are never updated or deleted (FR-063: 
 
 | Domain Event | Achievements Evaluated |
 |-------------|----------------------|
-| `RaceCompletedEvent` | first_race, podium_finisher, champion, race_count milestones |
+| `RaceCompletedEvent` | first_race, podium_finisher, champion, hidden_speedster, race_count milestones |
 | `ProblemSolvedEvent` | correct_streak milestones, first_perfect_race |
 | `LevelUpEvent` | level milestones (5, 10, 20, …) |
 | `AvatarCreatedEvent` | first_avatar, avatar_count milestones |
 | `DailyChallengeCompletedEvent` | daily_streak milestones |
 | `AchievementUnlockedEvent` | meta achievements (unlock N achievements) |
+
+Daily Challenge events and awards are outside v1.0. Every achievement shown
+in the released catalogue must have a documented predicate and a trigger test.
+Do not publish an achievement that has no implemented trigger.
 
 ---
 
@@ -99,6 +103,14 @@ predicates["perfect_race"] = lambda event, player_id: (
 predicates["level_5"] = lambda event, player_id: (
     event.type == "LevelUpEvent"
     and event.new_level >= 5
+)
+
+# hidden_speedster: win a non-Training race with an average response time below 500 ms
+predicates["hidden_speedster"] = lambda event, player_id: (
+    event.type == "RaceCompletedEvent"
+    and event.mode != "training"
+    and event.position == 1
+    and event.average_response_ms < 500
 )
 ```
 

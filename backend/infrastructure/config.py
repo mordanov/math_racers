@@ -48,6 +48,7 @@ class Config(BaseSettings):
     ENVIRONMENT: Environment = Environment.development
     VERSION: str = "dev"
     LOG_LEVEL: str = "INFO"
+    CSRF_ALLOWED_ORIGINS: str = ""
 
     # Alert thresholds (US5)
     ALERT_ERROR_RATE_THRESHOLD: float = 0.01

@@ -10,8 +10,9 @@ if TYPE_CHECKING:
     from app.championships.models import Championship
     from app.championships.repository import ChampionshipRepository
     from app.championships.schemas import CreateChampionshipRequest, RecordRaceRequest
+    from app.progression.repository import ProgressionRepository
 
-_POINTS_TABLE = [10, 6, 3, 1, 0]
+_POINTS_TABLE = [10, 8, 6, 4, 2]
 
 
 def _points_for_position(position: int) -> int:
@@ -58,17 +59,32 @@ def _to_response(championship: Championship) -> ChampionshipResponse:
 
 
 class ChampionshipDomainService:
-    def __init__(self, repository: ChampionshipRepository) -> None:
+    def __init__(
+        self,
+        repository: ChampionshipRepository,
+        progression_repository: ProgressionRepository | None = None,
+    ) -> None:
         self._repository = repository
+        self._progression_repository = progression_repository
 
     async def create(
-        self, account_id: uuid.UUID, request: CreateChampionshipRequest
+        self,
+        account_id: uuid.UUID,
+        request: CreateChampionshipRequest,
+        child_profile_id: uuid.UUID | None = None,
     ) -> ChampionshipResponse:
-        championship = await self._repository.create(account_id, request.total_races)
+        championship = await self._repository.create(
+            account_id, request.total_races, child_profile_id
+        )
         return _to_response(championship)
 
-    async def get(self, account_id: uuid.UUID, championship_id: uuid.UUID) -> ChampionshipResponse:
-        championship = await self._repository.get(championship_id)
+    async def get(
+        self,
+        account_id: uuid.UUID,
+        championship_id: uuid.UUID,
+        child_profile_id: uuid.UUID | None = None,
+    ) -> ChampionshipResponse:
+        championship = await self._repository.get(championship_id, child_profile_id)
         if championship.account_id != account_id:
             raise PermissionError(
                 error_code="CHAMPIONSHIP_ACCESS_DENIED",
@@ -82,8 +98,9 @@ class ChampionshipDomainService:
         championship_id: uuid.UUID,
         race_id: uuid.UUID,
         request: RecordRaceRequest,
+        child_profile_id: uuid.UUID | None = None,
     ) -> ChampionshipResponse:
-        championship = await self._repository.get(championship_id)
+        championship = await self._repository.get(championship_id, child_profile_id)
         if championship.account_id != account_id:
             raise PermissionError(
                 error_code="CHAMPIONSHIP_ACCESS_DENIED",
@@ -106,7 +123,20 @@ class ChampionshipDomainService:
             for p in request.participants
         ]
 
+        was_active = championship.status == "active"
         championship = await self._repository.add_race(
             championship, race_id, request.race_index, participants
         )
-        return _to_response(championship)
+        response = _to_response(championship)
+        if (
+            was_active
+            and championship.status == "completed"
+            and child_profile_id is not None
+            and self._progression_repository is not None
+        ):
+            from app.progression.domain_service import ProgressionDomainService
+
+            response.completion_xp_awarded = await ProgressionDomainService(
+                self._progression_repository
+            ).award_championship_completion(account_id, child_profile_id, championship_id)
+        return response

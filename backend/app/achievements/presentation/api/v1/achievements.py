@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import uuid
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.accounts.models import Account, AccountRole
@@ -14,7 +14,9 @@ from app.achievements.schemas import (
     PlayerAchievementListResponse,
     PlayerAchievementResponse,
 )
+from app.child_profiles.models import ChildProfile
 from app.presentation.api.middleware.auth import get_current_account
+from app.presentation.api.middleware.child_profile import get_active_child_profile
 from app.shared.exceptions import PermissionError
 from infrastructure.database.session import get_session
 
@@ -23,12 +25,11 @@ router = APIRouter(tags=["achievements"])
 
 @router.get("/api/v1/achievements", response_model=AchievementListResponse, status_code=200)
 async def get_achievements(
-    account_id: uuid.UUID | None = Query(default=None),
     session: AsyncSession = Depends(get_session),
 ) -> AchievementListResponse:
     repo = SQLAlchemyAchievementRepository(session)
     service = AchievementDomainService(repo)
-    achievements = await service.get_visible_catalogue(account_id, session)
+    achievements = await service.get_visible_catalogue(None, session)
     return AchievementListResponse(achievements=achievements)
 
 
@@ -40,13 +41,14 @@ async def get_achievements(
 async def get_player_achievements(
     account_id: uuid.UUID,
     current_account: Account = Depends(get_current_account),
+    child_profile: ChildProfile = Depends(get_active_child_profile),
     session: AsyncSession = Depends(get_session),
 ) -> PlayerAchievementListResponse:
     if current_account.id != account_id and current_account.role != AccountRole.administrator:
         raise PermissionError(message="You may only view your own achievements.")
 
     repo = SQLAlchemyAchievementRepository(session)
-    records = await repo.get_unlocked(account_id)
+    records = await repo.get_unlocked(account_id, child_profile.id)
 
     achievements: list[PlayerAchievementResponse] = []
     for record in records:

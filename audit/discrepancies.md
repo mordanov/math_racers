@@ -70,6 +70,24 @@ target environment:
   as open.
 - Keyboard use, screen-reader output, colour contrast, and reduced motion.
 
+## Remediation status
+
+The implementation branch contains remediation code and local test evidence.
+See `specs/014-audit-remediation/quickstart.md` for the evidence and the checks
+that remain. The full backend integration suite passed with 85 tests on an
+isolated PostgreSQL 16 and Redis test stack. It includes a race where the AI
+wins, child-scoped legacy assignment and export, operation statistics, and
+achievement replay. No discrepancy is marked closed.
+
+Migration round-trip and data restore checks passed on PostgreSQL 16. A
+PostgreSQL 18.6 host client failed against that server, so the restore script
+was run with matching PostgreSQL 16 tools. `make ci` stopped at the formatting
+check because the backend runtime image does not include Black. The standalone
+backend format, lint, type, unit, and integration checks passed. Frontend
+format, lint, type, test, and production-build checks passed.
+Configured provider checks, target performance, browser, and accessibility
+checks are not complete.
+
 ## Evidence
 
 - Product requirements: `docs/prd.md` sections 3 and 4.

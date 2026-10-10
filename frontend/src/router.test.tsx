@@ -3,6 +3,34 @@ import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { vi } from 'vitest';
 import { routeConfig } from './router';
 
+vi.mock('./engine/avatar/avatarApi', () => ({
+  listAvatars: () =>
+    Promise.resolve([
+      {
+        avatar_id: 'avatar-1',
+        name: 'Test Fox',
+        species: 'fox',
+        status: 'published',
+        is_favourite: false,
+        portrait: null,
+        created_at: '',
+      },
+    ]),
+}));
+
+vi.mock('./features/race/raceSessionApi', () => ({
+  createRaceSession: () => Promise.resolve({ race_id: 'race-1', seed: 1 }),
+}));
+
+vi.mock('./infrastructure/offline/offlineStore', () => ({
+  cacheChildData: vi.fn(),
+  getCachedChildData: vi.fn().mockResolvedValue(null),
+  listPendingTrainingResults: vi.fn().mockResolvedValue([]),
+  removePendingTrainingResult: vi.fn(),
+}));
+
+vi.mock('./infrastructure/offline/OfflineResultSync', () => ({ default: () => null }));
+
 vi.mock('./features/statistics/statisticsApi', () => ({
   fetchPlayerStats: () =>
     Promise.resolve({
@@ -50,7 +78,7 @@ vi.mock('./infrastructure/auth/AuthContext', () => ({
     isAuthenticated: true,
     isLoading: false,
     account: { id: 'u1', email: 'a@b.com', role: 'parent' },
-    activeChildId: null,
+    activeChildId: 'child-1',
     login: vi.fn(),
     logout: vi.fn(),
     selectChild: vi.fn(),

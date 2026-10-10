@@ -14,6 +14,7 @@ export interface ChampionshipState {
   races_completed: number;
   status: 'active' | 'completed';
   standings: StandingEntry[];
+  completion_xp_awarded?: number;
 }
 
 export interface RecordRaceParticipant {

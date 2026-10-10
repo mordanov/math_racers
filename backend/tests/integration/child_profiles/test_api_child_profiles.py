@@ -6,12 +6,17 @@ Run with: pytest -m integration
 
 from __future__ import annotations
 
+import asyncio
 import os
 import time
 import uuid
 
-import httpx
 import pytest
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import async_sessionmaker
+
+from infrastructure.database.engine import get_engine
+from tests.integration import httpx_client as httpx
 
 BASE_URL = os.getenv("API_URL", "http://localhost:8000")
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "admin@example.com")
@@ -178,3 +183,119 @@ def test_delete_own_profile() -> None:
 
         listed = client.get("/api/v1/child-profiles")
         assert all(p["id"] != profile_id for p in listed.json()["profiles"])
+
+
+@pytest.mark.integration
+def test_legacy_progression_assignment_export_and_child_deletion() -> None:
+    admin_token = _login(ADMIN_EMAIL, ADMIN_PASSWORD)
+    token = _register_and_approve(admin_token)
+    headers = {"Authorization": f"Bearer {token}"}
+    first = httpx.post(
+        f"{BASE_URL}/api/v1/child-profiles",
+        json={"display_name": "First child"},
+        headers=headers,
+        timeout=10.0,
+    )
+    second = httpx.post(
+        f"{BASE_URL}/api/v1/child-profiles",
+        json={"display_name": "Second child"},
+        headers=headers,
+        timeout=10.0,
+    )
+    assert first.status_code == 201, first.text
+    assert second.status_code == 201, second.text
+    first_id = first.json()["id"]
+    second_id = second.json()["id"]
+    account_id = uuid.UUID(first.json()["account_id"])
+    second_profile_id = uuid.UUID(second_id)
+
+    async def seed_progressions() -> None:
+        async with async_sessionmaker(get_engine(), expire_on_commit=False)() as session:
+            await session.execute(
+                text("""
+                    INSERT INTO player_progressions (account_id, total_xp, current_level)
+                    VALUES (:account_id, 450, 2)
+                    """),
+                {"account_id": account_id},
+            )
+            await session.execute(
+                text("""
+                    INSERT INTO child_progressions
+                        (child_profile_id, account_id, total_xp, current_level)
+                    VALUES (:child_profile_id, :account_id, 75, 1)
+                    """),
+                {"child_profile_id": second_profile_id, "account_id": account_id},
+            )
+            await session.commit()
+
+    asyncio.run(seed_progressions())
+
+    legacy = httpx.get(
+        f"{BASE_URL}/api/v1/child-profiles/{first_id}/legacy-data",
+        headers=headers,
+        timeout=10.0,
+    )
+    assert legacy.status_code == 200, legacy.text
+    progression = next(
+        record for record in legacy.json()["records"] if record["record_type"] == "progression"
+    )
+
+    other_parent = _register_and_approve(admin_token)
+    forbidden = httpx.get(
+        f"{BASE_URL}/api/v1/child-profiles/{first_id}/export",
+        headers={"Authorization": f"Bearer {other_parent}"},
+        timeout=10.0,
+    )
+    assert forbidden.status_code == 403, forbidden.text
+
+    unassigned_export = httpx.get(
+        f"{BASE_URL}/api/v1/child-profiles/{first_id}/export",
+        headers=headers,
+        timeout=10.0,
+    )
+    assert unassigned_export.status_code == 200, unassigned_export.text
+    assert unassigned_export.json()["progression"] == []
+
+    assigned = httpx.post(
+        f"{BASE_URL}/api/v1/child-profiles/{first_id}/legacy-data/assign",
+        json={"records": [{"record_type": "progression", "record_id": progression["record_id"]}]},
+        headers=headers,
+        timeout=10.0,
+    )
+    assert assigned.status_code == 200, assigned.text
+    assert assigned.json()["assigned"] == 1
+
+    first_export = httpx.get(
+        f"{BASE_URL}/api/v1/child-profiles/{first_id}/export",
+        headers=headers,
+        timeout=10.0,
+    )
+    second_export = httpx.get(
+        f"{BASE_URL}/api/v1/child-profiles/{second_id}/export",
+        headers=headers,
+        timeout=10.0,
+    )
+    assert first_export.status_code == 200, first_export.text
+    assert second_export.status_code == 200, second_export.text
+    assert [row["total_xp"] for row in first_export.json()["progression"]] == [450]
+    assert [row["total_xp"] for row in second_export.json()["progression"]] == [75]
+
+    deleted = httpx.delete(
+        f"{BASE_URL}/api/v1/child-profiles/{first_id}",
+        headers=headers,
+        timeout=10.0,
+    )
+    assert deleted.status_code == 204, deleted.text
+    remaining = httpx.get(
+        f"{BASE_URL}/api/v1/child-profiles",
+        headers=headers,
+        timeout=10.0,
+    )
+    assert [profile["id"] for profile in remaining.json()["profiles"]] == [second_id]
+    second_export_after_delete = httpx.get(
+        f"{BASE_URL}/api/v1/child-profiles/{second_id}/export",
+        headers=headers,
+        timeout=10.0,
+    )
+    assert second_export_after_delete.status_code == 200, second_export_after_delete.text
+    assert [row["total_xp"] for row in second_export_after_delete.json()["progression"]] == [75]

@@ -40,10 +40,10 @@ Four modes are available in v1.0, each serving a different educational and engag
 | Position | Points |
 |----------|--------|
 | 1st | 10 |
-| 2nd | 7 |
-| 3rd | 5 |
-| 4th | 3 |
-| 5th | 1 |
+| 2nd | 8 |
+| 3rd | 6 |
+| 4th | 4 |
+| 5th | 2 |
 
 **Flow:** Championship Select → Race 1 → Standings → Race 2 → … → Championship Ceremony
 
@@ -56,11 +56,22 @@ Four modes are available in v1.0, each serving a different educational and engag
 - No AI opponents.
 - No timer.
 - Player answers problems at their own pace.
-- No XP awarded (to avoid grinding incentive).
+- +20 XP per correct answer; no race-completion XP.
 - Adaptive difficulty still active.
 - Ideal for parents setting focused practice.
 
 **Flow:** Mode Select → Training Setup (operation, tier) → Race → Summary
+
+### Approved v1.0 rules
+
+Training continues until the player exits. It has unlimited problems, no
+opponents, timer, or finish line. Each correct answer awards +20 XP. Training
+does not award race-completion XP.
+
+Championship points are fixed at 10, 8, 6, 4, and 2 for first through fifth
+place. A completed championship awards +500 XP once.
+
+Daily Challenge is outside v1.0. The game must not award daily-challenge XP.
 
 ---
 
@@ -81,6 +92,9 @@ Four modes are available in v1.0, each serving a different educational and engag
 
 - [ ] All four modes are reachable from the main menu in ≤ 3 taps.
 - [ ] Championship correctly accumulates points across all races in the series.
-- [ ] Training mode never awards XP.
+- [ ] Training awards correct-answer XP and no race-completion XP.
 - [ ] Duel always spawns exactly one AI opponent with Balanced personality.
 - [ ] Mode selection screen clearly describes each mode.
+- [ ] Training awards +20 XP per correct answer and no race-completion XP.
+- [ ] Championship awards the completion bonus once and uses the approved
+  point table.

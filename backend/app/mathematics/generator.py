@@ -65,12 +65,9 @@ def generate_problem_set(
     custom_tier_config: TierConfig | None = None,
 ) -> ProblemSet:
     if tier == 6:
-        config = custom_tier_config or TierConfig(
-            6,
-            TIER_CONFIGS[5].operations,
-            TIER_CONFIGS[5].min_operand,
-            TIER_CONFIGS[5].max_operand,
-        )
+        if custom_tier_config is None:
+            raise ValueError("Tier 6 requires parent-configured settings.")
+        config = custom_tier_config
     else:
         config = TIER_CONFIGS[tier]
 

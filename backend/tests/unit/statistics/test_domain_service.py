@@ -25,6 +25,7 @@ def _make_request(
     avg_ms: int = 1500,
 ) -> RaceSummaryRequest:
     return RaceSummaryRequest(
+        human_avatar_id=str(_AVATAR_ID),
         race_id=uuid.uuid4(),
         seed="42",
         difficulty_tier=3,
@@ -51,6 +52,8 @@ def _make_repo() -> MagicMock:
     repo.upsert_player_stats = AsyncMock()
     repo.upsert_avatar_stats = AsyncMock()
     repo.get_player_stats = AsyncMock(return_value=None)
+    repo.get_player_stats_for_child = AsyncMock(return_value=None)
+    repo.get_operation_counts = AsyncMock(return_value={})
     repo.get_avatar_stats = AsyncMock(return_value=None)
     repo.get_avatar_stats_for_player = AsyncMock(return_value=[])
     repo.get_history = AsyncMock(return_value=([], 0))
@@ -123,6 +126,122 @@ async def test_update_on_race_player_stats_uses_correct_deltas() -> None:
     assert kwargs["problems_delta"] == 8  # OBSTACLE_COUNT
     assert kwargs["correct_delta"] == 6
     assert kwargs["response_ms_delta"] == 2000 * 8  # avg_ms * problems_solved
+
+
+async def test_training_statistics_use_the_number_and_types_of_saved_answers() -> None:
+    from app.races.schemas import OperationAnswerRequest
+    from app.statistics.domain_service import StatisticsDomainService
+
+    request = _make_request(
+        mode="training",
+        position=None,
+        problems_correct=2,
+        streak=2,
+    ).model_copy(
+        update={
+            "answers": [
+                OperationAnswerRequest(
+                    operation="multiplication",
+                    is_correct=True,
+                    response_time_ms=900,
+                ),
+                OperationAnswerRequest(
+                    operation="division",
+                    is_correct=True,
+                    response_time_ms=1100,
+                ),
+                OperationAnswerRequest(
+                    operation="division",
+                    is_correct=False,
+                    response_time_ms=2000,
+                ),
+            ]
+        }
+    )
+    repo = _make_repo()
+
+    await StatisticsDomainService(repo).update_on_race(_ACCOUNT_ID, request)
+
+    assert repo.insert_session.call_args.kwargs["problems_solved"] == 3
+    assert repo.upsert_player_stats.call_args.kwargs["problems_delta"] == 3
+    assert repo.upsert_player_stats.call_args.kwargs["response_ms_delta"] == 4000
+
+
+async def test_favourite_operation_breaks_attempt_ties_alphabetically() -> None:
+    from app.statistics.domain_service import StatisticsDomainService
+
+    child_id = uuid.uuid4()
+    repo = _make_repo()
+    repo.get_player_stats_for_child = AsyncMock(return_value=None)
+    repo.get_operation_counts = AsyncMock(
+        return_value={
+            "multiplication": (10, 8),
+            "addition": (10, 8),
+            "division": (5, 1),
+        }
+    )
+
+    result = await StatisticsDomainService(repo).get_player_stats(_ACCOUNT_ID, child_id)
+
+    assert result.favourite_operation == "addition"
+
+
+async def test_weekly_operation_extremes_use_accuracy_and_minimum_attempts() -> None:
+    from app.statistics.domain_service import StatisticsDomainService
+
+    child_id = uuid.uuid4()
+    repo = _make_repo()
+    repo.get_operation_counts = AsyncMock(
+        return_value={
+            "addition": (5, 4),
+            "division": (5, 1),
+            "multiplication": (4, 0),
+        }
+    )
+
+    result = await StatisticsDomainService(repo).get_weekly_summary(_ACCOUNT_ID, child_id)
+
+    assert result.strongest_operation == "addition"
+    assert result.weakest_operation == "division"
+
+
+async def test_update_on_race_selects_human_avatar_not_first_place() -> None:
+    from app.statistics.domain_service import StatisticsDomainService
+
+    human_id = uuid.uuid4()
+    ai_id = uuid.uuid4()
+    request = _make_request().model_copy(
+        update={
+            "human_avatar_id": str(human_id),
+            "participants": [
+                ParticipantSummaryRequest(
+                    avatar_id=str(ai_id),
+                    position=1,
+                    problems_correct=8,
+                    longest_streak=8,
+                    average_response_ms=800,
+                    total_distance=144,
+                    xp_earned=200,
+                ),
+                ParticipantSummaryRequest(
+                    avatar_id=str(human_id),
+                    position=2,
+                    problems_correct=4,
+                    longest_streak=2,
+                    average_response_ms=1600,
+                    total_distance=120,
+                    xp_earned=80,
+                ),
+            ],
+        }
+    )
+    repo = _make_repo()
+
+    await StatisticsDomainService(repo).update_on_race(_ACCOUNT_ID, request)
+
+    repo.insert_session.assert_awaited_once()
+    assert repo.insert_session.await_args.kwargs["avatar_id"] == human_id
+    assert repo.upsert_avatar_stats.await_args.args[0] == human_id
 
 
 async def test_get_player_stats_returns_zeros_when_no_rows() -> None:

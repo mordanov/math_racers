@@ -38,14 +38,21 @@ class AvatarStats(Base):
     __table_args__ = (
         CheckConstraint("total_races >= 0", name="ck_avatar_stats_total_races"),
         Index("idx_avatar_stats_account_id", "account_id"),
+        Index("uq_avatar_stats_avatar_child", "avatar_id", "child_profile_id", unique=True),
     )
 
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     # No FK — avatar_id is plain UUID; records survive avatar deletion (spec Edge Case 2)
-    avatar_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True)
+    avatar_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False)
     account_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("accounts.id", ondelete="CASCADE"),
         nullable=False,
+    )
+    child_profile_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("child_profiles.id", ondelete="CASCADE"),
+        nullable=True,
     )
     total_races: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     wins: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
@@ -67,6 +74,7 @@ class RaceSession(Base):
         CheckConstraint("correct_answers >= 0", name="ck_race_sessions_correct_answers"),
         Index("idx_race_sessions_account_id", "account_id"),
         Index("idx_race_sessions_finished_at", "finished_at"),
+        Index("idx_race_sessions_child_profile_id", "child_profile_id"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -74,6 +82,11 @@ class RaceSession(Base):
         UUID(as_uuid=True),
         ForeignKey("accounts.id", ondelete="CASCADE"),
         nullable=False,
+    )
+    child_profile_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("child_profiles.id", ondelete="CASCADE"),
+        nullable=True,
     )
     # No FK — avatar_id is plain UUID; records survive avatar deletion (spec Edge Case 2)
     avatar_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False)

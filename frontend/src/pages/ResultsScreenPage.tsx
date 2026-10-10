@@ -4,10 +4,12 @@ import { recordChampionshipRace } from '../engine/race/championshipApi';
 import { postRaceSummary } from '../engine/race/raceApi';
 import type { RaceSummary } from '../engine/race/types';
 import type { Achievement } from '../engine/achievements/types';
+import type { RaceSummaryResult } from '../engine/race/raceApi';
 import { fetchProgression } from '../features/race/progressionApi';
 import { Button } from '../shared/components/Button';
 import { NotificationToast } from '../shared/components/NotificationToast';
 import { getBadgeUrl } from '../features/achievements/achievementBadges';
+import { queueTrainingResult } from '../infrastructure/offline/offlineStore';
 import { useAudioManager } from '../shared/hooks/useAudioManager';
 import { useSfxPlayer } from '../shared/hooks/useSfxPlayer';
 import { useVoicePlayer } from '../shared/hooks/useVoicePlayer';
@@ -18,14 +20,15 @@ interface ResultsRouteState {
   summary: RaceSummary;
   playerAvatarId: string;
   avatarSpecies: string;
+  childProfileId?: string;
   championshipId?: string;
   raceIndex?: number;
 }
 
-type SyncStatus = 'pending' | 'saved' | 'error';
+type SyncStatus = 'pending' | 'saved' | 'queued' | 'error';
 
 function computeLevel(totalXp: number): number {
-  return Math.floor(Math.sqrt(totalXp / 100));
+  return Math.max(1, Math.floor(Math.sqrt(totalXp / 100)));
 }
 
 export default function ResultsScreenPage() {
@@ -37,13 +40,15 @@ export default function ResultsScreenPage() {
 
 function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
   const navigate = useNavigate();
-  const { summary, playerAvatarId, avatarSpecies, championshipId, raceIndex } = routeState;
+  const { summary, playerAvatarId, avatarSpecies, childProfileId, championshipId, raceIndex } =
+    routeState;
 
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('pending');
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [toastIndex, setToastIndex] = useState(0);
   const [currentLevel, setCurrentLevel] = useState<number | null>(null);
   const [levelBefore, setLevelBefore] = useState<number | null>(null);
+  const [xpEarned, setXpEarned] = useState(0);
   const { playMusic, stopMusic } = useAudioManager();
   const { playSfx } = useSfxPlayer();
   const { playVoice } = useVoicePlayer((avatarSpecies as Species) || null);
@@ -60,28 +65,52 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
   }, []); // stable ref
 
   async function doSync() {
-    const result = await postRaceSummary(summary);
-    setAchievements(result.new_achievements);
+    const queueLocally = async (): Promise<boolean> => {
+      if (summary.mode !== 'training' || !childProfileId) return false;
+      await queueTrainingResult({
+        idempotency_key: summary.idempotency_key,
+        child_profile_id: childProfileId,
+        summary,
+        player_avatar_id: playerAvatarId,
+        avatar_species: avatarSpecies,
+        created_at: new Date().toISOString(),
+      });
+      setSyncStatus('queued');
+      return true;
+    };
 
-    if (championshipId !== undefined && raceIndex !== undefined) {
-      await recordChampionshipRace(
-        championshipId,
-        summary.race_id,
-        raceIndex,
-        summary.participants.map((p) => ({
-          avatar_id: p.avatar_id,
-          is_player: p.avatar_id === playerAvatarId,
-          finishing_position: p.position ?? 1,
-        })),
-      );
-    }
+    if (!navigator.onLine && (await queueLocally())) return;
 
-    const progression = await fetchProgression();
-    setCurrentLevel(progression.current_level);
-    if (playerEntry) {
-      setLevelBefore(computeLevel(progression.total_xp - playerEntry.xp_earned));
+    try {
+      const result = await postRaceSummary(summary);
+      setAchievements(result.new_achievements);
+      let xpEarnedThisFlow = result.progression?.xp_earned_this_race ?? 0;
+
+      if (championshipId !== undefined && raceIndex !== undefined) {
+        const championship = await recordChampionshipRace(
+          championshipId,
+          summary.race_id,
+          raceIndex,
+          summary.participants.map((p) => ({
+            avatar_id: p.avatar_id,
+            is_player: p.avatar_id === playerAvatarId,
+            finishing_position: p.position ?? 1,
+          })),
+        );
+        xpEarnedThisFlow += championship.completion_xp_awarded ?? 0;
+      }
+      setXpEarned(xpEarnedThisFlow);
+
+      const progression = await fetchProgression();
+      setCurrentLevel(progression.current_level);
+      if (playerEntry) {
+        setLevelBefore(computeLevel(progression.total_xp - xpEarnedThisFlow));
+      }
+      setSyncStatus('saved');
+    } catch (error) {
+      if ((!navigator.onLine || error instanceof TypeError) && (await queueLocally())) return;
+      throw error;
     }
-    setSyncStatus('saved');
   }
 
   useEffect(() => {
@@ -94,9 +123,36 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
     };
   }, []); // doSync closes over stable props/state from mount
 
+  useEffect(() => {
+    const handleSynced = (event: Event) => {
+      const detail = (
+        event as CustomEvent<{
+          idempotency_key: string;
+          result: RaceSummaryResult;
+        }>
+      ).detail;
+      if (detail.idempotency_key !== summary.idempotency_key) return;
+      setAchievements(detail.result.new_achievements);
+      setXpEarned(detail.result.progression?.xp_earned_this_race ?? 0);
+      setSyncStatus('saved');
+    };
+    window.addEventListener('training-result-synced', handleSynced);
+    return () => window.removeEventListener('training-result-synced', handleSynced);
+  }, [summary.idempotency_key]);
+
   function retry() {
     setSyncStatus('pending');
-    doSync().catch(() => setSyncStatus('error'));
+    if (syncStatus === 'queued' && navigator.onLine) {
+      window.dispatchEvent(new Event('online'));
+      return;
+    }
+    void (async () => {
+      try {
+        await doSync();
+      } catch {
+        setSyncStatus('error');
+      }
+    })();
   }
 
   const didLevelUp = currentLevel !== null && levelBefore !== null && currentLevel > levelBefore;
@@ -222,7 +278,8 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
                   {p.total_distance}m
                 </td>
                 <td style={{ padding: tokens.spacing.sm, textAlign: 'right' }}>
-                  {p.problems_correct}/8
+                  {p.problems_correct}
+                  {summary.mode === 'training' ? '' : '/8'}
                 </td>
                 <td
                   style={{
@@ -232,7 +289,7 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
                     fontWeight: 700,
                   }}
                 >
-                  +{p.xp_earned}
+                  +{isPlayer ? xpEarned : 0}
                 </td>
               </tr>
             );
@@ -261,6 +318,11 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
             Retry
           </button>
         </div>
+      )}
+      {syncStatus === 'queued' && (
+        <p role="status" aria-live="polite" style={{ marginBottom: tokens.spacing.md }}>
+          Training results are saved on this device and will sync when online.
+        </p>
       )}
 
       <div style={{ display: 'flex', gap: tokens.spacing.md, flexWrap: 'wrap' }}>

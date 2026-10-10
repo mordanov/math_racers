@@ -71,7 +71,7 @@ def _to_detail(avatar: Avatar) -> AvatarDetailResponse:
         is_favourite=avatar.is_favourite,
         active_portrait_id=avatar.active_portrait_id,
         portrait=_portrait_summary(avatar.active_portrait),
-        portrait_history=[_portrait_summary(p) for p in avatar.portraits if p is not None],  # type: ignore[misc]
+        portrait_history=[_portrait_summary(p) for p in avatar.portraits if p is not None],
         created_at=avatar.created_at,
     )
 
@@ -100,9 +100,17 @@ class AvatarDomainService:
         self._redis_url = redis_url
 
     async def create(
-        self, account_id: uuid.UUID, request: CreateAvatarRequest
+        self,
+        account_id: uuid.UUID,
+        request: CreateAvatarRequest,
+        child_profile_id: uuid.UUID | None = None,
     ) -> AvatarCreationResponse:
-        count = await self._repository.count_by_account(account_id)
+        await self._repository.lock_generation_quota(account_id)
+        count = (
+            await self._repository.count_by_child(child_profile_id)
+            if child_profile_id is not None
+            else await self._repository.count_by_account(account_id)
+        )
         if count >= _MAX_AVATARS:
             raise ValidationError(
                 error_code="AVATAR_LIMIT_REACHED",
@@ -134,6 +142,7 @@ class AvatarDomainService:
                 "clothes_top_color": request.clothes_top_color,
                 "clothes_bottom_color": request.clothes_bottom_color,
             },
+            child_profile_id,
         )
 
         job = await self._repository.create_job(avatar.id)
@@ -146,10 +155,16 @@ class AvatarDomainService:
         )
 
     async def get_job(
-        self, account_id: uuid.UUID, avatar_id: uuid.UUID, job_id: uuid.UUID
+        self,
+        account_id: uuid.UUID,
+        avatar_id: uuid.UUID,
+        job_id: uuid.UUID,
+        child_profile_id: uuid.UUID | None = None,
     ) -> JobStatusResponse:
         avatar = await self._repository.get(avatar_id)
-        if avatar.account_id != account_id:
+        if avatar.account_id != account_id or (
+            child_profile_id is not None and avatar.child_profile_id != child_profile_id
+        ):
             raise PermissionError(
                 error_code="AVATAR_ACCESS_DENIED",
                 message="You do not own this avatar.",
@@ -170,24 +185,38 @@ class AvatarDomainService:
             completed_at=job.completed_at,
         )
 
-    async def get(self, account_id: uuid.UUID, avatar_id: uuid.UUID) -> AvatarDetailResponse:
+    async def get(
+        self,
+        account_id: uuid.UUID,
+        avatar_id: uuid.UUID,
+        child_profile_id: uuid.UUID | None = None,
+    ) -> AvatarDetailResponse:
         avatar = await self._repository.get(avatar_id)
-        if avatar.account_id != account_id:
+        if avatar.account_id != account_id or (
+            child_profile_id is not None and avatar.child_profile_id != child_profile_id
+        ):
             raise PermissionError(
                 error_code="AVATAR_ACCESS_DENIED",
                 message="You do not own this avatar.",
             )
         return _to_detail(avatar)
 
-    async def list(self, account_id: uuid.UUID) -> list[AvatarListItem]:
-        avatars = await self._repository.list_by_account(account_id)
+    async def list(
+        self, account_id: uuid.UUID, child_profile_id: uuid.UUID | None = None
+    ) -> list[AvatarListItem]:
+        avatars = await self._repository.list_by_account(account_id, child_profile_id)
         return [_to_list_item(a) for a in avatars]
 
     async def regenerate(
-        self, account_id: uuid.UUID, avatar_id: uuid.UUID
+        self,
+        account_id: uuid.UUID,
+        avatar_id: uuid.UUID,
+        child_profile_id: uuid.UUID | None = None,
     ) -> AvatarCreationResponse:
         avatar = await self._repository.get(avatar_id)
-        if avatar.account_id != account_id:
+        if avatar.account_id != account_id or (
+            child_profile_id is not None and avatar.child_profile_id != child_profile_id
+        ):
             raise PermissionError(
                 error_code="AVATAR_ACCESS_DENIED",
                 message="You do not own this avatar.",
@@ -217,10 +246,16 @@ class AvatarDomainService:
         )
 
     async def update(
-        self, account_id: uuid.UUID, avatar_id: uuid.UUID, request: PatchAvatarRequest
+        self,
+        account_id: uuid.UUID,
+        avatar_id: uuid.UUID,
+        request: PatchAvatarRequest,
+        child_profile_id: uuid.UUID | None = None,
     ) -> AvatarDetailResponse:
         avatar = await self._repository.get(avatar_id)
-        if avatar.account_id != account_id:
+        if avatar.account_id != account_id or (
+            child_profile_id is not None and avatar.child_profile_id != child_profile_id
+        ):
             raise PermissionError(
                 error_code="AVATAR_ACCESS_DENIED",
                 message="You do not own this avatar.",
@@ -242,9 +277,16 @@ class AvatarDomainService:
         await self._repository.update(avatar)
         return _to_detail(avatar)
 
-    async def delete(self, account_id: uuid.UUID, avatar_id: uuid.UUID) -> None:
+    async def delete(
+        self,
+        account_id: uuid.UUID,
+        avatar_id: uuid.UUID,
+        child_profile_id: uuid.UUID | None = None,
+    ) -> None:
         avatar = await self._repository.get(avatar_id)
-        if avatar.account_id != account_id:
+        if avatar.account_id != account_id or (
+            child_profile_id is not None and avatar.child_profile_id != child_profile_id
+        ):
             raise PermissionError(
                 error_code="AVATAR_ACCESS_DENIED",
                 message="You do not own this avatar.",

@@ -9,7 +9,7 @@ vi.mock('./authApi');
 const { mockSetAuthToken } = vi.hoisted(() => ({ mockSetAuthToken: vi.fn() }));
 
 vi.mock('../api-client', () => ({
-  apiClient: { setAuthToken: mockSetAuthToken },
+  apiClient: { setAuthToken: mockSetAuthToken, setActiveChildId: vi.fn() },
   APIError: class extends Error {
     constructor(
       public status: number,

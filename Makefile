@@ -2,6 +2,7 @@ SHELL := /bin/bash
 .DEFAULT_GOAL := help
 
 VERSION ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo "dev")
+COMPOSE ?= docker-compose
 
 .PHONY: help up down ci ci-local fmt-check lint type-check test-unit test-int build \
 		security-scan migrate hooks release-check
@@ -11,11 +12,11 @@ help:
 		awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
 
 up: ## Start all services and verify health
-	VERSION=$(VERSION) docker compose up -d
+	VERSION=$(VERSION) $(COMPOSE) up -d
 	bash scripts/docker-verify.sh
 
 down: ## Stop all services
-	docker compose down
+	$(COMPOSE) down
 
 ci: fmt-check lint type-check test-unit test-int build security-scan ## Run full CI pipeline locally
 
@@ -23,23 +24,23 @@ ci-local: ## Run GitHub Actions CI workflow checks via local script
 	bash scripts/run-local-ci-checks.sh
 
 fmt-check: ## Check formatting (Black + Prettier)
-	docker compose run --rm backend black --check .
-	cd frontend && pnpm prettier --check "src/**/*"
+	$(COMPOSE) run --rm backend black --check .
+	cd frontend && pnpm prettier --check "src/**/*.{ts,tsx,css,json}" --ignore-unknown
 
 lint: ## Lint code (Ruff + ESLint)
-	docker compose run --rm backend ruff check .
+	$(COMPOSE) run --rm backend ruff check .
 	cd frontend && pnpm eslint src
 
 type-check: ## Static analysis (mypy + tsc)
-	docker compose run --rm backend mypy .
+	$(COMPOSE) run --rm backend mypy .
 	cd frontend && pnpm tsc --noEmit
 
 test-unit: ## Run unit tests (pytest + vitest)
-	docker compose run --rm backend pytest -m unit
+	$(COMPOSE) run --rm backend pytest -m unit
 	cd frontend && pnpm vitest run
 
 test-int: ## Run integration tests (requires Docker)
-	docker compose run --rm backend pytest -m integration
+	$(COMPOSE) run --rm backend pytest -m integration
 
 build: ## Build container images (requires clean git tree)
 	@if [ -n "$$(git status --porcelain)" ]; then \
@@ -56,7 +57,7 @@ security-scan: ## Run security scans (trivy + pip-audit + npm audit)
 	cd frontend && npm audit --audit-level=critical
 
 migrate: ## Run database migrations
-	docker compose exec backend alembic upgrade head
+	$(COMPOSE) exec backend alembic upgrade head
 
 hooks: ## Install git hooks
 	mkdir -p .git/hooks

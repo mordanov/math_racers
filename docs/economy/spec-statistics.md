@@ -28,7 +28,12 @@
 
 `accuracy_all_time` = `correct_answers / total_problems_solved`. Recomputed on every race result submission. Never stored as a literal float — derived at read time.
 
-`favourite_operation` = the operation with the highest correct-answer count in the player's history.
+`favourite_operation` = the operation with the highest number of attempted
+answers in the child's history. Ties are broken alphabetically.
+
+`strongest_operation` and `weakest_operation` are derived from operation
+accuracy (`correct answers / attempted answers`) for recorded answers. Ties
+are broken alphabetically. Return `null` when no operation has an answer.
 
 ### AvatarStats
 
@@ -94,12 +99,14 @@ avg_response_ms = sum(session.avg_response_ms * session.problems_solved
 
 ```
 for operation in [addition, subtraction, multiplication, division]:
-    score[operation] = count of correct answers for that operation
+    score[operation] = count of attempted answers for that operation
 
 favourite_operation = argmax(score)
 ```
 
 Ties broken by alphabetical order.
+
+Strongest and weakest operations use accuracy, not total correct-answer count.
 
 ### Streak
 

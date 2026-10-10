@@ -41,7 +41,7 @@ export function useRaceEngine(config: RaceConfig) {
   }, []);
 
   const submitAnswer = useCallback(
-    (input: { isCorrect: boolean }): ObstacleResult => engineRef.current.submitAnswer(input),
+    (input: { answer: string }): ObstacleResult => engineRef.current.submitAnswer(input),
     [],
   );
 

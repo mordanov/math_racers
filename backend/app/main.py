@@ -6,6 +6,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 from app.presentation.api.middleware.correlation_id import CorrelationIdMiddleware
+from app.presentation.api.middleware.csrf import CSRFMiddleware
 from app.presentation.api.v1.health import router as health_router
 from app.shared.exceptions import (
     ConflictError,
@@ -18,6 +19,7 @@ from app.shared.exceptions import (
 )
 from infrastructure.config import get_config
 from infrastructure.logging import request_id_var, setup_logging
+from infrastructure.rate_limiting import RedisRateLimiter
 
 logger = logging.getLogger(__name__)
 
@@ -111,6 +113,7 @@ def _domain_error_status(exc: DomainError) -> int:
 def create_app() -> FastAPI:
     cfg = get_config()
     setup_logging(service="backend", level=cfg.LOG_LEVEL)
+    import redis.asyncio as aioredis
 
     app = FastAPI(
         title="Math Racers API",
@@ -118,8 +121,11 @@ def create_app() -> FastAPI:
         docs_url=None if cfg.ENVIRONMENT.value == "production" else "/docs",
         redoc_url=None if cfg.ENVIRONMENT.value == "production" else "/redoc",
     )
+    redis_client = aioredis.from_url(cfg.REDIS_URL, decode_responses=True)  # type: ignore[no-untyped-call]
+    app.state.rate_limiter = RedisRateLimiter(redis_client)
 
     app.add_middleware(CorrelationIdMiddleware)
+    app.add_middleware(CSRFMiddleware)
     app.include_router(health_router)
 
     from app.achievements.presentation.api.v1.achievements import (
@@ -174,6 +180,10 @@ def create_app() -> FastAPI:
         from infrastructure.queue.recovery import recover_pending_jobs
 
         await recover_pending_jobs()
+
+    @app.on_event("shutdown")
+    async def shutdown() -> None:
+        await app.state.rate_limiter.close()
 
     return app
 
