@@ -137,6 +137,17 @@ jobs:
           DATABASE_URL: postgresql+asyncpg://mathracers:testpass@localhost:5432/mathracers_test
           REDIS_URL: redis://localhost:6379/0
           INTEGRATION_TESTING: "1"
+          JWT_SECRET: ${{ secrets.JWT_SECRET || 'ci-test-secret-32-bytes-minimum-xx' }}
+          OPENAI_API_KEY: sk-test-placeholder
+          STORAGE_ENDPOINT: https://CHANGE_ME
+          STORAGE_ACCESS_KEY: test
+          STORAGE_SECRET_KEY: test
+          STORAGE_BUCKET: test
+          ADMIN_EMAIL: admin@example.com
+          ADMIN_PASSWORD: adminpassword123
+          ENVIRONMENT: development
+          VERSION: ${{ github.sha }}
+          LOG_LEVEL: WARNING
           HEALTH_URL: http://localhost:8000/health
 
       # ── 7. Build container images ────────────────────────────────────────────
