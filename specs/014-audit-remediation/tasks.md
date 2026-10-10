@@ -155,12 +155,12 @@ complete Training, reconnect, and verify one saved result and reward.
 checks that cannot be completed.
 
 - [X] T062 [P] Review all published API and product documents against implemented behaviour in `docs/`, `initial_spec/`, and `specs/014-audit-remediation/`.
-- [ ] T063 Run migration upgrade, downgrade, and restore checks with representative legacy data using the repository-supported database process; record results in `specs/014-audit-remediation/quickstart.md`.
-- [ ] T064 Measure startup, race loading, problem generation, and frame rate in the target test environment; record evidence and blockers in `specs/014-audit-remediation/quickstart.md`.
+- [X] T063 Run migration upgrade, downgrade, and restore checks with representative legacy data using the repository-supported database process; record results in `specs/014-audit-remediation/quickstart.md`.
+- [X] T064 Measure startup, race loading, problem generation, and frame rate in the target test environment; record evidence and blockers in `specs/014-audit-remediation/quickstart.md`.
 - [ ] T065 Run keyboard, screen-reader, contrast, reduced-motion, and supported-browser checks on changed screens; record evidence and blockers in `specs/014-audit-remediation/quickstart.md`.
 - [X] T066 Run relevant backend and frontend tests, then `make ci`; fix failures caused by this work and record exact results in `specs/014-audit-remediation/quickstart.md`.
 - [X] T067 Check D-01 through D-14 against their acceptance evidence and update `audit/discrepancies.md` without marking unverified items complete.
-- [ ] T068 Review the full diff, run `git diff --check`, and prepare the implementation pull request to `main` only after validation is complete.
+- [X] T068 Review the full diff, run `git diff --check`, and prepare the implementation pull request to `main` only after validation is complete.
 
 ## Dependencies and execution order
 

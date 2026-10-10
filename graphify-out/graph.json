@@ -756,7 +756,7 @@
       "source_file": "frontend/src/App.tsx",
       "source_location": "L1",
       "id": "frontend_src_app_tsx",
-      "community": 25,
+      "community": 39,
       "norm_label": "app.tsx"
     },
     {
@@ -765,7 +765,7 @@
       "source_file": "frontend/src/App.tsx",
       "source_location": "L4",
       "id": "src_app_app",
-      "community": 25,
+      "community": 39,
       "norm_label": "app()"
     },
     {
@@ -1332,7 +1332,7 @@
       "source_file": "frontend/src/features/race/raceSessionApi.test.ts",
       "source_location": "L1",
       "id": "frontend_src_features_race_racesessionapi_test_ts",
-      "community": 25,
+      "community": 122,
       "norm_label": "racesessionapi.test.ts"
     },
     {
@@ -1341,7 +1341,7 @@
       "source_file": "frontend/src/features/race/raceSessionApi.test.ts",
       "source_location": "L4",
       "id": "race_racesessionapi_test_mockpost",
-      "community": 25,
+      "community": 122,
       "norm_label": "mockpost"
     },
     {
@@ -1395,7 +1395,7 @@
       "source_file": "frontend/src/features/race/raceSessionApi.ts",
       "source_location": "L1",
       "id": "frontend_src_features_race_racesessionapi_ts",
-      "community": 25,
+      "community": 122,
       "norm_label": "racesessionapi.ts"
     },
     {
@@ -1404,7 +1404,7 @@
       "source_file": "frontend/src/features/race/raceSessionApi.ts",
       "source_location": "L5",
       "id": "race_racesessionapi_createracesessionparams",
-      "community": 25,
+      "community": 122,
       "norm_label": "createracesessionparams"
     },
     {
@@ -1413,7 +1413,7 @@
       "source_file": "frontend/src/features/race/raceSessionApi.ts",
       "source_location": "L13",
       "id": "race_racesessionapi_createracesessionresult",
-      "community": 25,
+      "community": 122,
       "norm_label": "createracesessionresult"
     },
     {
@@ -1422,7 +1422,7 @@
       "source_file": "frontend/src/features/race/raceSessionApi.ts",
       "source_location": "L18",
       "id": "race_racesessionapi_createracesession",
-      "community": 25,
+      "community": 122,
       "norm_label": "createracesession()"
     },
     {
@@ -1944,7 +1944,7 @@
       "source_file": "frontend/src/shared/hooks/useAmbienceManager.test.ts",
       "source_location": "L1",
       "id": "frontend_src_shared_hooks_useambiencemanager_test_ts",
-      "community": 26,
+      "community": 124,
       "norm_label": "useambiencemanager.test.ts"
     },
     {
@@ -1953,7 +1953,7 @@
       "source_file": "frontend/src/shared/hooks/useAmbienceManager.test.ts",
       "source_location": "L19",
       "id": "hooks_useambiencemanager_test_inst",
-      "community": 26,
+      "community": 124,
       "norm_label": "inst"
     },
     {
@@ -1962,7 +1962,7 @@
       "source_file": "frontend/src/shared/hooks/useAmbienceManager.test.ts",
       "source_location": "L44",
       "id": "hooks_useambiencemanager_test_unmount",
-      "community": 26,
+      "community": 124,
       "norm_label": "{ unmount }"
     },
     {
@@ -1971,7 +1971,7 @@
       "source_file": "frontend/src/shared/hooks/useAmbienceManager.test.ts",
       "source_location": "L51",
       "id": "hooks_useambiencemanager_test_result",
-      "community": 26,
+      "community": 124,
       "norm_label": "{ result }"
     },
     {
@@ -1980,7 +1980,7 @@
       "source_file": "frontend/src/shared/hooks/useAmbienceManager.test.ts",
       "source_location": "L55",
       "id": "hooks_useambiencemanager_test_cheer",
-      "community": 26,
+      "community": 124,
       "norm_label": "cheer"
     },
     {
@@ -1989,7 +1989,7 @@
       "source_file": "frontend/src/shared/hooks/useAmbienceManager.test.ts",
       "source_location": "L66",
       "id": "hooks_useambiencemanager_test_applause",
-      "community": 26,
+      "community": 124,
       "norm_label": "applause"
     },
     {
@@ -1998,7 +1998,7 @@
       "source_file": "frontend/src/shared/hooks/useSfxPlayer.ts",
       "source_location": "L1",
       "id": "frontend_src_shared_hooks_usesfxplayer_ts",
-      "community": 118,
+      "community": 19,
       "norm_label": "usesfxplayer.ts"
     },
     {
@@ -2007,7 +2007,7 @@
       "source_file": "frontend/src/shared/hooks/useSfxPlayer.ts",
       "source_location": "L3",
       "id": "hooks_usesfxplayer_sfxname",
-      "community": 118,
+      "community": 19,
       "norm_label": "sfxname"
     },
     {
@@ -2016,7 +2016,7 @@
       "source_file": "frontend/src/shared/hooks/useSfxPlayer.ts",
       "source_location": "L18",
       "id": "hooks_usesfxplayer_sfx_files",
-      "community": 118,
+      "community": 19,
       "norm_label": "sfx_files"
     },
     {
@@ -2025,7 +2025,7 @@
       "source_file": "frontend/src/shared/hooks/useSfxPlayer.ts",
       "source_location": "L34",
       "id": "hooks_usesfxplayer_readsfxvolume",
-      "community": 118,
+      "community": 19,
       "norm_label": "readsfxvolume()"
     },
     {
@@ -2034,7 +2034,7 @@
       "source_file": "frontend/src/shared/hooks/useSfxPlayer.ts",
       "source_location": "L44",
       "id": "hooks_usesfxplayer_usesfxplayer",
-      "community": 118,
+      "community": 19,
       "norm_label": "usesfxplayer()"
     },
     {
@@ -2043,7 +2043,7 @@
       "source_file": "frontend/src/shared/hooks/useOffline.test.ts",
       "source_location": "L1",
       "id": "frontend_src_shared_hooks_useoffline_test_ts",
-      "community": 21,
+      "community": 117,
       "norm_label": "useoffline.test.ts"
     },
     {
@@ -2052,7 +2052,7 @@
       "source_file": "frontend/src/shared/hooks/useOffline.test.ts",
       "source_location": "L27",
       "id": "hooks_useoffline_test_result",
-      "community": 21,
+      "community": 117,
       "norm_label": "{ result }"
     },
     {
@@ -2178,7 +2178,7 @@
       "source_file": "frontend/src/shared/hooks/useOffline.ts",
       "source_location": "L1",
       "id": "frontend_src_shared_hooks_useoffline_ts",
-      "community": 21,
+      "community": 117,
       "norm_label": "useoffline.ts"
     },
     {
@@ -2187,7 +2187,7 @@
       "source_file": "frontend/src/shared/hooks/useOffline.ts",
       "source_location": "L3",
       "id": "hooks_useoffline_useoffline",
-      "community": 21,
+      "community": 117,
       "norm_label": "useoffline()"
     },
     {
@@ -2196,7 +2196,7 @@
       "source_file": "frontend/src/shared/hooks/useAmbienceManager.ts",
       "source_location": "L1",
       "id": "frontend_src_shared_hooks_useambiencemanager_ts",
-      "community": 26,
+      "community": 124,
       "norm_label": "useambiencemanager.ts"
     },
     {
@@ -2205,7 +2205,7 @@
       "source_file": "frontend/src/shared/hooks/useAmbienceManager.ts",
       "source_location": "L3",
       "id": "hooks_useambiencemanager_ambience_files",
-      "community": 26,
+      "community": 124,
       "norm_label": "ambience_files"
     },
     {
@@ -2214,7 +2214,7 @@
       "source_file": "frontend/src/shared/hooks/useAmbienceManager.ts",
       "source_location": "L9",
       "id": "hooks_useambiencemanager_readambiencevolume",
-      "community": 26,
+      "community": 124,
       "norm_label": "readambiencevolume()"
     },
     {
@@ -2223,7 +2223,7 @@
       "source_file": "frontend/src/shared/hooks/useAmbienceManager.ts",
       "source_location": "L19",
       "id": "hooks_useambiencemanager_useambiencemanager",
-      "community": 26,
+      "community": 124,
       "norm_label": "useambiencemanager()"
     },
     {
@@ -2286,7 +2286,7 @@
       "source_file": "frontend/src/shared/hooks/useSfxPlayer.test.ts",
       "source_location": "L1",
       "id": "frontend_src_shared_hooks_usesfxplayer_test_ts",
-      "community": 118,
+      "community": 19,
       "norm_label": "usesfxplayer.test.ts"
     },
     {
@@ -2295,7 +2295,7 @@
       "source_file": "frontend/src/shared/hooks/useSfxPlayer.test.ts",
       "source_location": "L12",
       "id": "hooks_usesfxplayer_test_inst",
-      "community": 118,
+      "community": 19,
       "norm_label": "inst"
     },
     {
@@ -2304,7 +2304,7 @@
       "source_file": "frontend/src/shared/hooks/useSfxPlayer.test.ts",
       "source_location": "L23",
       "id": "hooks_usesfxplayer_test_result",
-      "community": 118,
+      "community": 19,
       "norm_label": "{ result }"
     },
     {
@@ -2313,7 +2313,7 @@
       "source_file": "frontend/src/components/achievements/AchievementToast.tsx",
       "source_location": "L1",
       "id": "frontend_src_components_achievements_achievementtoast_tsx",
-      "community": 118,
+      "community": 19,
       "norm_label": "achievementtoast.tsx"
     },
     {
@@ -2322,7 +2322,7 @@
       "source_file": "frontend/src/components/achievements/AchievementToast.tsx",
       "source_location": "L7",
       "id": "achievements_achievementtoast_props",
-      "community": 118,
+      "community": 19,
       "norm_label": "props"
     },
     {
@@ -2331,7 +2331,7 @@
       "source_file": "frontend/src/components/achievements/AchievementToast.tsx",
       "source_location": "L15",
       "id": "achievements_achievementtoast_achievementtoast",
-      "community": 118,
+      "community": 19,
       "norm_label": "achievementtoast()"
     },
     {
@@ -2448,7 +2448,7 @@
       "source_file": "frontend/src/infrastructure/api-client.ts",
       "source_location": "L14",
       "id": "infrastructure_api_client_apiclient",
-      "community": 6,
+      "community": 127,
       "norm_label": "apiclient"
     },
     {
@@ -2457,7 +2457,7 @@
       "source_file": "frontend/src/infrastructure/api-client.ts",
       "source_location": "L19",
       "id": "infrastructure_api_client_apiclient_setauthtoken",
-      "community": 6,
+      "community": 127,
       "norm_label": ".setauthtoken()"
     },
     {
@@ -2466,7 +2466,7 @@
       "source_file": "frontend/src/infrastructure/api-client.ts",
       "source_location": "L23",
       "id": "infrastructure_api_client_apiclient_setactivechildid",
-      "community": 6,
+      "community": 127,
       "norm_label": ".setactivechildid()"
     },
     {
@@ -2475,7 +2475,7 @@
       "source_file": "frontend/src/infrastructure/api-client.ts",
       "source_location": "L27",
       "id": "infrastructure_api_client_apiclient_get",
-      "community": 6,
+      "community": 127,
       "norm_label": ".get()"
     },
     {
@@ -2484,7 +2484,7 @@
       "source_file": "frontend/src/infrastructure/api-client.ts",
       "source_location": "L31",
       "id": "infrastructure_api_client_apiclient_post",
-      "community": 6,
+      "community": 127,
       "norm_label": ".post()"
     },
     {
@@ -2493,7 +2493,7 @@
       "source_file": "frontend/src/infrastructure/api-client.ts",
       "source_location": "L35",
       "id": "infrastructure_api_client_apiclient_patch",
-      "community": 6,
+      "community": 127,
       "norm_label": ".patch()"
     },
     {
@@ -2502,7 +2502,7 @@
       "source_file": "frontend/src/infrastructure/api-client.ts",
       "source_location": "L39",
       "id": "infrastructure_api_client_apiclient_delete",
-      "community": 6,
+      "community": 127,
       "norm_label": ".delete()"
     },
     {
@@ -2511,7 +2511,7 @@
       "source_file": "frontend/src/infrastructure/api-client.ts",
       "source_location": "L43",
       "id": "infrastructure_api_client_apiclient_request",
-      "community": 6,
+      "community": 127,
       "norm_label": ".request()"
     },
     {
@@ -2520,7 +2520,7 @@
       "source_file": "frontend/src/infrastructure/api-client.ts",
       "source_location": "L74",
       "id": "infrastructure_api_client_apiclient_ensurecsrftoken",
-      "community": 6,
+      "community": 127,
       "norm_label": ".ensurecsrftoken()"
     },
     {
@@ -2529,7 +2529,7 @@
       "source_file": "frontend/src/infrastructure/api-client.ts",
       "source_location": "L92",
       "id": "infrastructure_api_client_apiclient_readcsrfcookie",
-      "community": 6,
+      "community": 127,
       "norm_label": ".readcsrfcookie()"
     },
     {
@@ -2538,7 +2538,7 @@
       "source_file": "frontend/src/infrastructure/auth/AuthContext.test.tsx",
       "source_location": "L1",
       "id": "frontend_src_infrastructure_auth_authcontext_test_tsx",
-      "community": 14,
+      "community": 32,
       "norm_label": "authcontext.test.tsx"
     },
     {
@@ -2547,7 +2547,7 @@
       "source_file": "frontend/src/infrastructure/auth/AuthContext.test.tsx",
       "source_location": "L9",
       "id": "auth_authcontext_test_mocksetauthtoken",
-      "community": 14,
+      "community": 32,
       "norm_label": "{ mocksetauthtoken }"
     },
     {
@@ -2556,7 +2556,7 @@
       "source_file": "frontend/src/infrastructure/auth/AuthContext.test.tsx",
       "source_location": "L14",
       "id": "auth_authcontext_test_constructor",
-      "community": 14,
+      "community": 32,
       "norm_label": "constructor()"
     },
     {
@@ -2565,7 +2565,7 @@
       "source_file": "frontend/src/infrastructure/auth/AuthContext.test.tsx",
       "source_location": "L23",
       "id": "auth_authcontext_test_testconsumer",
-      "community": 14,
+      "community": 32,
       "norm_label": "testconsumer()"
     },
     {
@@ -2574,7 +2574,7 @@
       "source_file": "frontend/src/infrastructure/auth/AuthContext.test.tsx",
       "source_location": "L50",
       "id": "auth_authcontext_test_payload",
-      "community": 14,
+      "community": 32,
       "norm_label": "payload"
     },
     {
@@ -2583,7 +2583,7 @@
       "source_file": "frontend/src/infrastructure/auth/AuthContext.test.tsx",
       "source_location": "L53",
       "id": "auth_authcontext_test_header",
-      "community": 14,
+      "community": 32,
       "norm_label": "header"
     },
     {
@@ -2592,7 +2592,7 @@
       "source_file": "frontend/src/infrastructure/auth/AuthContext.test.tsx",
       "source_location": "L79",
       "id": "auth_authcontext_test_user",
-      "community": 14,
+      "community": 32,
       "norm_label": "user"
     },
     {
@@ -2601,7 +2601,7 @@
       "source_file": "frontend/src/infrastructure/auth/AuthContext.test.tsx",
       "source_location": "L135",
       "id": "auth_authcontext_test_payloadobj",
-      "community": 14,
+      "community": 32,
       "norm_label": "payloadobj"
     },
     {
@@ -2610,7 +2610,7 @@
       "source_file": "frontend/src/infrastructure/auth/AuthContext.test.tsx",
       "source_location": "L142",
       "id": "auth_authcontext_test_b64url",
-      "community": 14,
+      "community": 32,
       "norm_label": "b64url"
     },
     {
@@ -2889,7 +2889,7 @@
       "source_file": "frontend/src/infrastructure/offline/OfflineResultSync.tsx",
       "source_location": "L9",
       "id": "offline_offlineresultsync_offlineresultsync",
-      "community": 32,
+      "community": 25,
       "norm_label": "offlineresultsync()"
     },
     {
@@ -3177,7 +3177,7 @@
       "source_file": "frontend/src/pages/RaceSetupPage.tsx",
       "source_location": "L37",
       "id": "pages_racesetuppage_racesetuppage",
-      "community": 21,
+      "community": 117,
       "norm_label": "racesetuppage()"
     },
     {
@@ -3573,7 +3573,7 @@
       "source_file": "frontend/src/pages/RaceSetupPage.test.tsx",
       "source_location": "L1",
       "id": "frontend_src_pages_racesetuppage_test_tsx",
-      "community": 25,
+      "community": 122,
       "norm_label": "racesetuppage.test.tsx"
     },
     {
@@ -3582,7 +3582,7 @@
       "source_file": "frontend/src/pages/RaceSetupPage.test.tsx",
       "source_location": "L27",
       "id": "pages_racesetuppage_test_published",
-      "community": 25,
+      "community": 122,
       "norm_label": "published"
     },
     {
@@ -3591,7 +3591,7 @@
       "source_file": "frontend/src/pages/RaceSetupPage.test.tsx",
       "source_location": "L72",
       "id": "pages_racesetuppage_test_renderpage",
-      "community": 25,
+      "community": 122,
       "norm_label": "renderpage()"
     },
     {
@@ -3600,7 +3600,7 @@
       "source_file": "frontend/src/pages/RaceSetupPage.test.tsx",
       "source_location": "L110",
       "id": "pages_racesetuppage_test_user",
-      "community": 25,
+      "community": 122,
       "norm_label": "user"
     },
     {
@@ -3609,7 +3609,7 @@
       "source_file": "frontend/src/pages/RaceSetupPage.test.tsx",
       "source_location": "L133",
       "id": "pages_racesetuppage_test_maxoperand",
-      "community": 25,
+      "community": 122,
       "norm_label": "maxoperand"
     },
     {
@@ -3618,7 +3618,7 @@
       "source_file": "frontend/src/pages/RaceSetupPage.test.tsx",
       "source_location": "L183",
       "id": "pages_racesetuppage_test_playsfx",
-      "community": 25,
+      "community": 122,
       "norm_label": "playsfx"
     },
     {
@@ -3627,7 +3627,7 @@
       "source_file": "frontend/src/pages/RaceSetupPage.test.tsx",
       "source_location": "L211",
       "id": "pages_racesetuppage_test_btn",
-      "community": 25,
+      "community": 122,
       "norm_label": "btn"
     },
     {
@@ -3870,7 +3870,7 @@
       "source_file": "frontend/src/pages/AvatarCreatorPage.tsx",
       "source_location": "L75",
       "id": "pages_avatarcreatorpage_avatarcreatorpage",
-      "community": 21,
+      "community": 117,
       "norm_label": "avatarcreatorpage()"
     },
     {
@@ -3978,7 +3978,7 @@
       "source_file": "frontend/src/pages/AvatarCreatorPage.test.tsx",
       "source_location": "L1",
       "id": "frontend_src_pages_avatarcreatorpage_test_tsx",
-      "community": 53,
+      "community": 21,
       "norm_label": "avatarcreatorpage.test.tsx"
     },
     {
@@ -3987,7 +3987,7 @@
       "source_file": "frontend/src/pages/AvatarCreatorPage.test.tsx",
       "source_location": "L10",
       "id": "pages_avatarcreatorpage_test_mocknavigate",
-      "community": 53,
+      "community": 21,
       "norm_label": "mocknavigate"
     },
     {
@@ -3996,7 +3996,7 @@
       "source_file": "frontend/src/pages/AvatarCreatorPage.test.tsx",
       "source_location": "L39",
       "id": "pages_avatarcreatorpage_test_user",
-      "community": 53,
+      "community": 21,
       "norm_label": "user"
     },
     {
@@ -4230,7 +4230,7 @@
       "source_file": "frontend/src/pages/RaceScreenPage.tsx",
       "source_location": "L1",
       "id": "frontend_src_pages_racescreenpage_tsx",
-      "community": 26,
+      "community": 29,
       "norm_label": "racescreenpage.tsx"
     },
     {
@@ -4239,7 +4239,7 @@
       "source_file": "frontend/src/pages/RaceScreenPage.tsx",
       "source_location": "L19",
       "id": "pages_racescreenpage_racescreenroutestate",
-      "community": 26,
+      "community": 29,
       "norm_label": "racescreenroutestate"
     },
     {
@@ -4248,7 +4248,7 @@
       "source_file": "frontend/src/pages/RaceScreenPage.tsx",
       "source_location": "L32",
       "id": "pages_racescreenpage_buildparticipants",
-      "community": 26,
+      "community": 29,
       "norm_label": "buildparticipants()"
     },
     {
@@ -4257,7 +4257,7 @@
       "source_file": "frontend/src/pages/RaceScreenPage.tsx",
       "source_location": "L43",
       "id": "pages_racescreenpage_racescreenpage",
-      "community": 26,
+      "community": 29,
       "norm_label": "racescreenpage()"
     },
     {
@@ -4266,7 +4266,7 @@
       "source_file": "frontend/src/pages/RaceScreenPage.tsx",
       "source_location": "L65",
       "id": "pages_racescreenpage_op_symbol",
-      "community": 26,
+      "community": 29,
       "norm_label": "op_symbol"
     },
     {
@@ -4275,7 +4275,7 @@
       "source_file": "frontend/src/pages/RaceScreenPage.tsx",
       "source_location": "L72",
       "id": "pages_racescreenpage_racescreen",
-      "community": 26,
+      "community": 57,
       "norm_label": "racescreen()"
     },
     {
@@ -4446,7 +4446,7 @@
       "source_file": "frontend/src/engine/math/tiers.ts",
       "source_location": "L1",
       "id": "frontend_src_engine_math_tiers_ts",
-      "community": 25,
+      "community": 14,
       "norm_label": "tiers.ts"
     },
     {
@@ -4455,7 +4455,7 @@
       "source_file": "frontend/src/engine/math/tiers.ts",
       "source_location": "L3",
       "id": "math_tiers_tier_configs",
-      "community": 25,
+      "community": 14,
       "norm_label": "tier_configs"
     },
     {
@@ -4464,7 +4464,7 @@
       "source_file": "frontend/src/engine/math/tiers.test.ts",
       "source_location": "L1",
       "id": "frontend_src_engine_math_tiers_test_ts",
-      "community": 25,
+      "community": 14,
       "norm_label": "tiers.test.ts"
     },
     {
@@ -4473,7 +4473,7 @@
       "source_file": "frontend/src/engine/math/generator.ts",
       "source_location": "L1",
       "id": "frontend_src_engine_math_generator_ts",
-      "community": 25,
+      "community": 14,
       "norm_label": "generator.ts"
     },
     {
@@ -4482,7 +4482,7 @@
       "source_file": "frontend/src/engine/math/generator.ts",
       "source_location": "L7",
       "id": "math_generator_randomint",
-      "community": 25,
+      "community": 14,
       "norm_label": "randomint()"
     },
     {
@@ -4491,7 +4491,7 @@
       "source_file": "frontend/src/engine/math/generator.ts",
       "source_location": "L11",
       "id": "math_generator_pickoperation",
-      "community": 25,
+      "community": 14,
       "norm_label": "pickoperation()"
     },
     {
@@ -4500,7 +4500,7 @@
       "source_file": "frontend/src/engine/math/generator.ts",
       "source_location": "L16",
       "id": "math_generator_pickoperands",
-      "community": 25,
+      "community": 14,
       "norm_label": "pickoperands()"
     },
     {
@@ -4509,7 +4509,7 @@
       "source_file": "frontend/src/engine/math/generator.ts",
       "source_location": "L36",
       "id": "math_generator_compute",
-      "community": 25,
+      "community": 14,
       "norm_label": "compute()"
     },
     {
@@ -4518,7 +4518,7 @@
       "source_file": "frontend/src/engine/math/generator.ts",
       "source_location": "L49",
       "id": "math_generator_isduplicate",
-      "community": 25,
+      "community": 14,
       "norm_label": "isduplicate()"
     },
     {
@@ -4527,7 +4527,7 @@
       "source_file": "frontend/src/engine/math/generator.ts",
       "source_location": "L58",
       "id": "math_generator_generateproblemset",
-      "community": 25,
+      "community": 14,
       "norm_label": "generateproblemset()"
     },
     {
@@ -4536,7 +4536,7 @@
       "source_file": "frontend/src/engine/math/types.ts",
       "source_location": "L1",
       "id": "frontend_src_engine_math_types_ts",
-      "community": 25,
+      "community": 14,
       "norm_label": "types.ts"
     },
     {
@@ -4554,7 +4554,7 @@
       "source_file": "frontend/src/engine/math/types.ts",
       "source_location": "L3",
       "id": "math_types_tier",
-      "community": 25,
+      "community": 14,
       "norm_label": "tier"
     },
     {
@@ -4563,7 +4563,7 @@
       "source_file": "frontend/src/engine/math/types.ts",
       "source_location": "L5",
       "id": "math_types_tierconfig",
-      "community": 25,
+      "community": 14,
       "norm_label": "tierconfig"
     },
     {
@@ -4572,7 +4572,7 @@
       "source_file": "frontend/src/engine/math/types.ts",
       "source_location": "L12",
       "id": "math_types_problem",
-      "community": 25,
+      "community": 14,
       "norm_label": "problem"
     },
     {
@@ -4581,7 +4581,7 @@
       "source_file": "frontend/src/engine/math/types.ts",
       "source_location": "L22",
       "id": "math_types_problemset",
-      "community": 25,
+      "community": 14,
       "norm_label": "problemset"
     },
     {
@@ -4590,7 +4590,7 @@
       "source_file": "frontend/src/engine/math/types.ts",
       "source_location": "L29",
       "id": "math_types_validationresult",
-      "community": 25,
+      "community": 14,
       "norm_label": "validationresult"
     },
     {
@@ -4599,7 +4599,7 @@
       "source_file": "frontend/src/engine/math/types.ts",
       "source_location": "L35",
       "id": "math_types_tierselectioninput",
-      "community": 25,
+      "community": 14,
       "norm_label": "tierselectioninput"
     },
     {
@@ -4608,7 +4608,7 @@
       "source_file": "frontend/src/engine/math/difficulty.ts",
       "source_location": "L1",
       "id": "frontend_src_engine_math_difficulty_ts",
-      "community": 25,
+      "community": 14,
       "norm_label": "difficulty.ts"
     },
     {
@@ -4617,7 +4617,7 @@
       "source_file": "frontend/src/engine/math/difficulty.ts",
       "source_location": "L3",
       "id": "math_difficulty_clamptier",
-      "community": 25,
+      "community": 14,
       "norm_label": "clamptier()"
     },
     {
@@ -4626,7 +4626,7 @@
       "source_file": "frontend/src/engine/math/difficulty.ts",
       "source_location": "L7",
       "id": "math_difficulty_selecttier",
-      "community": 25,
+      "community": 14,
       "norm_label": "selecttier()"
     },
     {
@@ -4635,7 +4635,7 @@
       "source_file": "frontend/src/engine/math/rng.ts",
       "source_location": "L1",
       "id": "frontend_src_engine_math_rng_ts",
-      "community": 25,
+      "community": 14,
       "norm_label": "rng.ts"
     },
     {
@@ -4644,7 +4644,7 @@
       "source_file": "frontend/src/engine/math/rng.ts",
       "source_location": "L1",
       "id": "math_rng_createrng",
-      "community": 25,
+      "community": 14,
       "norm_label": "createrng()"
     },
     {
@@ -4662,7 +4662,7 @@
       "source_file": "frontend/src/engine/math/validator.ts",
       "source_location": "L1",
       "id": "frontend_src_engine_math_validator_ts",
-      "community": 25,
+      "community": 14,
       "norm_label": "validator.ts"
     },
     {
@@ -4671,7 +4671,7 @@
       "source_file": "frontend/src/engine/math/validator.ts",
       "source_location": "L3",
       "id": "math_validator_validateanswer",
-      "community": 25,
+      "community": 14,
       "norm_label": "validateanswer()"
     },
     {
@@ -4734,7 +4734,7 @@
       "source_file": "frontend/src/engine/avatar/types.ts",
       "source_location": "L43",
       "id": "avatar_types_avatarlistitem",
-      "community": 17,
+      "community": 30,
       "norm_label": "avatarlistitem"
     },
     {
@@ -5022,7 +5022,7 @@
       "source_file": "frontend/src/engine/race/aiRunner.ts",
       "source_location": "L1",
       "id": "frontend_src_engine_race_airunner_ts",
-      "community": 57,
+      "community": 134,
       "norm_label": "airunner.ts"
     },
     {
@@ -5031,7 +5031,7 @@
       "source_file": "frontend/src/engine/race/aiRunner.ts",
       "source_location": "L3",
       "id": "race_airunner_aiobstacleresult",
-      "community": 57,
+      "community": 134,
       "norm_label": "aiobstacleresult"
     },
     {
@@ -5040,7 +5040,7 @@
       "source_file": "frontend/src/engine/race/aiRunner.ts",
       "source_location": "L8",
       "id": "race_airunner_lerp",
-      "community": 57,
+      "community": 134,
       "norm_label": "lerp()"
     },
     {
@@ -5049,7 +5049,7 @@
       "source_file": "frontend/src/engine/race/aiRunner.ts",
       "source_location": "L12",
       "id": "race_airunner_sampleresponsetime",
-      "community": 57,
+      "community": 134,
       "norm_label": "sampleresponsetime()"
     },
     {
@@ -5058,7 +5058,7 @@
       "source_file": "frontend/src/engine/race/aiRunner.ts",
       "source_location": "L31",
       "id": "race_airunner_speedmultiplier",
-      "community": 57,
+      "community": 134,
       "norm_label": "speedmultiplier()"
     },
     {
@@ -5067,7 +5067,7 @@
       "source_file": "frontend/src/engine/race/aiRunner.ts",
       "source_location": "L52",
       "id": "race_airunner_simulateaiobstacle",
-      "community": 57,
+      "community": 134,
       "norm_label": "simulateaiobstacle()"
     },
     {
@@ -5364,7 +5364,7 @@
       "source_file": "frontend/src/engine/race/clock.ts",
       "source_location": "L3",
       "id": "race_clock_gameclock",
-      "community": 47,
+      "community": 57,
       "norm_label": "gameclock"
     },
     {
@@ -5373,7 +5373,7 @@
       "source_file": "frontend/src/engine/race/clock.ts",
       "source_location": "L9",
       "id": "race_clock_gameclock_tick",
-      "community": 47,
+      "community": 57,
       "norm_label": ".tick()"
     },
     {
@@ -5382,7 +5382,7 @@
       "source_file": "frontend/src/engine/race/clock.ts",
       "source_location": "L22",
       "id": "race_clock_gameclock_startobstacleclock",
-      "community": 47,
+      "community": 57,
       "norm_label": ".startobstacleclock()"
     },
     {
@@ -5391,7 +5391,7 @@
       "source_file": "frontend/src/engine/race/clock.ts",
       "source_location": "L26",
       "id": "race_clock_gameclock_getms",
-      "community": 47,
+      "community": 57,
       "norm_label": ".getms()"
     },
     {
@@ -5400,7 +5400,7 @@
       "source_file": "frontend/src/engine/race/clock.ts",
       "source_location": "L30",
       "id": "race_clock_gameclock_getobstaclems",
-      "community": 47,
+      "community": 57,
       "norm_label": ".getobstaclems()"
     },
     {
@@ -5409,7 +5409,7 @@
       "source_file": "frontend/src/engine/race/clock.ts",
       "source_location": "L34",
       "id": "race_clock_gameclock_pause",
-      "community": 47,
+      "community": 57,
       "norm_label": ".pause()"
     },
     {
@@ -5418,7 +5418,7 @@
       "source_file": "frontend/src/engine/race/clock.ts",
       "source_location": "L38",
       "id": "race_clock_gameclock_resume",
-      "community": 47,
+      "community": 57,
       "norm_label": ".resume()"
     },
     {
@@ -5427,7 +5427,7 @@
       "source_file": "frontend/src/engine/race/clock.ts",
       "source_location": "L43",
       "id": "race_clock_gameclock_reset",
-      "community": 47,
+      "community": 57,
       "norm_label": ".reset()"
     },
     {
@@ -5497,7 +5497,7 @@
       "label": "trainingConfig",
       "file_type": "code",
       "source_file": "frontend/src/engine/race/hooks/useRaceEngine.test.ts",
-      "source_location": "L59",
+      "source_location": "L82",
       "id": "hooks_useraceengine_test_trainingconfig",
       "community": 57,
       "norm_label": "trainingconfig"
@@ -5506,7 +5506,7 @@
       "label": "engine",
       "file_type": "code",
       "source_file": "frontend/src/engine/race/hooks/useRaceEngine.test.ts",
-      "source_location": "L63",
+      "source_location": "L86",
       "id": "hooks_useraceengine_test_engine",
       "community": 57,
       "norm_label": "engine"
@@ -5515,7 +5515,7 @@
       "label": "state",
       "file_type": "code",
       "source_file": "frontend/src/engine/race/hooks/useRaceEngine.test.ts",
-      "source_location": "L69",
+      "source_location": "L92",
       "id": "hooks_useraceengine_test_state",
       "community": 57,
       "norm_label": "state"
@@ -5652,7 +5652,7 @@
       "source_file": "backend/app/main.py",
       "source_location": "L113",
       "id": "app_main_create_app",
-      "community": 36,
+      "community": 35,
       "norm_label": "create_app()"
     },
     {
@@ -5688,7 +5688,7 @@
       "source_file": "backend/app/statistics/models.py",
       "source_location": "L1",
       "id": "backend_app_statistics_models_py",
-      "community": 120,
+      "community": 1,
       "norm_label": "models.py"
     },
     {
@@ -5697,7 +5697,7 @@
       "source_file": "backend/app/statistics/models.py",
       "source_location": "L13",
       "id": "statistics_models_playerstats",
-      "community": 120,
+      "community": 1,
       "norm_label": "playerstats"
     },
     {
@@ -5715,7 +5715,7 @@
       "source_file": "backend/app/statistics/models.py",
       "source_location": "L36",
       "id": "statistics_models_avatarstats",
-      "community": 120,
+      "community": 1,
       "norm_label": "avatarstats"
     },
     {
@@ -5724,7 +5724,7 @@
       "source_file": "backend/app/statistics/models.py",
       "source_location": "L66",
       "id": "statistics_models_racesession",
-      "community": 120,
+      "community": 10,
       "norm_label": "racesession"
     },
     {
@@ -5733,7 +5733,7 @@
       "source_file": "backend/app/statistics/domain_service.py",
       "source_location": "L1",
       "id": "backend_app_statistics_domain_service_py",
-      "community": 0,
+      "community": 47,
       "norm_label": "domain_service.py"
     },
     {
@@ -5742,7 +5742,7 @@
       "source_file": "backend/app/statistics/domain_service.py",
       "source_location": "L25",
       "id": "statistics_domain_service_statisticsdomainservice",
-      "community": 0,
+      "community": 47,
       "norm_label": "statisticsdomainservice"
     },
     {
@@ -5751,7 +5751,7 @@
       "source_file": "backend/app/statistics/domain_service.py",
       "source_location": "L26",
       "id": "statistics_domain_service_statisticsdomainservice_init",
-      "community": 0,
+      "community": 47,
       "norm_label": ".__init__()"
     },
     {
@@ -5769,7 +5769,7 @@
       "source_file": "backend/app/statistics/domain_service.py",
       "source_location": "L85",
       "id": "statistics_domain_service_statisticsdomainservice_get_player_stats",
-      "community": 0,
+      "community": 47,
       "norm_label": ".get_player_stats()"
     },
     {
@@ -5778,7 +5778,7 @@
       "source_file": "backend/app/statistics/domain_service.py",
       "source_location": "L133",
       "id": "statistics_domain_service_statisticsdomainservice_get_avatar_stats",
-      "community": 0,
+      "community": 47,
       "norm_label": ".get_avatar_stats()"
     },
     {
@@ -5787,7 +5787,7 @@
       "source_file": "backend/app/statistics/domain_service.py",
       "source_location": "L151",
       "id": "statistics_domain_service_statisticsdomainservice_get_history",
-      "community": 0,
+      "community": 47,
       "norm_label": ".get_history()"
     },
     {
@@ -5796,7 +5796,7 @@
       "source_file": "backend/app/statistics/domain_service.py",
       "source_location": "L180",
       "id": "statistics_domain_service_statisticsdomainservice_get_weekly_summary",
-      "community": 0,
+      "community": 47,
       "norm_label": ".get_weekly_summary()"
     },
     {
@@ -5805,7 +5805,7 @@
       "source_file": "backend/app/statistics/domain_service.py",
       "source_location": "L214",
       "id": "statistics_domain_service_statisticsdomainservice_get_personal_records",
-      "community": 0,
+      "community": 47,
       "norm_label": ".get_personal_records()"
     },
     {
@@ -5814,7 +5814,7 @@
       "source_file": "backend/app/statistics/domain_service.py",
       "source_location": "L231",
       "id": "statistics_domain_service_statisticsdomainservice_get_all_sessions",
-      "community": 0,
+      "community": 47,
       "norm_label": ".get_all_sessions()"
     },
     {
@@ -5823,7 +5823,7 @@
       "source_file": "backend/app/statistics/domain_service.py",
       "source_location": "L237",
       "id": "statistics_domain_service_favourite_operation",
-      "community": 0,
+      "community": 47,
       "norm_label": "_favourite_operation()"
     },
     {
@@ -5832,7 +5832,7 @@
       "source_file": "backend/app/statistics/domain_service.py",
       "source_location": "L246",
       "id": "statistics_domain_service_operation_extremes",
-      "community": 0,
+      "community": 47,
       "norm_label": "_operation_extremes()"
     },
     {
@@ -5850,7 +5850,7 @@
       "source_file": "backend/app/statistics/schemas.py",
       "source_location": "L1",
       "id": "backend_app_statistics_schemas_py",
-      "community": 0,
+      "community": 47,
       "norm_label": "schemas.py"
     },
     {
@@ -5859,7 +5859,7 @@
       "source_file": "backend/app/statistics/schemas.py",
       "source_location": "L8",
       "id": "statistics_schemas_playerstatsresponse",
-      "community": 0,
+      "community": 47,
       "norm_label": "playerstatsresponse"
     },
     {
@@ -5877,7 +5877,7 @@
       "source_file": "backend/app/statistics/schemas.py",
       "source_location": "L20",
       "id": "statistics_schemas_avatarstatsresponse",
-      "community": 0,
+      "community": 47,
       "norm_label": "avatarstatsresponse"
     },
     {
@@ -5886,7 +5886,7 @@
       "source_file": "backend/app/statistics/schemas.py",
       "source_location": "L30",
       "id": "statistics_schemas_racesessionresponse",
-      "community": 0,
+      "community": 47,
       "norm_label": "racesessionresponse"
     },
     {
@@ -5895,7 +5895,7 @@
       "source_file": "backend/app/statistics/schemas.py",
       "source_location": "L46",
       "id": "statistics_schemas_historyresponse",
-      "community": 0,
+      "community": 47,
       "norm_label": "historyresponse"
     },
     {
@@ -5904,7 +5904,7 @@
       "source_file": "backend/app/statistics/schemas.py",
       "source_location": "L53",
       "id": "statistics_schemas_weeklysummaryresponse",
-      "community": 0,
+      "community": 47,
       "norm_label": "weeklysummaryresponse"
     },
     {
@@ -5913,7 +5913,7 @@
       "source_file": "backend/app/statistics/schemas.py",
       "source_location": "L66",
       "id": "statistics_schemas_personalrecordsresponse",
-      "community": 0,
+      "community": 47,
       "norm_label": "personalrecordsresponse"
     },
     {
@@ -5922,7 +5922,7 @@
       "source_file": "backend/app/statistics/repository.py",
       "source_location": "L1",
       "id": "backend_app_statistics_repository_py",
-      "community": 10,
+      "community": 120,
       "norm_label": "repository.py"
     },
     {
@@ -5940,7 +5940,7 @@
       "source_file": "",
       "source_location": "",
       "id": "protocol",
-      "community": 171,
+      "community": 132,
       "norm_label": "protocol"
     },
     {
@@ -6147,7 +6147,7 @@
       "source_file": "backend/app/statistics/repository.py",
       "source_location": "L254",
       "id": "statistics_repository_sqlalchemystatisticsrepository_insert_session",
-      "community": 120,
+      "community": 10,
       "norm_label": ".insert_session()"
     },
     {
@@ -6228,7 +6228,7 @@
       "source_file": "backend/app/statistics/presentation/api/v1/statistics.py",
       "source_location": "L1",
       "id": "backend_app_statistics_presentation_api_v1_statistics_py",
-      "community": 0,
+      "community": 119,
       "norm_label": "statistics.py"
     },
     {
@@ -6237,7 +6237,7 @@
       "source_file": "backend/app/statistics/presentation/api/v1/statistics.py",
       "source_location": "L30",
       "id": "v1_statistics_check_access",
-      "community": 0,
+      "community": 119,
       "norm_label": "_check_access()"
     },
     {
@@ -6246,7 +6246,7 @@
       "source_file": "backend/app/statistics/presentation/api/v1/statistics.py",
       "source_location": "L35",
       "id": "v1_statistics_service",
-      "community": 0,
+      "community": 119,
       "norm_label": "_service()"
     },
     {
@@ -6255,7 +6255,7 @@
       "source_file": "backend/app/statistics/presentation/api/v1/statistics.py",
       "source_location": "L43",
       "id": "v1_statistics_get_my_statistics",
-      "community": 0,
+      "community": 119,
       "norm_label": "get_my_statistics()"
     },
     {
@@ -6264,7 +6264,7 @@
       "source_file": "backend/app/statistics/presentation/api/v1/statistics.py",
       "source_location": "L52",
       "id": "v1_statistics_get_my_history",
-      "community": 0,
+      "community": 119,
       "norm_label": "get_my_history()"
     },
     {
@@ -6273,7 +6273,7 @@
       "source_file": "backend/app/statistics/presentation/api/v1/statistics.py",
       "source_location": "L62",
       "id": "v1_statistics_get_my_weekly_summary",
-      "community": 0,
+      "community": 119,
       "norm_label": "get_my_weekly_summary()"
     },
     {
@@ -6282,7 +6282,7 @@
       "source_file": "backend/app/statistics/presentation/api/v1/statistics.py",
       "source_location": "L71",
       "id": "v1_statistics_get_my_personal_records",
-      "community": 0,
+      "community": 119,
       "norm_label": "get_my_personal_records()"
     },
     {
@@ -6291,7 +6291,7 @@
       "source_file": "backend/app/statistics/presentation/api/v1/statistics.py",
       "source_location": "L80",
       "id": "v1_statistics_export_my_csv",
-      "community": 0,
+      "community": 119,
       "norm_label": "export_my_csv()"
     },
     {
@@ -6300,7 +6300,7 @@
       "source_file": "backend/app/statistics/presentation/api/v1/statistics.py",
       "source_location": "L133",
       "id": "v1_statistics_get_player_statistics",
-      "community": 0,
+      "community": 119,
       "norm_label": "get_player_statistics()"
     },
     {
@@ -6309,7 +6309,7 @@
       "source_file": "backend/app/statistics/presentation/api/v1/statistics.py",
       "source_location": "L146",
       "id": "v1_statistics_get_avatar_statistics",
-      "community": 0,
+      "community": 119,
       "norm_label": "get_avatar_statistics()"
     },
     {
@@ -6318,7 +6318,7 @@
       "source_file": "backend/app/statistics/presentation/api/v1/statistics.py",
       "source_location": "L158",
       "id": "v1_statistics_get_history",
-      "community": 0,
+      "community": 119,
       "norm_label": "get_history()"
     },
     {
@@ -6327,7 +6327,7 @@
       "source_file": "backend/app/statistics/presentation/api/v1/statistics.py",
       "source_location": "L169",
       "id": "v1_statistics_get_weekly_summary",
-      "community": 0,
+      "community": 119,
       "norm_label": "get_weekly_summary()"
     },
     {
@@ -6336,7 +6336,7 @@
       "source_file": "backend/app/statistics/presentation/api/v1/statistics.py",
       "source_location": "L182",
       "id": "v1_statistics_get_personal_records",
-      "community": 0,
+      "community": 119,
       "norm_label": "get_personal_records()"
     },
     {
@@ -6372,7 +6372,7 @@
       "source_file": "backend/app/child_profiles/schemas.py",
       "source_location": "L1",
       "id": "backend_app_child_profiles_schemas_py",
-      "community": 150,
+      "community": 113,
       "norm_label": "schemas.py"
     },
     {
@@ -6381,7 +6381,7 @@
       "source_file": "backend/app/child_profiles/schemas.py",
       "source_location": "L10",
       "id": "child_profiles_schemas_childprofileresponse",
-      "community": 150,
+      "community": 113,
       "norm_label": "childprofileresponse"
     },
     {
@@ -6390,7 +6390,7 @@
       "source_file": "backend/app/child_profiles/schemas.py",
       "source_location": "L19",
       "id": "child_profiles_schemas_childprofilelistresponse",
-      "community": 150,
+      "community": 113,
       "norm_label": "childprofilelistresponse"
     },
     {
@@ -6399,7 +6399,7 @@
       "source_file": "backend/app/child_profiles/schemas.py",
       "source_location": "L23",
       "id": "child_profiles_schemas_createchildprofilerequest",
-      "community": 150,
+      "community": 113,
       "norm_label": "createchildprofilerequest"
     },
     {
@@ -6408,7 +6408,7 @@
       "source_file": "backend/app/child_profiles/schemas.py",
       "source_location": "L27",
       "id": "child_profiles_schemas_legacyrecordassignment",
-      "community": 150,
+      "community": 113,
       "norm_label": "legacyrecordassignment"
     },
     {
@@ -6417,7 +6417,7 @@
       "source_file": "backend/app/child_profiles/schemas.py",
       "source_location": "L41",
       "id": "child_profiles_schemas_legacydataassignmentrequest",
-      "community": 150,
+      "community": 113,
       "norm_label": "legacydataassignmentrequest"
     },
     {
@@ -6426,7 +6426,7 @@
       "source_file": "backend/app/child_profiles/schemas.py",
       "source_location": "L45",
       "id": "child_profiles_schemas_reject_duplicate_records",
-      "community": 150,
+      "community": 113,
       "norm_label": "reject_duplicate_records()"
     },
     {
@@ -6498,7 +6498,7 @@
       "source_file": "backend/app/child_profiles/repository.py",
       "source_location": "L20",
       "id": "child_profiles_repository_sqlalchemychildprofilerepository",
-      "community": 16,
+      "community": 12,
       "norm_label": "sqlalchemychildprofilerepository"
     },
     {
@@ -6507,7 +6507,7 @@
       "source_file": "backend/app/child_profiles/repository.py",
       "source_location": "L21",
       "id": "child_profiles_repository_sqlalchemychildprofilerepository_init",
-      "community": 16,
+      "community": 12,
       "norm_label": ".__init__()"
     },
     {
@@ -6516,7 +6516,7 @@
       "source_file": "backend/app/child_profiles/repository.py",
       "source_location": "L24",
       "id": "child_profiles_repository_sqlalchemychildprofilerepository_get",
-      "community": 16,
+      "community": 12,
       "norm_label": ".get()"
     },
     {
@@ -6525,7 +6525,7 @@
       "source_file": "backend/app/child_profiles/repository.py",
       "source_location": "L30",
       "id": "child_profiles_repository_sqlalchemychildprofilerepository_list_for_account",
-      "community": 16,
+      "community": 12,
       "norm_label": ".list_for_account()"
     },
     {
@@ -6534,7 +6534,7 @@
       "source_file": "backend/app/child_profiles/repository.py",
       "source_location": "L38",
       "id": "child_profiles_repository_sqlalchemychildprofilerepository_create",
-      "community": 16,
+      "community": 12,
       "norm_label": ".create()"
     },
     {
@@ -6543,7 +6543,7 @@
       "source_file": "backend/app/child_profiles/repository.py",
       "source_location": "L44",
       "id": "child_profiles_repository_sqlalchemychildprofilerepository_delete",
-      "community": 16,
+      "community": 12,
       "norm_label": ".delete()"
     },
     {
@@ -6552,7 +6552,7 @@
       "source_file": "backend/app/child_profiles/repository.py",
       "source_location": "L49",
       "id": "child_profiles_repository_sqlalchemychildprofilerepository_count_for_account",
-      "community": 16,
+      "community": 12,
       "norm_label": ".count_for_account()"
     },
     {
@@ -6613,7 +6613,7 @@
       "label": "delete_child_profile()",
       "file_type": "code",
       "source_file": "backend/app/child_profiles/presentation/api/v1/child_profiles.py",
-      "source_location": "L61",
+      "source_location": "L62",
       "id": "v1_child_profiles_delete_child_profile",
       "community": 12,
       "norm_label": "delete_child_profile()"
@@ -6622,7 +6622,7 @@
       "label": "list_unassigned_legacy_data()",
       "file_type": "code",
       "source_file": "backend/app/child_profiles/presentation/api/v1/child_profiles.py",
-      "source_location": "L72",
+      "source_location": "L74",
       "id": "v1_child_profiles_list_unassigned_legacy_data",
       "community": 12,
       "norm_label": "list_unassigned_legacy_data()"
@@ -6631,7 +6631,7 @@
       "label": "assign_legacy_data()",
       "file_type": "code",
       "source_file": "backend/app/child_profiles/presentation/api/v1/child_profiles.py",
-      "source_location": "L85",
+      "source_location": "L87",
       "id": "v1_child_profiles_assign_legacy_data",
       "community": 12,
       "norm_label": "assign_legacy_data()"
@@ -6640,9 +6640,9 @@
       "label": "export_child_data()",
       "file_type": "code",
       "source_file": "backend/app/child_profiles/presentation/api/v1/child_profiles.py",
-      "source_location": "L101",
+      "source_location": "L103",
       "id": "v1_child_profiles_export_child_data",
-      "community": 142,
+      "community": 12,
       "norm_label": "export_child_data()"
     },
     {
@@ -7047,7 +7047,7 @@
       "source_file": "backend/app/opponents/schemas.py",
       "source_location": "L1",
       "id": "backend_app_opponents_schemas_py",
-      "community": 119,
+      "community": 113,
       "norm_label": "schemas.py"
     },
     {
@@ -7056,7 +7056,7 @@
       "source_file": "backend/app/opponents/schemas.py",
       "source_location": "L6",
       "id": "opponents_schemas_personalitydefinitionresponse",
-      "community": 119,
+      "community": 113,
       "norm_label": "personalitydefinitionresponse"
     },
     {
@@ -7065,7 +7065,7 @@
       "source_file": "backend/app/mathematics/models.py",
       "source_location": "L1",
       "id": "backend_app_mathematics_models_py",
-      "community": 1,
+      "community": 22,
       "norm_label": "models.py"
     },
     {
@@ -7074,7 +7074,7 @@
       "source_file": "backend/app/mathematics/models.py",
       "source_location": "L13",
       "id": "mathematics_models_playerdifficulty",
-      "community": 1,
+      "community": 22,
       "norm_label": "playerdifficulty"
     },
     {
@@ -7362,7 +7362,7 @@
       "source_file": "backend/app/mathematics/repository.py",
       "source_location": "L1",
       "id": "backend_app_mathematics_repository_py",
-      "community": 22,
+      "community": 132,
       "norm_label": "repository.py"
     },
     {
@@ -7371,7 +7371,7 @@
       "source_file": "backend/app/mathematics/repository.py",
       "source_location": "L12",
       "id": "mathematics_repository_playerdifficultyrepository",
-      "community": 22,
+      "community": 132,
       "norm_label": "playerdifficultyrepository"
     },
     {
@@ -7380,7 +7380,7 @@
       "source_file": "backend/app/mathematics/repository.py",
       "source_location": "L13",
       "id": "mathematics_repository_playerdifficultyrepository_get_by_player_id",
-      "community": 22,
+      "community": 132,
       "norm_label": ".get_by_player_id()"
     },
     {
@@ -7389,7 +7389,7 @@
       "source_file": "backend/app/mathematics/repository.py",
       "source_location": "L14",
       "id": "mathematics_repository_playerdifficultyrepository_upsert",
-      "community": 22,
+      "community": 132,
       "norm_label": ".upsert()"
     },
     {
@@ -7533,7 +7533,7 @@
       "source_file": "backend/app/shared/exceptions.py",
       "source_location": "L29",
       "id": "shared_exceptions_conflicterror",
-      "community": 12,
+      "community": 2,
       "norm_label": "conflicterror"
     },
     {
@@ -7542,7 +7542,7 @@
       "source_file": "backend/app/shared/exceptions.py",
       "source_location": "L32",
       "id": "shared_exceptions_conflicterror_init",
-      "community": 12,
+      "community": 2,
       "norm_label": ".__init__()"
     },
     {
@@ -7632,7 +7632,7 @@
       "source_file": "backend/app/shared/exceptions.py",
       "source_location": "L30",
       "id": "shared_exceptions_rationale_30",
-      "community": 12,
+      "community": 2,
       "norm_label": "a duplicate or conflicting entity already exists."
     },
     {
@@ -7785,7 +7785,7 @@
       "source_file": "backend/app/accounts/schemas.py",
       "source_location": "L1",
       "id": "backend_app_accounts_schemas_py",
-      "community": 168,
+      "community": 113,
       "norm_label": "schemas.py"
     },
     {
@@ -7794,7 +7794,7 @@
       "source_file": "backend/app/accounts/schemas.py",
       "source_location": "L9",
       "id": "accounts_schemas_registerrequest",
-      "community": 168,
+      "community": 113,
       "norm_label": "registerrequest"
     },
     {
@@ -7803,7 +7803,7 @@
       "source_file": "backend/app/accounts/schemas.py",
       "source_location": "L15",
       "id": "accounts_schemas_password_length",
-      "community": 168,
+      "community": 113,
       "norm_label": "password_length()"
     },
     {
@@ -7812,7 +7812,7 @@
       "source_file": "backend/app/accounts/schemas.py",
       "source_location": "L21",
       "id": "accounts_schemas_loginrequest",
-      "community": 168,
+      "community": 113,
       "norm_label": "loginrequest"
     },
     {
@@ -7830,7 +7830,7 @@
       "source_file": "backend/app/accounts/schemas.py",
       "source_location": "L31",
       "id": "accounts_schemas_accountresponse",
-      "community": 168,
+      "community": 113,
       "norm_label": "accountresponse"
     },
     {
@@ -7839,7 +7839,7 @@
       "source_file": "backend/app/accounts/repository.py",
       "source_location": "L1",
       "id": "backend_app_accounts_repository_py",
-      "community": 157,
+      "community": 156,
       "norm_label": "repository.py"
     },
     {
@@ -7902,7 +7902,7 @@
       "source_file": "backend/app/accounts/repository.py",
       "source_location": "L27",
       "id": "accounts_repository_refreshtokenrepository",
-      "community": 157,
+      "community": 156,
       "norm_label": "refreshtokenrepository"
     },
     {
@@ -7911,7 +7911,7 @@
       "source_file": "backend/app/accounts/repository.py",
       "source_location": "L28",
       "id": "accounts_repository_refreshtokenrepository_get_by_hash",
-      "community": 157,
+      "community": 156,
       "norm_label": ".get_by_hash()"
     },
     {
@@ -7920,7 +7920,7 @@
       "source_file": "backend/app/accounts/repository.py",
       "source_location": "L29",
       "id": "accounts_repository_refreshtokenrepository_save",
-      "community": 157,
+      "community": 156,
       "norm_label": ".save()"
     },
     {
@@ -7929,7 +7929,7 @@
       "source_file": "backend/app/accounts/repository.py",
       "source_location": "L30",
       "id": "accounts_repository_refreshtokenrepository_revoke",
-      "community": 157,
+      "community": 156,
       "norm_label": ".revoke()"
     },
     {
@@ -7938,7 +7938,7 @@
       "source_file": "backend/app/accounts/repository.py",
       "source_location": "L33",
       "id": "accounts_repository_refreshtokenrepository_revoke_all_for_account",
-      "community": 157,
+      "community": 156,
       "norm_label": ".revoke_all_for_account()"
     },
     {
@@ -8064,7 +8064,7 @@
       "source_file": "backend/app/championships/models.py",
       "source_location": "L1",
       "id": "backend_app_championships_models_py",
-      "community": 143,
+      "community": 1,
       "norm_label": "models.py"
     },
     {
@@ -8073,7 +8073,7 @@
       "source_file": "backend/app/championships/models.py",
       "source_location": "L23",
       "id": "championships_models_championship",
-      "community": 143,
+      "community": 1,
       "norm_label": "championship"
     },
     {
@@ -8082,7 +8082,7 @@
       "source_file": "backend/app/championships/models.py",
       "source_location": "L60",
       "id": "championships_models_championshiprace",
-      "community": 143,
+      "community": 1,
       "norm_label": "championshiprace"
     },
     {
@@ -8091,7 +8091,7 @@
       "source_file": "backend/app/championships/domain_service.py",
       "source_location": "L1",
       "id": "backend_app_championships_domain_service_py",
-      "community": 9,
+      "community": 129,
       "norm_label": "domain_service.py"
     },
     {
@@ -8100,7 +8100,7 @@
       "source_file": "backend/app/championships/domain_service.py",
       "source_location": "L18",
       "id": "championships_domain_service_points_for_position",
-      "community": 9,
+      "community": 129,
       "norm_label": "_points_for_position()"
     },
     {
@@ -8109,7 +8109,7 @@
       "source_file": "backend/app/championships/domain_service.py",
       "source_location": "L23",
       "id": "championships_domain_service_build_standings",
-      "community": 9,
+      "community": 129,
       "norm_label": "_build_standings()"
     },
     {
@@ -8118,7 +8118,7 @@
       "source_file": "backend/app/championships/domain_service.py",
       "source_location": "L50",
       "id": "championships_domain_service_to_response",
-      "community": 9,
+      "community": 129,
       "norm_label": "_to_response()"
     },
     {
@@ -8127,7 +8127,7 @@
       "source_file": "backend/app/championships/domain_service.py",
       "source_location": "L61",
       "id": "championships_domain_service_championshipdomainservice",
-      "community": 9,
+      "community": 129,
       "norm_label": "championshipdomainservice"
     },
     {
@@ -8136,7 +8136,7 @@
       "source_file": "backend/app/championships/domain_service.py",
       "source_location": "L62",
       "id": "championships_domain_service_championshipdomainservice_init",
-      "community": 9,
+      "community": 129,
       "norm_label": ".__init__()"
     },
     {
@@ -8145,7 +8145,7 @@
       "source_file": "backend/app/championships/domain_service.py",
       "source_location": "L70",
       "id": "championships_domain_service_championshipdomainservice_create",
-      "community": 9,
+      "community": 129,
       "norm_label": ".create()"
     },
     {
@@ -8154,7 +8154,7 @@
       "source_file": "backend/app/championships/domain_service.py",
       "source_location": "L81",
       "id": "championships_domain_service_championshipdomainservice_get",
-      "community": 9,
+      "community": 129,
       "norm_label": ".get()"
     },
     {
@@ -8163,7 +8163,7 @@
       "source_file": "backend/app/championships/domain_service.py",
       "source_location": "L95",
       "id": "championships_domain_service_championshipdomainservice_record_race",
-      "community": 9,
+      "community": 129,
       "norm_label": ".record_race()"
     },
     {
@@ -8235,7 +8235,7 @@
       "source_file": "backend/app/championships/repository.py",
       "source_location": "L1",
       "id": "backend_app_championships_repository_py",
-      "community": 143,
+      "community": 9,
       "norm_label": "repository.py"
     },
     {
@@ -8244,7 +8244,7 @@
       "source_file": "backend/app/championships/repository.py",
       "source_location": "L15",
       "id": "championships_repository_championshiprepository",
-      "community": 143,
+      "community": 9,
       "norm_label": "championshiprepository"
     },
     {
@@ -8253,7 +8253,7 @@
       "source_file": "backend/app/championships/repository.py",
       "source_location": "L16",
       "id": "championships_repository_championshiprepository_create",
-      "community": 143,
+      "community": 9,
       "norm_label": ".create()"
     },
     {
@@ -8262,7 +8262,7 @@
       "source_file": "backend/app/championships/repository.py",
       "source_location": "L22",
       "id": "championships_repository_championshiprepository_get",
-      "community": 143,
+      "community": 9,
       "norm_label": ".get()"
     },
     {
@@ -8271,7 +8271,7 @@
       "source_file": "backend/app/championships/repository.py",
       "source_location": "L25",
       "id": "championships_repository_championshiprepository_add_race",
-      "community": 143,
+      "community": 9,
       "norm_label": ".add_race()"
     },
     {
@@ -8280,7 +8280,7 @@
       "source_file": "backend/app/championships/repository.py",
       "source_location": "L34",
       "id": "championships_repository_sqlalchemychampionshiprepository",
-      "community": 143,
+      "community": 9,
       "norm_label": "sqlalchemychampionshiprepository"
     },
     {
@@ -8289,7 +8289,7 @@
       "source_file": "backend/app/championships/repository.py",
       "source_location": "L35",
       "id": "championships_repository_sqlalchemychampionshiprepository_init",
-      "community": 143,
+      "community": 9,
       "norm_label": ".__init__()"
     },
     {
@@ -8298,7 +8298,7 @@
       "source_file": "backend/app/championships/repository.py",
       "source_location": "L38",
       "id": "championships_repository_sqlalchemychampionshiprepository_create",
-      "community": 143,
+      "community": 9,
       "norm_label": ".create()"
     },
     {
@@ -8307,7 +8307,7 @@
       "source_file": "backend/app/championships/repository.py",
       "source_location": "L53",
       "id": "championships_repository_sqlalchemychampionshiprepository_get",
-      "community": 143,
+      "community": 9,
       "norm_label": ".get()"
     },
     {
@@ -8316,7 +8316,7 @@
       "source_file": "backend/app/championships/repository.py",
       "source_location": "L73",
       "id": "championships_repository_sqlalchemychampionshiprepository_add_race",
-      "community": 143,
+      "community": 1,
       "norm_label": ".add_race()"
     },
     {
@@ -8361,7 +8361,7 @@
       "source_file": "backend/app/progression/domain_service.py",
       "source_location": "L1",
       "id": "backend_app_progression_domain_service_py",
-      "community": 9,
+      "community": 53,
       "norm_label": "domain_service.py"
     },
     {
@@ -8370,7 +8370,7 @@
       "source_file": "backend/app/progression/domain_service.py",
       "source_location": "L17",
       "id": "progression_domain_service_compute_level",
-      "community": 9,
+      "community": 53,
       "norm_label": "_compute_level()"
     },
     {
@@ -8379,7 +8379,7 @@
       "source_file": "backend/app/progression/domain_service.py",
       "source_location": "L21",
       "id": "progression_domain_service_xp_to_next_level",
-      "community": 9,
+      "community": 53,
       "norm_label": "_xp_to_next_level()"
     },
     {
@@ -8388,7 +8388,7 @@
       "source_file": "backend/app/progression/domain_service.py",
       "source_location": "L25",
       "id": "progression_domain_service_calculate_xp_delta",
-      "community": 9,
+      "community": 53,
       "norm_label": "_calculate_xp_delta()"
     },
     {
@@ -8397,7 +8397,7 @@
       "source_file": "backend/app/progression/domain_service.py",
       "source_location": "L34",
       "id": "progression_domain_service_progressiondomainservice",
-      "community": 9,
+      "community": 53,
       "norm_label": "progressiondomainservice"
     },
     {
@@ -8406,7 +8406,7 @@
       "source_file": "backend/app/progression/domain_service.py",
       "source_location": "L35",
       "id": "progression_domain_service_progressiondomainservice_init",
-      "community": 9,
+      "community": 53,
       "norm_label": ".__init__()"
     },
     {
@@ -8415,7 +8415,7 @@
       "source_file": "backend/app/progression/domain_service.py",
       "source_location": "L38",
       "id": "progression_domain_service_progressiondomainservice_award_xp",
-      "community": 9,
+      "community": 53,
       "norm_label": ".award_xp()"
     },
     {
@@ -8424,7 +8424,7 @@
       "source_file": "backend/app/progression/domain_service.py",
       "source_location": "L92",
       "id": "progression_domain_service_progressiondomainservice_get_progression",
-      "community": 9,
+      "community": 53,
       "norm_label": ".get_progression()"
     },
     {
@@ -8433,7 +8433,7 @@
       "source_file": "backend/app/progression/domain_service.py",
       "source_location": "L108",
       "id": "progression_domain_service_progressiondomainservice_award_championship_completion",
-      "community": 9,
+      "community": 53,
       "norm_label": ".award_championship_completion()"
     },
     {
@@ -8451,7 +8451,7 @@
       "source_file": "backend/app/progression/schemas.py",
       "source_location": "L1",
       "id": "backend_app_progression_schemas_py",
-      "community": 9,
+      "community": 53,
       "norm_label": "schemas.py"
     },
     {
@@ -8460,7 +8460,7 @@
       "source_file": "backend/app/progression/schemas.py",
       "source_location": "L6",
       "id": "progression_schemas_levelupevent",
-      "community": 9,
+      "community": 53,
       "norm_label": "levelupevent"
     },
     {
@@ -8469,7 +8469,7 @@
       "source_file": "backend/app/progression/schemas.py",
       "source_location": "L12",
       "id": "progression_schemas_progressionresponse",
-      "community": 9,
+      "community": 53,
       "norm_label": "progressionresponse"
     },
     {
@@ -9558,7 +9558,7 @@
       "source_file": "backend/app/races/domain_service.py",
       "source_location": "L1",
       "id": "backend_app_races_domain_service_py",
-      "community": 0,
+      "community": 161,
       "norm_label": "domain_service.py"
     },
     {
@@ -9567,7 +9567,7 @@
       "source_file": "backend/app/races/domain_service.py",
       "source_location": "L31",
       "id": "races_domain_service_generate_training_problems",
-      "community": 0,
+      "community": 161,
       "norm_label": "_generate_training_problems()"
     },
     {
@@ -9619,9 +9619,9 @@
       "label": ".persist_race()",
       "file_type": "code",
       "source_file": "backend/app/races/domain_service.py",
-      "source_location": "L358",
+      "source_location": "L357",
       "id": "races_domain_service_racedomainservice_persist_race",
-      "community": 9,
+      "community": 53,
       "norm_label": ".persist_race()"
     },
     {
@@ -9783,7 +9783,7 @@
       "source_file": "backend/app/races/repository.py",
       "source_location": "L1",
       "id": "backend_app_races_repository_py",
-      "community": 0,
+      "community": 131,
       "norm_label": "repository.py"
     },
     {
@@ -9792,7 +9792,7 @@
       "source_file": "backend/app/races/repository.py",
       "source_location": "L25",
       "id": "races_repository_racerepository",
-      "community": 0,
+      "community": 131,
       "norm_label": "racerepository"
     },
     {
@@ -9801,7 +9801,7 @@
       "source_file": "backend/app/races/repository.py",
       "source_location": "L26",
       "id": "races_repository_racerepository_create",
-      "community": 0,
+      "community": 131,
       "norm_label": ".create()"
     },
     {
@@ -9810,7 +9810,7 @@
       "source_file": "backend/app/races/repository.py",
       "source_location": "L27",
       "id": "races_repository_racerepository_create_session",
-      "community": 0,
+      "community": 131,
       "norm_label": ".create_session()"
     },
     {
@@ -9819,7 +9819,7 @@
       "source_file": "backend/app/races/repository.py",
       "source_location": "L30",
       "id": "races_repository_racerepository_get_session",
-      "community": 0,
+      "community": 131,
       "norm_label": ".get_session()"
     },
     {
@@ -9828,7 +9828,7 @@
       "source_file": "backend/app/races/repository.py",
       "source_location": "L31",
       "id": "races_repository_racerepository_get_session_for_update",
-      "community": 0,
+      "community": 131,
       "norm_label": ".get_session_for_update()"
     },
     {
@@ -9837,7 +9837,7 @@
       "source_file": "backend/app/races/repository.py",
       "source_location": "L32",
       "id": "races_repository_racerepository_list_answers",
-      "community": 0,
+      "community": 131,
       "norm_label": ".list_answers()"
     },
     {
@@ -9846,7 +9846,7 @@
       "source_file": "backend/app/races/repository.py",
       "source_location": "L33",
       "id": "races_repository_racerepository_submit_answer",
-      "community": 0,
+      "community": 131,
       "norm_label": ".submit_answer()"
     },
     {
@@ -9855,7 +9855,7 @@
       "source_file": "backend/app/races/repository.py",
       "source_location": "L40",
       "id": "races_repository_racerepository_save_result_response",
-      "community": 0,
+      "community": 131,
       "norm_label": ".save_result_response()"
     },
     {
@@ -9889,7 +9889,7 @@
       "label": ".create_session()",
       "file_type": "code",
       "source_file": "backend/app/races/repository.py",
-      "source_location": "L104",
+      "source_location": "L109",
       "id": "races_repository_sqlalchemyracerepository_create_session",
       "community": 2,
       "norm_label": ".create_session()"
@@ -9898,7 +9898,7 @@
       "label": ".get_session()",
       "file_type": "code",
       "source_file": "backend/app/races/repository.py",
-      "source_location": "L166",
+      "source_location": "L171",
       "id": "races_repository_sqlalchemyracerepository_get_session",
       "community": 0,
       "norm_label": ".get_session()"
@@ -9907,7 +9907,7 @@
       "label": ".get_session_for_update()",
       "file_type": "code",
       "source_file": "backend/app/races/repository.py",
-      "source_location": "L170",
+      "source_location": "L175",
       "id": "races_repository_sqlalchemyracerepository_get_session_for_update",
       "community": 0,
       "norm_label": ".get_session_for_update()"
@@ -9916,7 +9916,7 @@
       "label": ".list_answers()",
       "file_type": "code",
       "source_file": "backend/app/races/repository.py",
-      "source_location": "L176",
+      "source_location": "L181",
       "id": "races_repository_sqlalchemyracerepository_list_answers",
       "community": 0,
       "norm_label": ".list_answers()"
@@ -9925,7 +9925,7 @@
       "label": ".submit_answer()",
       "file_type": "code",
       "source_file": "backend/app/races/repository.py",
-      "source_location": "L184",
+      "source_location": "L189",
       "id": "races_repository_sqlalchemyracerepository_submit_answer",
       "community": 0,
       "norm_label": ".submit_answer()"
@@ -9934,7 +9934,7 @@
       "label": ".save_result_response()",
       "file_type": "code",
       "source_file": "backend/app/races/repository.py",
-      "source_location": "L321",
+      "source_location": "L326",
       "id": "races_repository_sqlalchemyracerepository_save_result_response",
       "community": 0,
       "norm_label": ".save_result_response()"
@@ -10656,7 +10656,7 @@
       "source_file": "backend/application/manage_child_profiles.py",
       "source_location": "L19",
       "id": "application_manage_child_profiles_managechildprofilesusecase_create",
-      "community": 12,
+      "community": 2,
       "norm_label": ".create()"
     },
     {
@@ -10683,7 +10683,7 @@
       "source_file": "backend/application/assign_legacy_child_data.py",
       "source_location": "L1",
       "id": "backend_application_assign_legacy_child_data_py",
-      "community": 12,
+      "community": 139,
       "norm_label": "assign_legacy_child_data.py"
     },
     {
@@ -10692,7 +10692,7 @@
       "source_file": "backend/application/assign_legacy_child_data.py",
       "source_location": "L32",
       "id": "application_assign_legacy_child_data_assignlegacychilddatausecase",
-      "community": 12,
+      "community": 139,
       "norm_label": "assignlegacychilddatausecase"
     },
     {
@@ -10701,7 +10701,7 @@
       "source_file": "backend/application/assign_legacy_child_data.py",
       "source_location": "L33",
       "id": "application_assign_legacy_child_data_assignlegacychilddatausecase_init",
-      "community": 12,
+      "community": 139,
       "norm_label": ".__init__()"
     },
     {
@@ -10710,7 +10710,7 @@
       "source_file": "backend/application/assign_legacy_child_data.py",
       "source_location": "L36",
       "id": "application_assign_legacy_child_data_assignlegacychilddatausecase_list_unassigned",
-      "community": 12,
+      "community": 139,
       "norm_label": ".list_unassigned()"
     },
     {
@@ -10719,7 +10719,7 @@
       "source_file": "backend/application/assign_legacy_child_data.py",
       "source_location": "L75",
       "id": "application_assign_legacy_child_data_assignlegacychilddatausecase_execute",
-      "community": 12,
+      "community": 139,
       "norm_label": ".execute()"
     },
     {
@@ -11050,7 +11050,7 @@
       "label": "RedisClient",
       "file_type": "code",
       "source_file": "backend/infrastructure/rate_limiting.py",
-      "source_location": "L8",
+      "source_location": "L9",
       "id": "infrastructure_rate_limiting_redisclient",
       "community": 144,
       "norm_label": "redisclient"
@@ -11059,7 +11059,7 @@
       "label": ".eval()",
       "file_type": "code",
       "source_file": "backend/infrastructure/rate_limiting.py",
-      "source_location": "L9",
+      "source_location": "L10",
       "id": "infrastructure_rate_limiting_redisclient_eval",
       "community": 144,
       "norm_label": ".eval()"
@@ -11068,7 +11068,7 @@
       "label": ".aclose()",
       "file_type": "code",
       "source_file": "backend/infrastructure/rate_limiting.py",
-      "source_location": "L10",
+      "source_location": "L11",
       "id": "infrastructure_rate_limiting_redisclient_aclose",
       "community": 144,
       "norm_label": ".aclose()"
@@ -11077,7 +11077,7 @@
       "label": "RedisRateLimiter",
       "file_type": "code",
       "source_file": "backend/infrastructure/rate_limiting.py",
-      "source_location": "L22",
+      "source_location": "L23",
       "id": "infrastructure_rate_limiting_redisratelimiter",
       "community": 144,
       "norm_label": "redisratelimiter"
@@ -11086,7 +11086,7 @@
       "label": ".__init__()",
       "file_type": "code",
       "source_file": "backend/infrastructure/rate_limiting.py",
-      "source_location": "L23",
+      "source_location": "L24",
       "id": "infrastructure_rate_limiting_redisratelimiter_init",
       "community": 144,
       "norm_label": ".__init__()"
@@ -11095,7 +11095,7 @@
       "label": ".close()",
       "file_type": "code",
       "source_file": "backend/infrastructure/rate_limiting.py",
-      "source_location": "L26",
+      "source_location": "L27",
       "id": "infrastructure_rate_limiting_redisratelimiter_close",
       "community": 144,
       "norm_label": ".close()"
@@ -11104,7 +11104,7 @@
       "label": ".enforce()",
       "file_type": "code",
       "source_file": "backend/infrastructure/rate_limiting.py",
-      "source_location": "L29",
+      "source_location": "L30",
       "id": "infrastructure_rate_limiting_redisratelimiter_enforce",
       "community": 144,
       "norm_label": ".enforce()"
@@ -11268,7 +11268,7 @@
       "source_file": "backend/infrastructure/storage/interfaces.py",
       "source_location": "L1",
       "id": "backend_infrastructure_storage_interfaces_py",
-      "community": 171,
+      "community": 132,
       "norm_label": "interfaces.py"
     },
     {
@@ -11277,7 +11277,7 @@
       "source_file": "backend/infrastructure/storage/interfaces.py",
       "source_location": "L6",
       "id": "storage_interfaces_objectstorage",
-      "community": 171,
+      "community": 132,
       "norm_label": "objectstorage"
     },
     {
@@ -11286,7 +11286,7 @@
       "source_file": "backend/infrastructure/storage/interfaces.py",
       "source_location": "L7",
       "id": "storage_interfaces_objectstorage_upload_png",
-      "community": 171,
+      "community": 132,
       "norm_label": ".upload_png()"
     },
     {
@@ -36336,6 +36336,17 @@
       "confidence_score": 1.0,
       "source": "race_raceengine_racesummaryerror",
       "target": "race_raceengine_racesummaryerror_constructor"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/engine/race/hooks/useRaceEngine.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "frontend_src_engine_race_hooks_useraceengine_ts",
+      "target": "race_raceengine_raceengine",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports",
@@ -62533,5 +62544,5 @@
       "source_file": "initial_spec/"
     }
   ],
-  "built_at_commit": "7010025f2114f90c513106d2b815c2540262001f"
+  "built_at_commit": "def77459ab81f33828947114bfaa0ef12543f8ff"
 }

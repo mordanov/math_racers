@@ -105,6 +105,64 @@ audit item open until the checks in the last column pass.
 
 ## Blocked acceptance checks
 
+### Follow-up verification on 2026-10-10
+
+- **T063 complete:** the PostgreSQL 16 downgrade/upgrade round trip and dump
+  restore with representative legacy rows are recorded in Local validation
+  evidence above. The restore used PostgreSQL 16-compatible tools and verified
+  the checksum and account, child, race, answer, and progression counts.
+- **T064 measured; target acceptance remains partial:** on this Apple Silicon development machine,
+  `generate_problem_set(tier=2, count=8)` ran 1,000 times with a median of
+  0.0441 ms, p95 of 0.0722 ms, and maximum of 0.4688 ms. This local measurement
+  is below the 1 ms generation target. In an isolated Compose project using
+  `.env.example` and separate PostgreSQL/Redis volumes, backend cold startup
+  from container start to `Application startup complete` took 4.89 s; a warm
+  restart took 3.59 s, both above the 3 s goal. Five local `/health` requests
+  had a median 5.56 ms total response time. The endpoint returned HTTP 200 but
+  reported `storage: unavailable` because no object store was configured.
+  Production frontend build completed in 0.931 s; this is build time, not race
+  loading. On `https://mathracers.miveralta.ru`, five read-only curl samples
+  reported median TTFB/total of 241/241.5 ms for `/`, 232.7 ms for `/health`,
+  297.5/527.9 ms for the JavaScript bundle (322,389 bytes), and 219.3/219.9 ms
+  for the stylesheet (278 bytes). These network timings do not measure browser
+  paint or authenticated race loading. Race loading and FPS remain unverified:
+  those require a designated test account and an active race on target hardware.
+- **T065 still open; partial browser evidence only:** on 2026-10-10, Chrome
+  154.0.8037.98 was used through the DevTools protocol against the deployed
+  public login page and the local Vite login page. No form was submitted. The
+  browser accessibility tree exposed the page heading, labelled Email and
+  Password fields, Log In button, and Register link. Keyboard focus advanced
+  through Email, Password, Log In, and Register in order. With reduced motion
+  emulated, the media query was active; existing `RaceSetupPage` and
+  `RaceScreenPage` tests cover keyboard submission and reduced-motion logic.
+  This did not validate race animations in an authenticated browser session.
+- The browser contrast smoke check found the deployed primary button text and
+  Register link at 3.34:1, and the input border at 1.29:1. On this branch the
+  shared primary, focus, and border tokens were darkened to pass their
+  applicable checks: primary button text 4.82:1 (hover 5.36:1, active 6.71:1),
+  focus indicator 6.71:1, and input border 3.54:1 against white. Five
+  `tokens.test.ts` assertions and the targeted RaceSetup/RaceScreen/token tests
+  passed (37 tests total). These fixes are not deployed yet.
+- The full documented matrix remains incomplete. Safari WebDriver could not be
+  authorized in the unattended macOS session; Edge and Firefox drivers were
+  unavailable. No tablet or screen-reader acceptance environment or
+  designated test account was available, so VoiceOver/manual announcements,
+  contrast and keyboard acceptance on authenticated changed screens, and
+  cross-browser race-flow checks remain unverified. The Chrome accessibility
+  tree is not a substitute for a screen-reader pass. Keep T065 unchecked.
+- Before the accessibility color-token update, follow-up regression checks
+  passed: backend unit tests (123), frontend Vitest tests (378), mypy, Ruff,
+  Black, TypeScript, ESLint, and Prettier. The targeted race domain/repository
+  tests also passed (26).
+- After the color-token update, the full frontend Vitest suite passed (383
+  tests in 54 files), the frontend production build passed, and the targeted
+  RaceSetup/RaceScreen/token suite passed (37 tests). `git diff --check` passed.
+- **T068 complete:** PR #25 was merged after the full implementation diff was
+  reviewed. That review identified the partial-offline-answer persistence bug
+  fixed in this follow-up; the frontend callback typing was also tightened to
+  match the server-answer timing data it already forwards. `git diff --check`
+  passes for the current follow-up changes.
+
 `docker-compose` 2.37.1 works. The backend and worker images built, and the
 Compose health check passed when `HEALTH_URL=http://localhost:8000/health` was
 set. The default health check uses port 80, but this Compose file exposes the

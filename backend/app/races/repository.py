@@ -83,8 +83,13 @@ class SQLAlchemyRaceRepository:
             )
             self._session.add(participant)
 
-        if request.mode == "training" and not await self.list_answers(existing.id):
+        if request.mode == "training":
+            saved_answer_indexes = {
+                answer.answer_index for answer in await self.list_answers(existing.id)
+            }
             for index, answer in enumerate(request.answers):
+                if index in saved_answer_indexes:
+                    continue
                 self._session.add(
                     RaceAnswer(
                         race_id=existing.id,

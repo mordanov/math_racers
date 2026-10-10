@@ -1,16 +1,16 @@
 # Graph Report - math-racers  (2026-10-10)
 
 ## Corpus Check
-- 273 files · ~102,895 words
+- 273 files · ~102,959 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2815 nodes · 3605 edges · 380 communities (195 shown, 185 thin omitted)
+- 2815 nodes · 3606 edges · 384 communities (198 shown, 186 thin omitted)
 - Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 280 edges (avg confidence: 0.74)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `7010025f`
+- Built from commit: `def77459`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -87,32 +87,37 @@
 - [[_COMMUNITY_Community 119|Community 119]]
 - [[_COMMUNITY_Community 120|Community 120]]
 - [[_COMMUNITY_Community 121|Community 121]]
+- [[_COMMUNITY_Community 122|Community 122]]
 - [[_COMMUNITY_Community 123|Community 123]]
+- [[_COMMUNITY_Community 124|Community 124]]
 - [[_COMMUNITY_Community 125|Community 125]]
 - [[_COMMUNITY_Community 126|Community 126]]
+- [[_COMMUNITY_Community 127|Community 127]]
 - [[_COMMUNITY_Community 128|Community 128]]
+- [[_COMMUNITY_Community 129|Community 129]]
 - [[_COMMUNITY_Community 130|Community 130]]
+- [[_COMMUNITY_Community 131|Community 131]]
+- [[_COMMUNITY_Community 132|Community 132]]
 - [[_COMMUNITY_Community 133|Community 133]]
+- [[_COMMUNITY_Community 134|Community 134]]
 - [[_COMMUNITY_Community 135|Community 135]]
 - [[_COMMUNITY_Community 136|Community 136]]
 - [[_COMMUNITY_Community 137|Community 137]]
 - [[_COMMUNITY_Community 138|Community 138]]
+- [[_COMMUNITY_Community 139|Community 139]]
 - [[_COMMUNITY_Community 141|Community 141]]
 - [[_COMMUNITY_Community 142|Community 142]]
-- [[_COMMUNITY_Community 143|Community 143]]
 - [[_COMMUNITY_Community 144|Community 144]]
 - [[_COMMUNITY_Community 145|Community 145]]
 - [[_COMMUNITY_Community 146|Community 146]]
 - [[_COMMUNITY_Community 147|Community 147]]
 - [[_COMMUNITY_Community 148|Community 148]]
 - [[_COMMUNITY_Community 149|Community 149]]
-- [[_COMMUNITY_Community 150|Community 150]]
 - [[_COMMUNITY_Community 152|Community 152]]
 - [[_COMMUNITY_Community 153|Community 153]]
 - [[_COMMUNITY_Community 154|Community 154]]
 - [[_COMMUNITY_Community 155|Community 155]]
 - [[_COMMUNITY_Community 156|Community 156]]
-- [[_COMMUNITY_Community 157|Community 157]]
 - [[_COMMUNITY_Community 158|Community 158]]
 - [[_COMMUNITY_Community 159|Community 159]]
 - [[_COMMUNITY_Community 160|Community 160]]
@@ -123,7 +128,6 @@
 - [[_COMMUNITY_Community 165|Community 165]]
 - [[_COMMUNITY_Community 166|Community 166]]
 - [[_COMMUNITY_Community 167|Community 167]]
-- [[_COMMUNITY_Community 168|Community 168]]
 - [[_COMMUNITY_Community 169|Community 169]]
 - [[_COMMUNITY_Community 170|Community 170]]
 - [[_COMMUNITY_Community 171|Community 171]]
@@ -375,19 +379,19 @@
 - **SDD sprint ledgers** — s1, s2, s3 [INFERRED 0.80]
 - **Creative documentation set** — gdd, art, prompt, econ [INFERRED 0.75]
 
-## Communities (380 total, 185 thin omitted)
+## Communities (384 total, 186 thin omitted)
 
 ### Community 0 - "Community 0"
-Cohesion: 0.05
-Nodes (33): SubmitRaceResultUseCase, TierConfig, Operation, Problem, ProblemSet, _generate_training_problems(), RaceDomainService, RaceRepository (+25 more)
+Cohesion: 0.12
+Nodes (10): SubmitRaceResultUseCase, TierConfig, Operation, Problem, ProblemSet, RaceDomainService, SQLAlchemyRaceRepository, create_race() (+2 more)
 
 ### Community 1 - "Community 1"
-Cohesion: 0.15
-Nodes (17): Account, AccountRole, ApprovalStatus, RefreshToken, PlayerAchievement, Base, ChildProfile, Base (+9 more)
+Cohesion: 0.12
+Nodes (20): Account, AccountRole, ApprovalStatus, RefreshToken, PlayerAchievement, Base, Championship, ChampionshipRace (+12 more)
 
 ### Community 2 - "Community 2"
-Cohesion: 0.14
-Nodes (11): Exception, DomainError, LastAdministratorError, NotFoundError, An invariant was violated or input failed domain-level validation., Base class for all domain errors.      Carries an error_code used by the HTTP er, The requested entity does not exist., Missing or invalid credentials — HTTP 401. (+3 more)
+Cohesion: 0.12
+Nodes (13): Exception, ConflictError, DomainError, LastAdministratorError, NotFoundError, An invariant was violated or input failed domain-level validation., Base class for all domain errors.      Carries an error_code used by the HTTP er, The requested entity does not exist. (+5 more)
 
 ### Community 3 - "Community 3"
 Cohesion: 0.19
@@ -398,8 +402,8 @@ Cohesion: 0.05
 Nodes (38): dependencies, react, react-dom, react-router-dom, devDependencies, eslint, eslint-config-prettier, happy-dom (+30 more)
 
 ### Community 6 - "Community 6"
-Cohesion: 0.10
-Nodes (14): ErrorState(), ErrorStateProps, getChildFriendlyMessage(), onRetry, user, APIClient, APIError, delay() (+6 more)
+Cohesion: 0.14
+Nodes (13): ErrorState(), ErrorStateProps, getChildFriendlyMessage(), onRetry, user, APIError, delay(), check (+5 more)
 
 ### Community 7 - "Community 7"
 Cohesion: 0.06
@@ -410,44 +414,44 @@ Cohesion: 0.07
 Nodes (14): AchievementDef, get_by_key(), AchievementDomainService, _count_races(), _pred_first_race(), _to_response(), AchievementRepository, SQLAlchemyAchievementRepository (+6 more)
 
 ### Community 9 - "Community 9"
-Cohesion: 0.07
-Nodes (17): _build_standings(), ChampionshipDomainService, _points_for_position(), _to_response(), _calculate_xp_delta(), _compute_level(), ProgressionDomainService, _xp_to_next_level() (+9 more)
+Cohesion: 0.08
+Nodes (9): ChampionshipRepository, SQLAlchemyChampionshipRepository, ProgressionRepository, SQLAlchemyProgressionRepository, create_championship(), get_championship(), record_championship_race(), _service() (+1 more)
 
 ### Community 11 - "Community 11"
 Cohesion: 0.18
 Nodes (12): fmtPct(), StatisticsPage(), mockHistory, mockStats, AvatarStats, fetchHistory(), fetchPlayerStats(), fetchWeeklySummary() (+4 more)
 
 ### Community 12 - "Community 12"
-Cohesion: 0.14
-Nodes (9): AssignLegacyChildDataUseCase, ManageChildProfilesUseCase, ConflictError, A duplicate or conflicting entity already exists., assign_legacy_data(), create_child_profile(), delete_child_profile(), list_child_profiles() (+1 more)
+Cohesion: 0.16
+Nodes (8): ManageChildProfilesUseCase, SQLAlchemyChildProfileRepository, assign_legacy_data(), create_child_profile(), delete_child_profile(), export_child_data(), list_child_profiles(), list_unassigned_legacy_data()
 
 ### Community 13 - "Community 13"
 Cohesion: 0.08
 Nodes (22): getBadgeUrl(), KNOWN_BADGE_IDS, AchievementListResponse, PlayerAchievementListResponse, Achievement, PlayerAchievement, pending, summary (+14 more)
 
 ### Community 14 - "Community 14"
-Cohesion: 0.22
-Nodes (7): b64url, HEADER, { mockSetAuthToken }, PAYLOAD, payloadObj, TestConsumer(), user
+Cohesion: 0.17
+Nodes (16): clampTier(), selectTier(), compute(), generateProblemSet(), isDuplicate(), pickOperands(), pickOperation(), randomInt() (+8 more)
 
 ### Community 15 - "Community 15"
 Cohesion: 0.10
 Nodes (4): Avatar, AvatarPortrait, GenerationJob, SQLAlchemyAvatarRepository
 
 ### Community 16 - "Community 16"
-Cohesion: 0.19
-Nodes (7): SQLAlchemyChildProfileRepository, get_active_child_profile(), get_child_profile(), get_child_profile_dependency(), Validate profile exists and belongs to the authenticated account.     Administra, FastAPI dependency: resolves and validates child profile ownership., Resolve the active child from the shared API header.
+Cohesion: 0.38
+Nodes (6): get_active_child_profile(), get_child_profile(), get_child_profile_dependency(), Validate profile exists and belongs to the authenticated account.     Administra, FastAPI dependency: resolves and validates child profile ownership., Resolve the active child from the shared API header.
 
 ### Community 17 - "Community 17"
-Cohesion: 0.21
-Nodes (13): deleteAvatar(), listAvatars(), patchAvatar(), regeneratePortrait(), AvatarCreationResponse, AvatarDetail, AvatarListItem, AvatarStatus (+5 more)
+Cohesion: 0.22
+Nodes (12): deleteAvatar(), listAvatars(), patchAvatar(), regeneratePortrait(), AvatarCreationResponse, AvatarDetail, AvatarStatus, CreateAvatarRequest (+4 more)
 
 ### Community 18 - "Community 18"
 Cohesion: 0.10
 Nodes (18): baseState, { container }, EngineReturn, forceComplete, hasTransition, playSfx, playVoice, problem (+10 more)
 
 ### Community 19 - "Community 19"
-Cohesion: 0.15
-Nodes (11): NotificationToast(), NotificationToastProps, onClose, { unmount }, user, typeColor, fill, XPBar() (+3 more)
+Cohesion: 0.09
+Nodes (18): AchievementToast(), Props, NotificationToast(), NotificationToastProps, onClose, { unmount }, user, typeColor (+10 more)
 
 ### Community 20 - "Community 20"
 Cohesion: 0.11
@@ -455,11 +459,11 @@ Nodes (18): compilerOptions, allowImportingTsExtensions, isolatedModules, jsx, l
 
 ### Community 21 - "Community 21"
 Cohesion: 0.13
-Nodes (14): createAvatar(), pollGenerationJob(), { result }, useOffline(), ACCESSORIES_OPTIONS, AvatarCreatorPage(), CLOTHES_COLORS, EYE_COLORS (+6 more)
+Nodes (12): createAvatar(), pollGenerationJob(), ACCESSORIES_OPTIONS, CLOTHES_COLORS, EYE_COLORS, FUR_COLORS, HAIRSTYLES, SPECIES (+4 more)
 
 ### Community 22 - "Community 22"
-Cohesion: 0.13
-Nodes (11): select_tier(), PlayerNotFoundError, PlayerDifficultyRepository, SQLAlchemyPlayerDifficultyRepository, DifficultyResponse, Tier6SettingsResponse, NotFoundError, get_difficulty() (+3 more)
+Cohesion: 0.15
+Nodes (11): select_tier(), PlayerNotFoundError, PlayerDifficulty, SQLAlchemyPlayerDifficultyRepository, DifficultyResponse, Tier6SettingsResponse, NotFoundError, get_difficulty() (+3 more)
 
 ### Community 23 - "Community 23"
 Cohesion: 0.12
@@ -470,12 +474,12 @@ Cohesion: 0.15
 Nodes (13): ChildProfileListResponse, createChildProfile(), fetchChildProfiles(), Account, ChildProfile, avatarCircleStyle, cardStyle, ChildProfileSelectPage() (+5 more)
 
 ### Community 25 - "Community 25"
-Cohesion: 0.06
-Nodes (48): clampTier(), selectTier(), compute(), generateProblemSet(), isDuplicate(), pickOperands(), pickOperation(), randomInt() (+40 more)
+Cohesion: 0.13
+Nodes (24): Operation, OfflineResultSync(), SyncState, cacheChildData(), CachedChildData, CachedTrainingSession, deleteCachedChildData(), getCachedChildData() (+16 more)
 
 ### Community 26 - "Community 26"
-Cohesion: 0.09
-Nodes (21): AMBIENCE_FILES, applause, cheer, inst, { result }, { unmount }, useAmbienceManager(), Species (+13 more)
+Cohesion: 0.18
+Nodes (9): Species, inst, paths, { result }, species, unique, useVoicePlayer(), VoiceEmotion (+1 more)
 
 ### Community 27 - "Community 27"
 Cohesion: 0.13
@@ -486,20 +490,20 @@ Cohesion: 0.29
 Nodes (11): _backoff_seconds(), _call_image_api(), _call_llm(), _generate_thumbnails(), _llm_user_prompt(), Return seconds to sleep before the next attempt. attempt_just_failed is 1-indexe, Return seconds to sleep before the next attempt. attempt_just_failed is 1-indexe, _run_pipeline() (+3 more)
 
 ### Community 29 - "Community 29"
-Cohesion: 0.17
-Nodes (9): DuelConfig, BALANCED, PERSONALITIES, SLOW_STARTER, SPEEDSTER, STEADY, UNPREDICTABLE, AiPersonality (+1 more)
+Cohesion: 0.14
+Nodes (13): buildParticipants(), OP_SYMBOL, RaceScreenPage(), RaceScreenRouteState, DuelConfig, BALANCED, PERSONALITIES, SLOW_STARTER (+5 more)
 
 ### Community 30 - "Community 30"
-Cohesion: 0.50
-Nodes (3): pending, published, user
+Cohesion: 0.40
+Nodes (4): AvatarListItem, pending, published, user
 
 ### Community 31 - "Community 31"
 Cohesion: 0.09
 Nodes (7): SQLAlchemyAccountRepository, ApproveAccountUseCase, ListAccountsUseCase, RejectAccountUseCase, approve_account(), list_accounts(), reject_account()
 
 ### Community 32 - "Community 32"
-Cohesion: 0.23
-Nodes (7): useAuth(), RequireAuth(), RequireParent(), LoadingSpinner(), LoadingSpinnerProps, el, OfflineResultSync()
+Cohesion: 0.13
+Nodes (13): b64url, HEADER, { mockSetAuthToken }, PAYLOAD, payloadObj, TestConsumer(), user, useAuth() (+5 more)
 
 ### Community 33 - "Community 33"
 Cohesion: 0.10
@@ -510,12 +514,12 @@ Cohesion: 0.20
 Nodes (4): LoginUseCase, BaseSettings, Config, Environment
 
 ### Community 35 - "Community 35"
-Cohesion: 0.25
-Nodes (4): _seed_default_admin(), get_engine(), get_session(), _get_session_factory()
+Cohesion: 0.22
+Nodes (5): create_app(), _seed_default_admin(), get_engine(), get_session(), _get_session_factory()
 
 ### Community 36 - "Community 36"
-Cohesion: 0.22
-Nodes (7): create_app(), Recursively redact sensitive keys from a dict up to depth 5., Emit JSON log entries with all required fields., Configure the root logger with structured JSON output., _redact(), setup_logging(), StructuredFormatter
+Cohesion: 0.24
+Nodes (6): Recursively redact sensitive keys from a dict up to depth 5., Emit JSON log entries with all required fields., Configure the root logger with structured JSON output., _redact(), setup_logging(), StructuredFormatter
 
 ### Community 37 - "Community 37"
 Cohesion: 0.12
@@ -526,7 +530,7 @@ Cohesion: 0.20
 Nodes (8): cardStyle, fieldStyle, inputStyle, labelStyle, LoginPage(), pageStyle, mockLogin, user
 
 ### Community 39 - "Community 39"
-Cohesion: 0.32
+Cohesion: 0.24
 Nodes (4): AuthProvider(), root, routeConfig, router
 
 ### Community 40 - "Community 40"
@@ -553,6 +557,10 @@ Nodes (328): 10.10 Mathematics Achievements, 10.11 Collection Achievements, 10.1
 Cohesion: 0.18
 Nodes (9): MusicTrack, inst, { result }, TRACK_FILES, useAudioManager(), HomePage(), mockPlayMusic, mockStopMusic (+1 more)
 
+### Community 47 - "Community 47"
+Cohesion: 0.20
+Nodes (9): _favourite_operation(), _operation_extremes(), StatisticsDomainService, AvatarStatsResponse, HistoryResponse, PersonalRecordsResponse, PlayerStatsResponse, RaceSessionResponse (+1 more)
+
 ### Community 49 - "Community 49"
 Cohesion: 0.01
 Nodes (141): 10. Button States, 10. Camera, 10. Colour Philosophy, 10. Nose, 11. Lighting, 11. Mouth, 11. Palette Characteristics, 11. Primary Buttons (+133 more)
@@ -569,6 +577,10 @@ Nodes (87): 10. Feature Boundaries, 11. Change Scope, 12. Architectural Complian
 Cohesion: 0.29
 Nodes (6): clearIntervalSpy, pending, published, { result }, second, setIntervalSpy
 
+### Community 53 - "Community 53"
+Cohesion: 0.23
+Nodes (6): _calculate_xp_delta(), _compute_level(), ProgressionDomainService, _xp_to_next_level(), LevelUpEvent, ProgressionResponse
+
 ### Community 54 - "Community 54"
 Cohesion: 0.04
 Nodes (47): ADR-005 — Infrastructure Architecture, Advantages, Architecture Decision Record, Background Workers, Backup Strategy, CI/CD, Cloud Independence, code:block1 (Browser) (+39 more)
@@ -582,8 +594,8 @@ Cohesion: 0.40
 Nodes (4): Card(), CardProps, onClick, user
 
 ### Community 57 - "Community 57"
-Cohesion: 0.08
-Nodes (29): config, engine, { result }, state, trainingConfig, useRaceEngine(), AiObstacleResult, lerp() (+21 more)
+Cohesion: 0.07
+Nodes (26): config, engine, { result }, state, trainingConfig, useRaceEngine(), RaceScreen(), GameClock (+18 more)
 
 ### Community 58 - "Community 58"
 Cohesion: 0.05
@@ -602,8 +614,8 @@ Cohesion: 0.67
 Nodes (3): build_character_prompt(), Build a deterministic image generation prompt from avatar metadata.      attempt, VersionedPrompt
 
 ### Community 113 - "Community 113"
-Cohesion: 0.15
-Nodes (18): BaseModel, ChampionshipResponse, CreateChampionshipRequest, RaceParticipantEntry, RecordRaceRequest, StandingEntry, CustomTierConfigRequest, OperationAnswerRequest (+10 more)
+Cohesion: 0.09
+Nodes (27): AccountResponse, LoginRequest, RegisterRequest, BaseModel, ChampionshipResponse, CreateChampionshipRequest, RaceParticipantEntry, RecordRaceRequest (+19 more)
 
 ### Community 114 - "Community 114"
 Cohesion: 0.08
@@ -618,24 +630,32 @@ Cohesion: 0.09
 Nodes (21): Architecture Decision Record, Authentication, Background Jobs, Caching, Configuration, Deployment, Design Goals, Feature Flags (+13 more)
 
 ### Community 117 - "Community 117"
-Cohesion: 0.15
-Nodes (15): assignLegacyData(), deleteChildProfile(), exportChildData(), LegacyRecord, LegacyRecordAssignment, LegacyRecordType, listLegacyData(), fmtPct() (+7 more)
+Cohesion: 0.11
+Nodes (19): assignLegacyData(), deleteChildProfile(), exportChildData(), LegacyRecord, LegacyRecordAssignment, LegacyRecordType, listLegacyData(), { result } (+11 more)
 
 ### Community 118 - "Community 118"
-Cohesion: 0.08
-Nodes (22): AchievementToast(), Props, Button(), ButtonProps, btn, onClick, playSfx, { rerender } (+14 more)
-
-### Community 120 - "Community 120"
 Cohesion: 0.12
-Nodes (4): AvatarStats, PlayerStats, RaceSession, StatisticsRepository
+Nodes (15): Button(), ButtonProps, btn, onClick, playSfx, { rerender }, user, variantStyles (+7 more)
+
+### Community 119 - "Community 119"
+Cohesion: 0.38
+Nodes (12): _check_access(), export_my_csv(), get_avatar_statistics(), get_history(), get_my_history(), get_my_personal_records(), get_my_statistics(), get_my_weekly_summary() (+4 more)
 
 ### Community 121 - "Community 121"
 Cohesion: 0.12
 Nodes (16): API Independence, Architecture Decision Record, Code Quality, Deterministic Gameplay, Documentation, Error Handling Philosophy, Framework Independence, Goals (+8 more)
 
+### Community 122 - "Community 122"
+Cohesion: 0.17
+Nodes (9): btn, maxOperand, playSfx, published, user, createRaceSession(), CreateRaceSessionParams, CreateRaceSessionResult (+1 more)
+
 ### Community 123 - "Community 123"
 Cohesion: 0.18
 Nodes (11): AvatarDomainService, _enqueue_job(), _portrait_summary(), _to_detail(), _to_list_item(), AvatarDetailResponse, get_account_repository(), get_current_account() (+3 more)
+
+### Community 124 - "Community 124"
+Cohesion: 0.22
+Nodes (7): AMBIENCE_FILES, applause, cheer, inst, { result }, { unmount }, useAmbienceManager()
 
 ### Community 125 - "Community 125"
 Cohesion: 0.14
@@ -649,13 +669,25 @@ Nodes (10): code:python ("""Unit tests — GenerationJob model includes retry st
 Cohesion: 0.17
 Nodes (11): code:typescript (// frontend/src/pages/ChildProfileSelectPage.test.tsx), code:typescript (// frontend/src/pages/ChildProfileSelectPage.tsx), code:typescript (// frontend/src/router.tsx), code:typescript (// frontend/src/main.tsx), code:typescript (// Modify frontend/src/router.test.tsx to mock AuthContext), code:bash (git add frontend/src/pages/ChildProfileSelectPage.tsx fronte), Dependencies & Execution Order, Notes (+3 more)
 
+### Community 129 - "Community 129"
+Cohesion: 0.39
+Nodes (4): _build_standings(), ChampionshipDomainService, _points_for_position(), _to_response()
+
 ### Community 130 - "Community 130"
 Cohesion: 0.18
 Nodes (6): AvatarCreationResponse, AvatarListItem, CreateAvatarRequest, JobStatusResponse, PatchAvatarRequest, PortraitSummary
 
+### Community 132 - "Community 132"
+Cohesion: 0.25
+Nodes (3): PlayerDifficultyRepository, Protocol, ObjectStorage
+
 ### Community 133 - "Community 133"
 Cohesion: 0.18
 Nodes (11): 1.7 Product Pillars, Collection, Competition, Creativity, Personal Attachment, Pillar 1, Pillar 2, Pillar 3 (+3 more)
+
+### Community 134 - "Community 134"
+Cohesion: 0.53
+Nodes (5): AiObstacleResult, lerp(), sampleResponseTime(), simulateAiObstacle(), speedMultiplier()
 
 ### Community 135 - "Community 135"
 Cohesion: 0.22
@@ -678,12 +710,8 @@ Cohesion: 0.25
 Nodes (8): Architectural Layers, code:block1 (Pages), code:block2 (Avatar Selection), code:block3 (Button), Components, Features, Pages, Shared UI
 
 ### Community 142 - "Community 142"
-Cohesion: 0.36
-Nodes (5): _avatar_record(), _championship_record(), ExportChildDataUseCase, _race_record(), export_child_data()
-
-### Community 143 - "Community 143"
-Cohesion: 0.18
-Nodes (4): Championship, ChampionshipRace, ChampionshipRepository, SQLAlchemyChampionshipRepository
+Cohesion: 0.43
+Nodes (4): _avatar_record(), _championship_record(), ExportChildDataUseCase, _race_record()
 
 ### Community 145 - "Community 145"
 Cohesion: 0.25
@@ -700,10 +728,6 @@ Nodes (7): Application Layer, Architectural Layers, code:block2 (Presentation), 
 ### Community 148 - "Community 148"
 Cohesion: 0.29
 Nodes (4): Execute the full avatar generation pipeline for a queued job., Execute the full avatar generation pipeline for a queued job., run_generation_job(), S3ObjectStorage
-
-### Community 150 - "Community 150"
-Cohesion: 0.29
-Nodes (5): ChildProfileListResponse, ChildProfileResponse, CreateChildProfileRequest, LegacyDataAssignmentRequest, LegacyRecordAssignment
 
 ### Community 152 - "Community 152"
 Cohesion: 0.29
@@ -730,8 +754,8 @@ Cohesion: 0.33
 Nodes (5): Completion checks, Priority, Purpose, Refactoring recommendations, Suggested boundaries
 
 ### Community 161 - "Community 161"
-Cohesion: 0.60
-Nodes (4): _create_rng(), OpponentResult, _simulate_opponent(), simulate_opponents()
+Cohesion: 0.39
+Nodes (5): _create_rng(), OpponentResult, _simulate_opponent(), simulate_opponents(), _generate_training_problems()
 
 ### Community 162 - "Community 162"
 Cohesion: 0.33
@@ -757,10 +781,6 @@ Nodes (6): 5.14 Educational Progression, code:block33 (3 + 2), code:block34 (8 +
 Cohesion: 0.33
 Nodes (6): 9.2 UX Philosophy, Animated, Colourful, Friendly, Large, Simple
 
-### Community 168 - "Community 168"
-Cohesion: 0.40
-Nodes (3): AccountResponse, LoginRequest, RegisterRequest
-
 ### Community 169 - "Community 169"
 Cohesion: 0.40
 Nodes (5): 1. Domain First, 2. Clean Architecture, 3. Domain Driven Design, Architectural Principles, code:block1 (Presentation)
@@ -768,10 +788,6 @@ Nodes (5): 1. Domain First, 2. Clean Architecture, 3. Domain Driven Design, Arch
 ### Community 170 - "Community 170"
 Cohesion: 0.40
 Nodes (5): AI Generation, Error Handling, Network, Unexpected, Validation
-
-### Community 171 - "Community 171"
-Cohesion: 0.22
-Nodes (3): AvatarGenerationProvider, Protocol, ObjectStorage
 
 ### Community 174 - "Community 174"
 Cohesion: 0.40
@@ -958,18 +974,18 @@ Cohesion: 0.67
 Nodes (3): code:text (Generate fifty encouraging messages shown after answering in), code:json ([), Encouragement Messages
 
 ## Knowledge Gaps
-- **1484 isolated node(s):** `name`, `version`, `private`, `node`, `dev` (+1479 more)
+- **1483 isolated node(s):** `name`, `version`, `private`, `node`, `dev` (+1478 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **185 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **186 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `PermissionError` connect `Community 123` to `Community 0`, `Community 33`, `Community 2`, `Community 161`, `Community 1`, `Community 34`, `Community 8`, `Community 9`, `Community 12`, `Community 142`, `Community 16`, `Community 22`?**
+- **Why does `PermissionError` connect `Community 123` to `Community 0`, `Community 33`, `Community 2`, `Community 129`, `Community 161`, `Community 1`, `Community 34`, `Community 8`, `Community 12`, `Community 16`, `Community 22`, `Community 119`?**
   _High betweenness centrality (0.010) - this node is a cross-community bridge._
-- **Why does `AvatarRepository` connect `Community 4` to `Community 171`, `Community 15`?**
+- **Why does `AvatarRepository` connect `Community 4` to `Community 132`, `Community 15`?**
   _High betweenness centrality (0.008) - this node is a cross-community bridge._
-- **Why does `StatisticsDomainService` connect `Community 0` to `Community 120`, `Community 2`?**
+- **Why does `StatisticsDomainService` connect `Community 47` to `Community 0`, `Community 2`, `Community 10`, `Community 119`, `Community 120`?**
   _High betweenness centrality (0.007) - this node is a cross-community bridge._
 - **Are the 27 inferred relationships involving `PermissionError` (e.g. with `_check_access()` and `get_player_achievements()`) actually correct?**
   _`PermissionError` has 27 INFERRED edges - model-reasoned connections that need verification._
@@ -978,4 +994,4 @@ _Questions this graph is uniquely positioned to answer:_
 - **Are the 21 inferred relationships involving `Base` (e.g. with `PlayerStats` and `AvatarStats`) actually correct?**
   _`Base` has 21 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `name`, `version`, `private` to the rest of the system?**
-  _1510 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _1509 weakly-connected nodes found - possible documentation gaps or missing edges._
