@@ -900,7 +900,7 @@
     "semantic_hash": "edf2a95293348944f8bc214f24b97546"
   },
   "/Users/aleksandr/Local/web-projects/math-racers/backend/app/avatars/generation_service.py": {
-    "mtime": 1791666369.604961,
+    "mtime": 1791669590.9484243,
     "ast_hash": "19299e008ffe50b6ec8ae249c8a8e667",
     "semantic_hash": ""
   },
@@ -1185,9 +1185,9 @@
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/index.html": {
-    "mtime": 1786261485.0102472,
-    "ast_hash": "1c60b168fd7592c2c0df569eb410b84e",
-    "semantic_hash": "1c60b168fd7592c2c0df569eb410b84e"
+    "mtime": 1791669860.0390823,
+    "ast_hash": "2c0681ff36e27288cb146c4cf8eba4d2",
+    "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/pnpm-workspace.yaml": {
     "mtime": 1791301217.0309303,
@@ -1435,7 +1435,7 @@
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/backend/infrastructure/database/models.py": {
-    "mtime": 1791666392.6817865,
+    "mtime": 1791669590.9487886,
     "ast_hash": "985fda2743303d217ef0201c61fb76dc",
     "semantic_hash": ""
   },
