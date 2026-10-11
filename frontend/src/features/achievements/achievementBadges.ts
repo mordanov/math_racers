@@ -1,6 +1,5 @@
 const KNOWN_BADGE_IDS = new Set([
-  '1-6',
-  '7-8',
+  'new_achievement',
   'champion',
   'first_race',
   'hidden_speedster',
@@ -12,6 +11,6 @@ const KNOWN_BADGE_IDS = new Set([
 ]);
 
 export function getBadgeUrl(achievementId: string): string {
-  const id = KNOWN_BADGE_IDS.has(achievementId) ? achievementId : '1-6';
+  const id = KNOWN_BADGE_IDS.has(achievementId) ? achievementId : 'new_achievement';
   return `/achievements/${id}.png`;
 }

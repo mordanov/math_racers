@@ -10,7 +10,7 @@ describe('getBadgeUrl', () => {
     expect(getBadgeUrl('level_10')).toBe('/achievements/level_10.png');
   });
 
-  it('falls back to 1-6.png for unknown achievement', () => {
-    expect(getBadgeUrl('unknown_achievement_xyz')).toBe('/achievements/1-6.png');
+  it('falls back to new_achievement.png for unknown achievement', () => {
+    expect(getBadgeUrl('unknown_achievement_xyz')).toBe('/achievements/new_achievement.png');
   });
 });

@@ -36,7 +36,8 @@
 - Test: inline — no separate test file needed (verified by dev server response)
 
 **Interfaces:**
-- Produces: `/audio/music_menu_1.wav`, `/audio/music_menu_2.wav`, `/audio/music_race_1.wav`, `/audio/music_race_2.wav`, `/audio/music_victory_1.wav`, `/audio/music_victory_2.wav`, `/achievements/1-6.png`, `/mainmenu.png`, `/loading.png`, `/stadium.png`, `/avatar_generation.jpeg` all served from `/`
+- Produces: `/audio/music_menu_1.wav`, `/audio/music_menu_2.wav`, `/audio/music_race_1.wav`, `/audio/music_race_2.wav`, `/audio/music_victory_1.wav`, `/audio/music_victory_2.wav`, `/achievements/
+`, `/mainmenu.png`, `/loading.png`, `/stadium.png`, `/avatar_generation.jpeg` all served from `/`
 
 - [ ] **Step 1: Update vite.config.ts to add publicDir**
 
@@ -504,8 +505,7 @@ Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
 
 **Interfaces:**
 - Achievement badge files at these paths (from publicDir):
-  - `/achievements/1-6.png` — achievements for ids: first_race, perfect_race (generic levels 1-6)
-  - `/achievements/7-8.png` — level 7-8
+  - `/achievements/new_achievement.png` — new achievement (or not found)
   - `/achievements/champion.png` — champion
   - `/achievements/first_race.png` — first race
   - `/achievements/hidden_speedster.png` — hidden speedster
@@ -518,7 +518,7 @@ Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
   ```typescript
   export function getBadgeUrl(achievementId: string): string
   ```
-  - Returns `/achievements/<id>.png` if a known match; falls back to `/achievements/1-6.png`
+  - Returns `/achievements/<id>.png` if a known match; falls back to `/achievements/new_achievement.png`
 
 - [ ] **Step 1: Write failing test**
 
@@ -536,8 +536,8 @@ describe('getBadgeUrl', () => {
     expect(getBadgeUrl('level_10')).toBe('/achievements/level_10.png');
   });
 
-  it('falls back to 1-6.png for unknown achievement', () => {
-    expect(getBadgeUrl('unknown_achievement_xyz')).toBe('/achievements/1-6.png');
+  it('falls back to new_achievement.png for unknown achievement', () => {
+    expect(getBadgeUrl('unknown_achievement_xyz')).toBe('/achievements/new_achievement.png');
   });
 });
 ```
@@ -552,8 +552,7 @@ Expected: FAIL — module not found
 ```typescript
 // frontend/src/features/achievements/achievementBadges.ts
 const KNOWN_BADGE_IDS = new Set([
-  '1-6',
-  '7-8',
+  'new_achievement',
   'champion',
   'first_race',
   'hidden_speedster',
@@ -565,7 +564,7 @@ const KNOWN_BADGE_IDS = new Set([
 ]);
 
 export function getBadgeUrl(achievementId: string): string {
-  const id = KNOWN_BADGE_IDS.has(achievementId) ? achievementId : '1-6';
+  const id = KNOWN_BADGE_IDS.has(achievementId) ? achievementId : 'new_achievement';
   return `/achievements/${id}.png`;
 }
 ```
