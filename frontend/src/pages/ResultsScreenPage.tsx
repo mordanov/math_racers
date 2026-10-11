@@ -321,7 +321,7 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
           role="alert"
           style={{ color: tokens.color.error, marginBottom: tokens.spacing.md, fontSize: 14 }}
         >
-          {t('Couldn't save results.')}
+          {t('Couldn’t save results.')}
           <button
             type="button"
             onClick={retry}
