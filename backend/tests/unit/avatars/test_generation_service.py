@@ -31,7 +31,15 @@ def test_validate_valid_image() -> None:
     img_bytes = _make_png_bytes(1024, "RGBA")
     result = _validate_image(img_bytes)
     assert result["dimensions"] is True
-    assert result["has_alpha"] is True
+    assert result["file_size"] is True
+    assert result["not_empty"] is True
+
+
+def test_validate_valid_image_rgb() -> None:
+    # DALL-E returns RGB (no alpha); validation must accept it
+    img_bytes = _make_png_bytes(1024, "RGB")
+    result = _validate_image(img_bytes)
+    assert result["dimensions"] is True
     assert result["file_size"] is True
     assert result["not_empty"] is True
 
@@ -42,12 +50,6 @@ def test_validate_wrong_dimensions() -> None:
     assert result["dimensions"] is False
 
 
-def test_validate_no_alpha() -> None:
-    img_bytes = _make_png_bytes(1024, "RGB")
-    result = _validate_image(img_bytes)
-    assert result["has_alpha"] is False
-
-
 def test_validate_corrupt_bytes() -> None:
     result = _validate_image(b"not-an-image")
     assert all(v is False for v in result.values())
@@ -56,7 +58,7 @@ def test_validate_corrupt_bytes() -> None:
 def test_validate_all_pass_returns_dict() -> None:
     img_bytes = _make_png_bytes(1024, "RGBA")
     result = _validate_image(img_bytes)
-    assert set(result.keys()) == {"dimensions", "has_alpha", "file_size", "not_empty"}
+    assert set(result.keys()) == {"dimensions", "file_size", "not_empty"}
 
 
 # ── _generate_thumbnails ──────────────────────────────────────────────────────
