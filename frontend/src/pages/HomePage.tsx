@@ -44,10 +44,11 @@ export default function HomePage() {
       >
         <h1
           style={{
-            fontSize: 40,
+            fontSize: tokens.fontSize.hero,
             fontWeight: 900,
             color: tokens.color.textPrimary,
             marginBottom: tokens.spacing.xl,
+            textShadow: '2px 2px 0 rgba(0,0,0,0.15)',
           }}
         >
           Math Racers

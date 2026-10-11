@@ -186,7 +186,9 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
             textAlign: 'center',
           }}
         >
-          <p style={{ fontSize: 28, fontWeight: 900, margin: 0 }}>{t('Level Up!')}</p>
+          <p style={{ fontSize: tokens.fontSize.xxl, fontWeight: 900, margin: 0 }}>
+            {t('Level Up!')}
+          </p>
           <p style={{ margin: `${tokens.spacing.xs}px 0 0` }}>
             {t('You reached Level {{level}}!', { level: currentLevel })}
           </p>
@@ -235,7 +237,7 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
                 <img
                   src={getBadgeUrl(a.key)}
                   alt={title}
-                  style={{ width: 64, height: 64, borderRadius: '50%' }}
+                  style={{ width: 80, height: 80, borderRadius: '50%' }}
                 />
                 <div
                   style={{
@@ -319,7 +321,7 @@ function ResultsScreen({ routeState }: { routeState: ResultsRouteState }) {
           role="alert"
           style={{ color: tokens.color.error, marginBottom: tokens.spacing.md, fontSize: 14 }}
         >
-          {t('Couldn’t save results.')}
+          {t('Couldn't save results.')}
           <button
             type="button"
             onClick={retry}

@@ -282,7 +282,7 @@ function RaceScreen({
                 <div
                   style={{
                     flex: 1,
-                    height: 24,
+                    height: 32,
                     background: tokens.color.background,
                     borderRadius: 999,
                     border: `1px solid ${tokens.color.border}`,
@@ -296,8 +296,8 @@ function RaceScreen({
                       left: `${pct}%`,
                       top: '50%',
                       transform: 'translate(-50%, -50%)',
-                      width: 20,
-                      height: 20,
+                      width: 28,
+                      height: 28,
                       borderRadius: '50%',
                       background: runner.isHuman
                         ? tokens.color.primary
@@ -366,7 +366,7 @@ function RaceScreen({
         >
           <p
             style={{
-              fontSize: 48,
+              fontSize: tokens.fontSize.hero,
               fontWeight: 900,
               color: tokens.color.textPrimary,
               margin: `0 0 ${tokens.spacing.md}px`,
