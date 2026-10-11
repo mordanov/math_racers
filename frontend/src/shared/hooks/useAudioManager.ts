@@ -69,7 +69,10 @@ export function useAudioManager() {
     const next = !readMuted();
     try {
       localStorage.setItem('settings.musicMuted', String(next));
-    } catch {}
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.warn('The music mute preference could not be saved in this browser.', error);
+    }
     setIsMuted(next);
     if (audioRef.current) audioRef.current.volume = readVolume();
     // notify other hook instances in the same window (e.g., currently-playing page component)
