@@ -85,7 +85,7 @@ export default function LoginPage() {
           style={{
             margin: `0 0 ${tokens.spacing.lg}px`,
             color: tokens.color.textPrimary,
-            fontSize: 28,
+            fontSize: tokens.fontSize.xl,
             fontWeight: 700,
           }}
         >
