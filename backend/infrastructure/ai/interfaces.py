@@ -4,7 +4,8 @@ from typing import Any, Protocol
 
 
 class AvatarGenerationProvider(Protocol):
-    image_model_version: str
+    @property
+    def image_model_version(self) -> str: ...
 
     async def generate_metadata(self, prompt: str) -> dict[str, Any]: ...
     async def generate_image(self, prompt: str) -> bytes: ...

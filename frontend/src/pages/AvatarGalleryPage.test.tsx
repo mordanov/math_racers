@@ -18,7 +18,7 @@ const published: AvatarListItem = {
     id: 'p1',
     version: 1,
     prompt_version: '1.0.0',
-    model_version: 'dall-e-3',
+    model_version: 'test-image-model',
     full_url: 'http://x.com/full.png',
     medium_url: 'http://x.com/medium.png',
     small_url: 'http://x.com/small.png',

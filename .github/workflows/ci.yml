@@ -167,7 +167,8 @@ jobs:
       - name: Build frontend image
         run: |
           VERSION=${{ github.sha }}
-          docker build -t math-racers/frontend:$VERSION ./frontend
+          docker build -f frontend/Dockerfile \
+            -t math-racers/frontend:$VERSION .
 
       # ── 8. Security scan ─────────────────────────────────────────────────────
       - name: Security scan — backend image (trivy)

@@ -1,0 +1,16 @@
+.git
+.github
+backend/
+docs/
+specs/
+scripts/
+tests/
+graphify-out/
+**/node_modules/
+**/dist/
+**/coverage/
+**/__pycache__/
+**/*.py[cod]
+.env
+.env.*
+*.log

@@ -48,7 +48,7 @@ build: ## Build container images (requires clean git tree)
 		exit 1; \
 	fi
 	VERSION=$(VERSION) docker build --build-arg VERSION=$(VERSION) -t math-racers/backend:$(VERSION) backend/
-	VERSION=$(VERSION) docker build -t math-racers/frontend:$(VERSION) frontend/
+	VERSION=$(VERSION) docker build -f frontend/Dockerfile -t math-racers/frontend:$(VERSION) .
 
 security-scan: ## Run security scans (trivy + pip-audit + npm audit)
 	trivy image math-racers/backend:$(VERSION)

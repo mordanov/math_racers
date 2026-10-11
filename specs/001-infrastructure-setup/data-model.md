@@ -22,6 +22,9 @@ variables. No defaults for secret fields.
 | `REDIS_URL` | `str` | Env | Redis DSN |
 | `JWT_SECRET` | `SecretStr` | Env | Signing key; rotation invalidates all sessions |
 | `OPENAI_API_KEY` | `SecretStr` | Env | AI provider key; never logged |
+| `OPENAI_AVATAR_METADATA_MODEL` | `str` | Env | OpenAI model for avatar metadata; default: `gpt-4o-mini` |
+| `OPENAI_AVATAR_IMAGE_MODEL` | `str` | Env | OpenAI image-generation model; default: `gpt-image-1` |
+| `OPENAI_AVATAR_SAFETY_MODEL` | `str` | Env | OpenAI image-safety model; default: `gpt-4o` |
 | `STORAGE_ENDPOINT` | `str` | Env | S3-compatible endpoint |
 | `STORAGE_ACCESS_KEY` | `SecretStr` | Env | Storage credentials |
 | `STORAGE_SECRET_KEY` | `SecretStr` | Env | Storage credentials |
