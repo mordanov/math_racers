@@ -1,10 +1,8 @@
 name: CI
 
 on:
-  push:
-    branches: ["**"]
   pull_request:
-    branches-ignore: ["main"]
+    branches: [main]
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -247,10 +245,3 @@ jobs:
             { echo "ERROR: HSTS header missing from production nginx config"; exit 1; }
           echo "HSTS OK: $HSTS"
 
-      # ── 9. Deploy (default branch only) ─────────────────────────────────────
-      - name: Deploy
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: |
-          echo "Deploying version ${{ github.sha }}"
-          # Replace with actual deployment command
-          # e.g.: VERSION=${{ github.sha }} ssh deploy@server docker compose pull && docker compose up -d
