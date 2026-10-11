@@ -15,6 +15,7 @@ import RegisterPage from './pages/RegisterPage';
 import ResultsScreenPage from './pages/ResultsScreenPage';
 import SettingsPage from './pages/SettingsPage';
 import StatisticsPage from './pages/StatisticsPage';
+import RequireChildProfile from './infrastructure/auth/RequireChildProfile';
 
 export const routeConfig: RouteObject[] = [
   {
@@ -27,8 +28,13 @@ export const routeConfig: RouteObject[] = [
         children: [
           { path: '/child-profiles', element: <ChildProfileSelectPage /> },
           { index: true, element: <HomePage /> },
-          { path: '/avatars', element: <AvatarGalleryPage /> },
-          { path: '/avatars/new', element: <AvatarCreatorPage /> },
+          {
+            element: <RequireChildProfile />,
+            children: [
+              { path: '/avatars', element: <AvatarGalleryPage /> },
+              { path: '/avatars/new', element: <AvatarCreatorPage /> },
+            ],
+          },
           { path: '/race/setup', element: <RaceSetupPage /> },
           { path: '/race/:id', element: <RaceScreenPage /> },
           { path: '/race/:id/results', element: <ResultsScreenPage /> },

@@ -44,8 +44,8 @@ class Config(BaseSettings):
     ADMIN_PASSWORD: SecretStr
 
     # JWT token lifetimes
-    JWT_ACCESS_TTL_MINUTES: int = 15
-    JWT_REFRESH_TTL_DAYS: int = 30
+    JWT_ACCESS_TTL_MINUTES: int = 1440
+    JWT_REFRESH_TTL_DAYS: int = 90
 
     # Application
     ENVIRONMENT: Environment = Environment.development

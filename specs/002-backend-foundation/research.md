@@ -123,5 +123,5 @@ The infrastructure sprint (001) delivered the following, all of which this featu
 |---|---|---|
 | `ADMIN_EMAIL` | Yes — no default | Seeded administrator email |
 | `ADMIN_PASSWORD` | Yes — no default | Seeded administrator password (hashed on first write) |
-| `JWT_ACCESS_TTL_MINUTES` | No — default 15 | Access token TTL |
-| `JWT_REFRESH_TTL_DAYS` | No — default 30 | Refresh token TTL |
+| `JWT_ACCESS_TTL_MINUTES` | No — default 1440 | Access token TTL (24 hours) |
+| `JWT_REFRESH_TTL_DAYS` | No — default 90 | Refresh token TTL |

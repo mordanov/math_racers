@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, type Location } from 'react-router-dom';
 import { useAuth } from '../infrastructure/auth/AuthContext';
 import { createChildProfile, fetchChildProfiles } from '../infrastructure/auth/childProfilesApi';
 import type { ChildProfile } from '../infrastructure/auth/types';
@@ -66,6 +66,8 @@ export default function ChildProfileSelectPage() {
   const { selectChild } = useAuth();
   const { t } = useLocale();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = (location.state as { from?: Location } | null)?.from;
   const [profiles, setProfiles] = useState<ChildProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<TranslationKey | null>(null);
@@ -81,7 +83,7 @@ export default function ChildProfileSelectPage() {
 
   const handleSelect = (profile: ChildProfile) => {
     selectChild(profile.id);
-    void navigate('/', { replace: true });
+    void navigate(from ?? '/', { replace: true });
   };
 
   const handleCreate = async (e: React.FormEvent) => {
