@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export type MusicTrack = 'menu' | 'race' | 'victory';
 
@@ -8,7 +8,16 @@ const TRACK_FILES: Record<MusicTrack, string[]> = {
   victory: ['/audio/music_victory_1.ogg', '/audio/music_victory_2.ogg'],
 };
 
+function readMuted(): boolean {
+  try {
+    return localStorage.getItem('settings.musicMuted') === 'true';
+  } catch {
+    return false;
+  }
+}
+
 function readVolume(): number {
+  if (readMuted()) return 0;
   try {
     const master = parseInt(localStorage.getItem('settings.masterVolume') ?? '100', 10);
     const music = parseInt(localStorage.getItem('settings.musicVolume') ?? '100', 10);
@@ -20,6 +29,7 @@ function readVolume(): number {
 
 export function useAudioManager() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isMuted, setIsMuted] = useState(readMuted);
 
   const stopMusic = useCallback(() => {
     if (audioRef.current) {
@@ -55,13 +65,28 @@ export function useAudioManager() {
     [stopMusic],
   );
 
+  const toggleMute = useCallback(() => {
+    const next = !readMuted();
+    try {
+      localStorage.setItem('settings.musicMuted', String(next));
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.warn('The music mute preference could not be saved in this browser.', error);
+    }
+    setIsMuted(next);
+    if (audioRef.current) audioRef.current.volume = readVolume();
+    // notify other hook instances in the same window (e.g., currently-playing page component)
+    window.dispatchEvent(new StorageEvent('storage', { key: 'settings.musicMuted' }));
+  }, []);
+
   useEffect(() => {
     const handler = () => {
+      setIsMuted(readMuted());
       if (audioRef.current) audioRef.current.volume = readVolume();
     };
     window.addEventListener('storage', handler);
     return () => window.removeEventListener('storage', handler);
   }, []);
 
-  return { playMusic, stopMusic };
+  return { playMusic, stopMusic, isMuted, toggleMute };
 }

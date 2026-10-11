@@ -35,7 +35,6 @@ def _validate_image(image_bytes: bytes) -> dict[str, bool]:
         img = Image.open(io.BytesIO(image_bytes))
         return {
             "dimensions": img.size == (_IMAGE_SIZE, _IMAGE_SIZE),
-            "has_alpha": img.mode == "RGBA",
             "file_size": len(image_bytes) < _MAX_FILE_BYTES,
             "not_empty": img.getbbox() is not None,
         }
@@ -43,7 +42,6 @@ def _validate_image(image_bytes: bytes) -> dict[str, bool]:
         logger.warning("Image validation error", extra={"context": {"error": str(exc)}})
         return {
             "dimensions": False,
-            "has_alpha": False,
             "file_size": False,
             "not_empty": False,
         }

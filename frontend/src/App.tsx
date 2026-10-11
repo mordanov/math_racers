@@ -2,6 +2,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from './infrastructure/auth/AuthContext';
 import { useLocale } from './infrastructure/localization/LocaleContext';
 import OfflineResultSync from './infrastructure/offline/OfflineResultSync';
+import { useAudioManager } from './shared/hooks/useAudioManager';
 import { LanguageSwitcher } from './shared/components/LanguageSwitcher';
 import tokens from './shared/tokens';
 
@@ -9,6 +10,7 @@ export default function App() {
   const { account, logout } = useAuth();
   const { t } = useLocale();
   const navigate = useNavigate();
+  const { isMuted, toggleMute } = useAudioManager();
 
   const handleLogout = async () => {
     await logout();
@@ -32,6 +34,25 @@ export default function App() {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: tokens.spacing.sm }}>
+          <button
+            type="button"
+            aria-label={isMuted ? t('Unmute music') : t('Mute music')}
+            onClick={toggleMute}
+            style={{
+              minHeight: tokens.touchTarget,
+              minWidth: tokens.touchTarget,
+              padding: `0 ${tokens.spacing.sm}px`,
+              color: isMuted ? tokens.color.textSecondary : tokens.color.primary,
+              background: 'transparent',
+              border: `1px solid ${tokens.color.border}`,
+              borderRadius: tokens.radius.md,
+              cursor: 'pointer',
+              font: 'inherit',
+              fontSize: 18,
+            }}
+          >
+            {isMuted ? '♪✕' : '♪'}
+          </button>
           {account && (
             <button
               type="button"

@@ -1,3 +1,7 @@
+body {
+  font-family: 'Nunito', sans-serif;
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);
