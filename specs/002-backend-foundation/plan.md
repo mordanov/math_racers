@@ -153,8 +153,8 @@ Add both to `[project].dependencies` in `backend/pyproject.toml`.
 |---|---|---|---|
 | `ADMIN_EMAIL` | Yes | none | Email for the seeded default administrator |
 | `ADMIN_PASSWORD` | Yes | none | Plain-text password; hashed on first write; never stored raw |
-| `JWT_ACCESS_TTL_MINUTES` | No | `15` | Access token lifetime |
-| `JWT_REFRESH_TTL_DAYS` | No | `30` | Refresh token lifetime |
+| `JWT_ACCESS_TTL_MINUTES` | No | `1440` | Access token lifetime (24 hours) |
+| `JWT_REFRESH_TTL_DAYS` | No | `90` | Refresh token lifetime |
 
 Add to `infrastructure/config.py` (`Config` class). Service fails to start if `ADMIN_EMAIL` or `ADMIN_PASSWORD` are absent.
 

@@ -26,6 +26,8 @@ class TestConfigValidation:
         env = self._make_valid_env()
         cfg = Config.model_validate(env)
         assert cfg.ENVIRONMENT.value == "development"
+        assert cfg.JWT_ACCESS_TTL_MINUTES == 1440
+        assert cfg.JWT_REFRESH_TTL_DAYS == 90
 
     def test_avatar_model_names_can_be_overridden(self) -> None:
         from infrastructure.config import Config

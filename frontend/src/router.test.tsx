@@ -1,7 +1,24 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
-import { vi } from 'vitest';
+import { beforeEach, vi } from 'vitest';
 import { routeConfig } from './router';
+
+const { mockAuthState, mockLogout } = vi.hoisted(() => {
+  const logout = vi.fn();
+  return {
+    mockLogout: logout,
+    mockAuthState: {
+      isAuthenticated: true,
+      isLoading: false,
+      account: { id: 'u1', email: 'a@b.com', role: 'parent' },
+      activeChildId: 'child-1' as string | null,
+      login: vi.fn(),
+      logout,
+      selectChild: vi.fn(),
+    },
+  };
+});
 
 vi.mock('./engine/avatar/avatarApi', () => ({
   listAvatars: () =>
@@ -30,6 +47,10 @@ vi.mock('./infrastructure/offline/offlineStore', () => ({
 }));
 
 vi.mock('./infrastructure/offline/OfflineResultSync', () => ({ default: () => null }));
+
+vi.mock('./infrastructure/auth/childProfilesApi', () => ({
+  fetchChildProfiles: () => Promise.resolve([]),
+}));
 
 vi.mock('./features/statistics/statisticsApi', () => ({
   fetchPlayerStats: () =>
@@ -74,17 +95,14 @@ vi.mock('./shared/hooks/useAudioManager', () => ({
 }));
 
 vi.mock('./infrastructure/auth/AuthContext', () => ({
-  useAuth: () => ({
-    isAuthenticated: true,
-    isLoading: false,
-    account: { id: 'u1', email: 'a@b.com', role: 'parent' },
-    activeChildId: 'child-1',
-    login: vi.fn(),
-    logout: vi.fn(),
-    selectChild: vi.fn(),
-  }),
+  useAuth: () => mockAuthState,
   AuthProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
+
+beforeEach(() => {
+  mockAuthState.activeChildId = 'child-1';
+  vi.clearAllMocks();
+});
 
 function go(path: string) {
   const r = createMemoryRouter(routeConfig, { initialEntries: [path] });
@@ -99,6 +117,22 @@ it('/ renders home page', () => {
 it('/avatars renders avatar gallery', () => {
   go('/avatars');
   expect(screen.getByTestId('page-avatar-gallery')).toBeInTheDocument();
+});
+
+it('/avatars asks for a child profile before loading avatars', async () => {
+  mockAuthState.activeChildId = null;
+  go('/avatars');
+  expect(await screen.findByRole('heading', { name: /who.?s playing/i })).toBeInTheDocument();
+});
+
+it('shows a logout button in the global header and returns to login', async () => {
+  const user = userEvent.setup();
+  go('/');
+
+  await user.click(screen.getByRole('button', { name: 'Log out' }));
+
+  expect(mockLogout).toHaveBeenCalledOnce();
+  expect(await screen.findByRole('heading', { name: 'Log In' })).toBeInTheDocument();
 });
 
 it('/avatars/new renders avatar creator', () => {

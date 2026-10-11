@@ -6,10 +6,16 @@ import * as authApi from './authApi';
 
 vi.mock('./authApi');
 
-const { mockSetAuthToken } = vi.hoisted(() => ({ mockSetAuthToken: vi.fn() }));
+const { mockSetAuthToken, mockSetActiveChildId } = vi.hoisted(() => ({
+  mockSetAuthToken: vi.fn(),
+  mockSetActiveChildId: vi.fn(),
+}));
 
 vi.mock('../api-client', () => ({
-  apiClient: { setAuthToken: mockSetAuthToken, setActiveChildId: vi.fn() },
+  apiClient: {
+    setAuthToken: mockSetAuthToken,
+    setActiveChildId: mockSetActiveChildId,
+  },
   APIError: class extends Error {
     constructor(
       public status: number,
@@ -55,11 +61,13 @@ const FAKE_TOKEN = `${HEADER}.${PAYLOAD}.sig`;
 
 describe('AuthContext', () => {
   beforeEach(() => {
+    sessionStorage.clear();
     vi.mocked(authApi.refreshToken).mockRejectedValue(new Error('no session'));
   });
 
   afterEach(() => {
     vi.clearAllMocks();
+    sessionStorage.clear();
   });
 
   it('starts unauthenticated after failed silent refresh', async () => {
@@ -100,11 +108,29 @@ describe('AuthContext', () => {
     );
     expect(await screen.findByTestId('loading')).toHaveTextContent('false');
 
+    await user.click(screen.getByText('login'));
     await user.click(screen.getByText('select'));
     expect(screen.getByTestId('child')).toHaveTextContent('child-1');
+    expect(sessionStorage.getItem('math-racers-active-child:u1')).toBe('child-1');
   });
 
-  it('logout clears account and calls setAuthToken(null)', async () => {
+  it('restores the selected child after refreshing the access token', async () => {
+    sessionStorage.setItem('math-racers-active-child:u1', 'child-1');
+    vi.mocked(authApi.refreshToken).mockResolvedValue({ access_token: FAKE_TOKEN });
+
+    render(
+      <AuthProvider>
+        <TestConsumer />
+      </AuthProvider>,
+    );
+
+    expect(await screen.findByTestId('email')).toHaveTextContent('a@b.com');
+    expect(screen.getByTestId('child')).toHaveTextContent('child-1');
+    expect(mockSetActiveChildId).toHaveBeenCalledWith('child-1');
+  });
+
+  it('logout clears account, selected child, and auth header', async () => {
+    vi.mocked(authApi.login).mockResolvedValue({ access_token: FAKE_TOKEN });
     vi.mocked(authApi.logout).mockResolvedValue(undefined);
     const user = userEvent.setup();
     render(
@@ -114,9 +140,14 @@ describe('AuthContext', () => {
     );
     expect(await screen.findByTestId('loading')).toHaveTextContent('false');
 
+    await user.click(screen.getByText('login'));
+    await user.click(screen.getByText('select'));
     await user.click(screen.getByText('logout'));
     expect(mockSetAuthToken).toHaveBeenCalledWith(null);
+    expect(mockSetActiveChildId).toHaveBeenLastCalledWith(null);
+    expect(sessionStorage.getItem('math-racers-active-child:u1')).toBeNull();
     expect(screen.getByTestId('email')).toHaveTextContent('none');
+    expect(screen.getByTestId('child')).toHaveTextContent('none');
   });
 
   it('silent refresh on mount sets account when token found', async () => {

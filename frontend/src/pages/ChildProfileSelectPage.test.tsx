@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import ChildProfileSelectPage from './ChildProfileSelectPage';
 import * as childProfilesApi from '../infrastructure/auth/childProfilesApi';
 import * as AuthContextModule from '../infrastructure/auth/AuthContext';
@@ -50,6 +50,29 @@ describe('ChildProfileSelectPage', () => {
     );
     await user.click(await screen.findByText('Alice'));
     expect(mockSelectChild).toHaveBeenCalledWith('p1');
+  });
+
+  it('returns to the requested page after profile selection', async () => {
+    vi.mocked(childProfilesApi.fetchChildProfiles).mockResolvedValue([
+      { id: 'p1', account_id: 'acc-1', display_name: 'Alice', created_at: '2026-01-01T00:00:00Z' },
+    ]);
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter
+        initialEntries={[
+          { pathname: '/child-profiles', state: { from: { pathname: '/avatars' } } },
+        ]}
+      >
+        <Routes>
+          <Route path="/child-profiles" element={<ChildProfileSelectPage />} />
+          <Route path="/avatars" element={<p>Avatar gallery</p>} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await user.click(await screen.findByText('Alice'));
+
+    expect(await screen.findByText('Avatar gallery')).toBeInTheDocument();
   });
 
   it('renders page heading', async () => {
