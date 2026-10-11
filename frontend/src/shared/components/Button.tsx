@@ -39,7 +39,7 @@ const variantBase: Record<ButtonProps['variant'], React.CSSProperties> = {
   },
   secondary: {
     background: tokens.color.surface,
-    color: tokens.color.primary,
+    color: tokens.color.primaryDark,
     border: `3px solid ${tokens.color.primary}`,
     boxShadow: 'none',
   },
@@ -79,7 +79,7 @@ export function Button({
         boxShadow: `0 8px 0 ${tokens.color.primaryActive}`,
       };
     } else if (variant === 'secondary') {
-      interactionStyle = { transform: 'translateY(-2px)', background: '#FFF0EA' };
+      interactionStyle = { transform: 'translateY(-2px)', background: tokens.color.primarySubtle };
     } else if (variant === 'ghost') {
       interactionStyle = { background: tokens.color.surface };
     }
