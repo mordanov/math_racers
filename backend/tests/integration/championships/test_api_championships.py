@@ -284,7 +284,7 @@ def test_patch_race_updates_standings_and_auto_completes() -> None:
 
 
 @pytest.mark.integration
-def test_patch_race_returns_409_on_duplicate_race_id() -> None:
+def test_patch_race_replays_identical_race_without_duplicating_standings() -> None:
     token = _register_and_approve()
     child_id, avatar_id = create_child_and_avatar(BASE_URL, token)
     create_resp = httpx.post(
@@ -315,4 +315,6 @@ def test_patch_race_returns_409_on_duplicate_race_id() -> None:
         headers={"Authorization": f"Bearer {token}", "X-Child-Profile-ID": child_id},
         timeout=10.0,
     )
-    assert second.status_code == 409
+    assert second.status_code == 200, second.text
+    assert second.json()["races_completed"] == first.json()["races_completed"]
+    assert second.json()["standings"] == first.json()["standings"]
