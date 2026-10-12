@@ -10,7 +10,7 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 from app.championships.domain_service import _build_standings, _points_for_position
-from app.championships.models import Championship
+from app.championships.models import Championship, ChampionshipRace
 from app.championships.repository import SQLAlchemyChampionshipRepository
 from app.shared.exceptions import ConflictError
 
@@ -191,10 +191,16 @@ async def test_championship_rejects_placements_that_differ_from_saved_race() -> 
 @pytest.mark.asyncio
 async def test_championship_replays_identical_recorded_race_without_adding_points() -> None:
     race_id = uuid.uuid4()
-    championship = SimpleNamespace(
+    championship_id = uuid.uuid4()
+    championship = Championship(
+        id=championship_id,
+        account_id=uuid.uuid4(),
+        total_races=3,
+        races_completed=3,
         status="completed",
         championship_races=[
-            SimpleNamespace(
+            ChampionshipRace(
+                championship_id=championship_id,
                 race_id=race_id,
                 race_index=2,
                 avatar_id="human",
@@ -202,7 +208,8 @@ async def test_championship_replays_identical_recorded_race_without_adding_point
                 finishing_position=1,
                 points_earned=10,
             ),
-            SimpleNamespace(
+            ChampionshipRace(
+                championship_id=championship_id,
                 race_id=race_id,
                 race_index=2,
                 avatar_id="opponent",
@@ -244,10 +251,16 @@ async def test_championship_replays_identical_recorded_race_without_adding_point
 @pytest.mark.asyncio
 async def test_championship_rejects_retry_with_different_recorded_results() -> None:
     race_id = uuid.uuid4()
-    championship = SimpleNamespace(
+    championship_id = uuid.uuid4()
+    championship = Championship(
+        id=championship_id,
+        account_id=uuid.uuid4(),
+        total_races=3,
+        races_completed=3,
         status="completed",
         championship_races=[
-            SimpleNamespace(
+            ChampionshipRace(
+                championship_id=championship_id,
                 race_id=race_id,
                 race_index=2,
                 avatar_id="human",
