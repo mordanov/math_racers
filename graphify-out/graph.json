@@ -99,7 +99,7 @@
       "source_file": "frontend/package.json",
       "source_location": "L5",
       "id": "frontend_package_type",
-      "community": 159,
+      "community": 43,
       "norm_label": "type"
     },
     {
@@ -835,7 +835,7 @@
       "label": "go()",
       "file_type": "code",
       "source_file": "frontend/src/router.test.tsx",
-      "source_location": "L107",
+      "source_location": "L108",
       "id": "src_router_test_go",
       "community": 32,
       "norm_label": "go()"
@@ -844,7 +844,7 @@
       "label": "user",
       "file_type": "code",
       "source_file": "frontend/src/router.test.tsx",
-      "source_location": "L129",
+      "source_location": "L130",
       "id": "src_router_test_user",
       "community": 32,
       "norm_label": "user"
@@ -5058,7 +5058,7 @@
       "source_file": "frontend/src/engine/math/tiers.ts",
       "source_location": "L21",
       "id": "math_tiers_supportsdivisionrange",
-      "community": 14,
+      "community": 63,
       "norm_label": "supportsdivisionrange()"
     },
     {
@@ -5094,7 +5094,7 @@
       "source_file": "frontend/src/engine/math/generator.ts",
       "source_location": "L1",
       "id": "frontend_src_engine_math_generator_ts",
-      "community": 14,
+      "community": 63,
       "norm_label": "generator.ts"
     },
     {
@@ -5103,7 +5103,7 @@
       "source_file": "frontend/src/engine/math/generator.ts",
       "source_location": "L7",
       "id": "math_generator_randomint",
-      "community": 14,
+      "community": 63,
       "norm_label": "randomint()"
     },
     {
@@ -5112,7 +5112,7 @@
       "source_file": "frontend/src/engine/math/generator.ts",
       "source_location": "L11",
       "id": "math_generator_pickoperation",
-      "community": 14,
+      "community": 63,
       "norm_label": "pickoperation()"
     },
     {
@@ -5121,7 +5121,7 @@
       "source_file": "frontend/src/engine/math/generator.ts",
       "source_location": "L16",
       "id": "math_generator_pickoperands",
-      "community": 14,
+      "community": 63,
       "norm_label": "pickoperands()"
     },
     {
@@ -5130,7 +5130,7 @@
       "source_file": "frontend/src/engine/math/generator.ts",
       "source_location": "L46",
       "id": "math_generator_compute",
-      "community": 14,
+      "community": 63,
       "norm_label": "compute()"
     },
     {
@@ -5139,7 +5139,7 @@
       "source_file": "frontend/src/engine/math/generator.ts",
       "source_location": "L59",
       "id": "math_generator_isduplicate",
-      "community": 14,
+      "community": 63,
       "norm_label": "isduplicate()"
     },
     {
@@ -5148,7 +5148,7 @@
       "source_file": "frontend/src/engine/math/generator.ts",
       "source_location": "L68",
       "id": "math_generator_generateproblemset",
-      "community": 14,
+      "community": 63,
       "norm_label": "generateproblemset()"
     },
     {
@@ -5256,7 +5256,7 @@
       "source_file": "frontend/src/engine/math/rng.ts",
       "source_location": "L1",
       "id": "frontend_src_engine_math_rng_ts",
-      "community": 14,
+      "community": 63,
       "norm_label": "rng.ts"
     },
     {
@@ -5265,7 +5265,7 @@
       "source_file": "frontend/src/engine/math/rng.ts",
       "source_location": "L1",
       "id": "math_rng_createrng",
-      "community": 14,
+      "community": 63,
       "norm_label": "createrng()"
     },
     {
@@ -5508,7 +5508,7 @@
       "source_file": "frontend/src/engine/race/stateMachine.ts",
       "source_location": "L1",
       "id": "frontend_src_engine_race_statemachine_ts",
-      "community": 39,
+      "community": 63,
       "norm_label": "statemachine.ts"
     },
     {
@@ -5517,7 +5517,7 @@
       "source_file": "frontend/src/engine/race/stateMachine.ts",
       "source_location": "L3",
       "id": "race_statemachine_racestateerror",
-      "community": 39,
+      "community": 63,
       "norm_label": "racestateerror"
     },
     {
@@ -5526,7 +5526,7 @@
       "source_file": "frontend/src/engine/race/stateMachine.ts",
       "source_location": "L4",
       "id": "race_statemachine_racestateerror_constructor",
-      "community": 39,
+      "community": 63,
       "norm_label": ".constructor()"
     },
     {
@@ -5535,7 +5535,7 @@
       "source_file": "frontend/src/engine/race/stateMachine.ts",
       "source_location": "L10",
       "id": "race_statemachine_legal_transitions",
-      "community": 39,
+      "community": 63,
       "norm_label": "legal_transitions"
     },
     {
@@ -5544,7 +5544,7 @@
       "source_file": "frontend/src/engine/race/stateMachine.ts",
       "source_location": "L19",
       "id": "race_statemachine_transition",
-      "community": 39,
+      "community": 63,
       "norm_label": "transition()"
     },
     {
@@ -5715,7 +5715,7 @@
       "source_file": "frontend/src/engine/race/raceEngine.ts",
       "source_location": "L1",
       "id": "frontend_src_engine_race_raceengine_ts",
-      "community": 39,
+      "community": 63,
       "norm_label": "raceengine.ts"
     },
     {
@@ -5724,7 +5724,7 @@
       "source_file": "frontend/src/engine/race/raceEngine.ts",
       "source_location": "L18",
       "id": "race_raceengine_racesummaryerror",
-      "community": 39,
+      "community": 63,
       "norm_label": "racesummaryerror"
     },
     {
@@ -5733,7 +5733,7 @@
       "source_file": "frontend/src/engine/race/raceEngine.ts",
       "source_location": "L19",
       "id": "race_raceengine_racesummaryerror_constructor",
-      "community": 39,
+      "community": 63,
       "norm_label": ".constructor()"
     },
     {
@@ -5742,7 +5742,7 @@
       "source_file": "frontend/src/engine/race/raceEngine.ts",
       "source_location": "L25",
       "id": "race_raceengine_makerunner",
-      "community": 39,
+      "community": 63,
       "norm_label": "makerunner()"
     },
     {
@@ -5868,7 +5868,7 @@
       "source_file": "frontend/src/engine/race/types.ts",
       "source_location": "L3",
       "id": "race_types_racestate",
-      "community": 39,
+      "community": 63,
       "norm_label": "racestate"
     },
     {
@@ -5976,7 +5976,7 @@
       "source_file": "frontend/src/engine/race/types.ts",
       "source_location": "L84",
       "id": "race_types_racesummary",
-      "community": 39,
+      "community": 25,
       "norm_label": "racesummary"
     },
     {
@@ -5985,7 +5985,7 @@
       "source_file": "frontend/src/engine/race/constants.ts",
       "source_location": "L1",
       "id": "frontend_src_engine_race_constants_ts",
-      "community": 39,
+      "community": 63,
       "norm_label": "constants.ts"
     },
     {
@@ -5994,7 +5994,7 @@
       "source_file": "frontend/src/engine/race/clock.ts",
       "source_location": "L1",
       "id": "frontend_src_engine_race_clock_ts",
-      "community": 39,
+      "community": 63,
       "norm_label": "clock.ts"
     },
     {
@@ -6615,7 +6615,7 @@
       "source_file": "",
       "source_location": "",
       "id": "protocol",
-      "community": 156,
+      "community": 149,
       "norm_label": "protocol"
     },
     {
@@ -8928,7 +8928,7 @@
       "source_file": "backend/app/championships/repository.py",
       "source_location": "L15",
       "id": "championships_repository_championshiprepository",
-      "community": 63,
+      "community": 149,
       "norm_label": "championshiprepository"
     },
     {
@@ -8937,7 +8937,7 @@
       "source_file": "backend/app/championships/repository.py",
       "source_location": "L16",
       "id": "championships_repository_championshiprepository_create",
-      "community": 63,
+      "community": 149,
       "norm_label": ".create()"
     },
     {
@@ -8946,7 +8946,7 @@
       "source_file": "backend/app/championships/repository.py",
       "source_location": "L22",
       "id": "championships_repository_championshiprepository_get",
-      "community": 63,
+      "community": 149,
       "norm_label": ".get()"
     },
     {
@@ -8955,7 +8955,7 @@
       "source_file": "backend/app/championships/repository.py",
       "source_location": "L25",
       "id": "championships_repository_championshiprepository_add_race",
-      "community": 63,
+      "community": 149,
       "norm_label": ".add_race()"
     },
     {
@@ -11466,7 +11466,7 @@
       "source_file": "backend/application/reject_account.py",
       "source_location": "L1",
       "id": "backend_application_reject_account_py",
-      "community": 31,
+      "community": 124,
       "norm_label": "reject_account.py"
     },
     {
@@ -11475,7 +11475,7 @@
       "source_file": "backend/application/reject_account.py",
       "source_location": "L10",
       "id": "application_reject_account_rejectaccountusecase",
-      "community": 31,
+      "community": 124,
       "norm_label": "rejectaccountusecase"
     },
     {
@@ -11484,7 +11484,7 @@
       "source_file": "backend/application/reject_account.py",
       "source_location": "L11",
       "id": "application_reject_account_rejectaccountusecase_init",
-      "community": 31,
+      "community": 124,
       "norm_label": ".__init__()"
     },
     {
@@ -11493,7 +11493,7 @@
       "source_file": "backend/application/reject_account.py",
       "source_location": "L14",
       "id": "application_reject_account_rejectaccountusecase_execute",
-      "community": 31,
+      "community": 124,
       "norm_label": ".execute()"
     },
     {
@@ -11898,7 +11898,7 @@
       "source_file": "backend/infrastructure/config.py",
       "source_location": "L82",
       "id": "infrastructure_config_get_config",
-      "community": 159,
+      "community": 43,
       "norm_label": "get_config()"
     },
     {
@@ -12015,7 +12015,7 @@
       "source_file": "backend/infrastructure/storage/interfaces.py",
       "source_location": "L1",
       "id": "backend_infrastructure_storage_interfaces_py",
-      "community": 156,
+      "community": 149,
       "norm_label": "interfaces.py"
     },
     {
@@ -12024,7 +12024,7 @@
       "source_file": "backend/infrastructure/storage/interfaces.py",
       "source_location": "L6",
       "id": "storage_interfaces_objectstorage",
-      "community": 156,
+      "community": 149,
       "norm_label": "objectstorage"
     },
     {
@@ -12033,7 +12033,7 @@
       "source_file": "backend/infrastructure/storage/interfaces.py",
       "source_location": "L7",
       "id": "storage_interfaces_objectstorage_upload_png",
-      "community": 156,
+      "community": 149,
       "norm_label": ".upload_png()"
     },
     {
@@ -12132,7 +12132,7 @@
       "source_file": "backend/infrastructure/ai/openai_provider.py",
       "source_location": "L1",
       "id": "backend_infrastructure_ai_openai_provider_py",
-      "community": 159,
+      "community": 43,
       "norm_label": "openai_provider.py"
     },
     {
@@ -12141,7 +12141,7 @@
       "source_file": "backend/infrastructure/ai/openai_provider.py",
       "source_location": "L10",
       "id": "ai_openai_provider_openaiavatargenerationprovider",
-      "community": 159,
+      "community": 43,
       "norm_label": "openaiavatargenerationprovider"
     },
     {
@@ -12150,7 +12150,7 @@
       "source_file": "backend/infrastructure/ai/openai_provider.py",
       "source_location": "L12",
       "id": "ai_openai_provider_image_model_version",
-      "community": 159,
+      "community": 43,
       "norm_label": "image_model_version()"
     },
     {
@@ -12159,7 +12159,7 @@
       "source_file": "backend/infrastructure/ai/openai_provider.py",
       "source_location": "L15",
       "id": "ai_openai_provider_openaiavatargenerationprovider_generate_metadata",
-      "community": 159,
+      "community": 43,
       "norm_label": ".generate_metadata()"
     },
     {
@@ -12168,7 +12168,7 @@
       "source_file": "backend/infrastructure/ai/openai_provider.py",
       "source_location": "L40",
       "id": "ai_openai_provider_openaiavatargenerationprovider_generate_image",
-      "community": 159,
+      "community": 43,
       "norm_label": ".generate_image()"
     },
     {
@@ -12177,7 +12177,7 @@
       "source_file": "backend/infrastructure/ai/openai_provider.py",
       "source_location": "L58",
       "id": "ai_openai_provider_openaiavatargenerationprovider_validate_child_safety",
-      "community": 159,
+      "community": 43,
       "norm_label": ".validate_child_safety()"
     },
     {
@@ -12186,7 +12186,7 @@
       "source_file": "backend/infrastructure/queue/recovery.py",
       "source_location": "L1",
       "id": "backend_infrastructure_queue_recovery_py",
-      "community": 159,
+      "community": 130,
       "norm_label": "recovery.py"
     },
     {
@@ -12195,7 +12195,7 @@
       "source_file": "backend/infrastructure/queue/recovery.py",
       "source_location": "L10",
       "id": "queue_recovery_recover_pending_jobs",
-      "community": 159,
+      "community": 130,
       "norm_label": "recover_pending_jobs()"
     },
     {
@@ -12204,7 +12204,7 @@
       "source_file": "backend/infrastructure/queue/recovery.py",
       "source_location": "L11",
       "id": "queue_recovery_rationale_11",
-      "community": 159,
+      "community": 130,
       "norm_label": "re-enqueue pending jobs from job_audit that are older than the threshold.      c"
     },
     {
@@ -25874,7 +25874,7 @@
       "file_type": "code",
       "source_file": "frontend/src/engine/race/raceEngine.ts",
       "source_location": "L18",
-      "community": 39,
+      "community": 63,
       "norm_label": "championship_points",
       "id": "race_raceengine_championship_points"
     },
@@ -25883,7 +25883,7 @@
       "file_type": "code",
       "source_file": "frontend/src/engine/race/raceEngine.ts",
       "source_location": "L20",
-      "community": 39,
+      "community": 63,
       "norm_label": "calcxp()",
       "id": "race_raceengine_calcxp"
     },
@@ -27162,9 +27162,9 @@
       "source_file": "frontend/src/App.tsx",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_app_tsx",
-      "target": "frontend_src_infrastructure_auth_authcontext_tsx",
-      "confidence_score": 1.0
+      "target": "frontend_src_infrastructure_auth_authcontext_tsx"
     },
     {
       "relation": "imports",
@@ -27173,9 +27173,9 @@
       "source_file": "frontend/src/App.tsx",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_app_tsx",
-      "target": "auth_authcontext_useauth",
-      "confidence_score": 1.0
+      "target": "auth_authcontext_useauth"
     },
     {
       "relation": "imports_from",
@@ -27184,9 +27184,9 @@
       "source_file": "frontend/src/App.tsx",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_app_tsx",
-      "target": "frontend_src_infrastructure_localization_localecontext_tsx",
-      "confidence_score": 1.0
+      "target": "frontend_src_infrastructure_localization_localecontext_tsx"
     },
     {
       "relation": "imports",
@@ -27195,9 +27195,9 @@
       "source_file": "frontend/src/App.tsx",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_app_tsx",
-      "target": "localization_localecontext_uselocale",
-      "confidence_score": 1.0
+      "target": "localization_localecontext_uselocale"
     },
     {
       "relation": "imports_from",
@@ -27217,9 +27217,9 @@
       "source_file": "frontend/src/App.tsx",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_app_tsx",
-      "target": "frontend_src_shared_hooks_useaudiomanager_ts",
-      "confidence_score": 1.0
+      "target": "frontend_src_shared_hooks_useaudiomanager_ts"
     },
     {
       "relation": "imports",
@@ -27228,9 +27228,9 @@
       "source_file": "frontend/src/App.tsx",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_app_tsx",
-      "target": "hooks_useaudiomanager_useaudiomanager",
-      "confidence_score": 1.0
+      "target": "hooks_useaudiomanager_useaudiomanager"
     },
     {
       "relation": "imports_from",
@@ -27402,9 +27402,9 @@
       "source_file": "frontend/src/App.test.tsx",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_app_test_tsx",
-      "target": "frontend_src_infrastructure_auth_authcontext_tsx",
-      "confidence_score": 1.0
+      "target": "frontend_src_infrastructure_auth_authcontext_tsx"
     },
     {
       "relation": "imports",
@@ -27413,9 +27413,9 @@
       "source_file": "frontend/src/App.test.tsx",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_app_test_tsx",
-      "target": "auth_authcontext_authprovider",
-      "confidence_score": 1.0
+      "target": "auth_authcontext_authprovider"
     },
     {
       "relation": "imports_from",
@@ -27424,9 +27424,9 @@
       "source_file": "frontend/src/App.test.tsx",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_app_test_tsx",
-      "target": "frontend_src_infrastructure_auth_authapi_ts",
-      "confidence_score": 1.0
+      "target": "frontend_src_infrastructure_auth_authapi_ts"
     },
     {
       "relation": "imports_from",
@@ -27498,9 +27498,9 @@
       "source_file": "frontend/src/router.test.tsx",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_router_test_tsx",
-      "target": "src_router_test_mockauthstate_mocklogout",
-      "confidence_score": 1.0
+      "target": "src_router_test_mockauthstate_mocklogout"
     },
     {
       "relation": "contains",
@@ -27518,9 +27518,9 @@
       "source_file": "frontend/src/router.test.tsx",
       "source_location": "L129",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_router_test_tsx",
-      "target": "src_router_test_user",
-      "confidence_score": 1.0
+      "target": "src_router_test_user"
     },
     {
       "relation": "imports_from",
@@ -27694,9 +27694,9 @@
       "source_file": "frontend/src/router.tsx",
       "source_location": "L18",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_router_tsx",
-      "target": "frontend_src_infrastructure_auth_requirechildprofile_tsx",
-      "confidence_score": 1.0
+      "target": "frontend_src_infrastructure_auth_requirechildprofile_tsx"
     },
     {
       "relation": "contains",
@@ -28883,9 +28883,9 @@
       "source_file": "frontend/src/features/race/progressionApi.test.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_features_race_progressionapi_test_ts",
-      "target": "frontend_src_features_race_progressionapi_ts",
-      "confidence_score": 1.0
+      "target": "frontend_src_features_race_progressionapi_ts"
     },
     {
       "relation": "imports",
@@ -28894,9 +28894,9 @@
       "source_file": "frontend/src/features/race/progressionApi.test.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_features_race_progressionapi_test_ts",
-      "target": "race_progressionapi_fetchprogression",
-      "confidence_score": 1.0
+      "target": "race_progressionapi_fetchprogression"
     },
     {
       "relation": "contains",
@@ -28904,9 +28904,9 @@
       "source_file": "frontend/src/features/race/progressionApi.test.ts",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_features_race_progressionapi_test_ts",
-      "target": "race_progressionapi_test_progression",
-      "confidence_score": 1.0
+      "target": "race_progressionapi_test_progression"
     },
     {
       "relation": "contains",
@@ -28914,9 +28914,9 @@
       "source_file": "frontend/src/features/race/progressionApi.test.ts",
       "source_location": "L15",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_features_race_progressionapi_test_ts",
-      "target": "race_progressionapi_test_fetchmock",
-      "confidence_score": 1.0
+      "target": "race_progressionapi_test_fetchmock"
     },
     {
       "relation": "imports_from",
@@ -30430,9 +30430,9 @@
       "source_file": "frontend/src/shared/components/Button.tsx",
       "source_location": "L16",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_shared_components_button_tsx",
-      "target": "components_button_basestyle",
-      "confidence_score": 1.0
+      "target": "components_button_basestyle"
     },
     {
       "relation": "contains",
@@ -30440,9 +30440,9 @@
       "source_file": "frontend/src/shared/components/Button.tsx",
       "source_location": "L33",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_shared_components_button_tsx",
-      "target": "components_button_variantbase",
-      "confidence_score": 1.0
+      "target": "components_button_variantbase"
     },
     {
       "relation": "contains",
@@ -31498,9 +31498,9 @@
       "source_file": "frontend/src/shared/hooks/useAudioManager.ts",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_shared_hooks_useaudiomanager_ts",
-      "target": "hooks_useaudiomanager_readmuted",
-      "confidence_score": 1.0
+      "target": "hooks_useaudiomanager_readmuted"
     },
     {
       "relation": "contains",
@@ -31573,9 +31573,9 @@
       "source_file": "frontend/src/shared/hooks/useAudioManager.ts",
       "source_location": "L20",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "hooks_useaudiomanager_readvolume",
-      "target": "hooks_useaudiomanager_readmuted",
-      "confidence_score": 1.0
+      "target": "hooks_useaudiomanager_readmuted"
     },
     {
       "relation": "imports",
@@ -32761,9 +32761,9 @@
       "source_file": "frontend/src/infrastructure/auth/AuthContext.test.tsx",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_infrastructure_auth_authcontext_test_tsx",
-      "target": "auth_authcontext_test_mocksetauthtoken_mocksetactivechildid",
-      "confidence_score": 1.0
+      "target": "auth_authcontext_test_mocksetauthtoken_mocksetactivechildid"
     },
     {
       "relation": "contains",
@@ -33207,9 +33207,9 @@
       "source_file": "frontend/src/infrastructure/auth/RequireChildProfile.tsx",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_infrastructure_auth_requirechildprofile_tsx",
-      "target": "frontend_src_infrastructure_auth_authcontext_tsx",
-      "confidence_score": 1.0
+      "target": "frontend_src_infrastructure_auth_authcontext_tsx"
     },
     {
       "relation": "imports",
@@ -33218,9 +33218,9 @@
       "source_file": "frontend/src/infrastructure/auth/RequireChildProfile.tsx",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_infrastructure_auth_requirechildprofile_tsx",
-      "target": "auth_authcontext_useauth",
-      "confidence_score": 1.0
+      "target": "auth_authcontext_useauth"
     },
     {
       "relation": "contains",
@@ -33228,9 +33228,9 @@
       "source_file": "frontend/src/infrastructure/auth/RequireChildProfile.tsx",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_infrastructure_auth_requirechildprofile_tsx",
-      "target": "auth_requirechildprofile_requirechildprofile",
-      "confidence_score": 1.0
+      "target": "auth_requirechildprofile_requirechildprofile"
     },
     {
       "relation": "calls",
@@ -33355,9 +33355,9 @@
       "source_file": "frontend/src/infrastructure/auth/AuthContext.tsx",
       "source_location": "L34",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_infrastructure_auth_authcontext_tsx",
-      "target": "auth_authcontext_activechildstoragekey",
-      "confidence_score": 1.0
+      "target": "auth_authcontext_activechildstoragekey"
     },
     {
       "relation": "contains",
@@ -35939,9 +35939,9 @@
       "source_file": "frontend/src/pages/RaceSetupPage.tsx",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_racesetuppage_tsx",
-      "target": "avatar_avatarapi_listavatarcatalog",
-      "confidence_score": 1.0
+      "target": "avatar_avatarapi_listavatarcatalog"
     },
     {
       "relation": "imports",
@@ -36005,9 +36005,9 @@
       "source_file": "frontend/src/pages/RaceSetupPage.tsx",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_racesetuppage_tsx",
-      "target": "frontend_src_engine_race_problemtimelimit_ts",
-      "confidence_score": 1.0
+      "target": "frontend_src_engine_race_problemtimelimit_ts"
     },
     {
       "relation": "imports",
@@ -36016,9 +36016,9 @@
       "source_file": "frontend/src/pages/RaceSetupPage.tsx",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_racesetuppage_tsx",
-      "target": "race_problemtimelimit_readproblemtimelimitseconds",
-      "confidence_score": 1.0
+      "target": "race_problemtimelimit_readproblemtimelimitseconds"
     },
     {
       "relation": "imports_from",
@@ -36093,9 +36093,9 @@
       "source_file": "frontend/src/pages/RaceSetupPage.tsx",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_racesetuppage_tsx",
-      "target": "frontend_src_engine_math_tiers_ts",
-      "confidence_score": 1.0
+      "target": "frontend_src_engine_math_tiers_ts"
     },
     {
       "relation": "imports",
@@ -36104,9 +36104,9 @@
       "source_file": "frontend/src/pages/RaceSetupPage.tsx",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_racesetuppage_tsx",
-      "target": "math_tiers_supportsdivisionrange",
-      "confidence_score": 1.0
+      "target": "math_tiers_supportsdivisionrange"
     },
     {
       "relation": "contains",
@@ -36144,9 +36144,9 @@
       "source_file": "frontend/src/pages/RaceSetupPage.tsx",
       "source_location": "L42",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_racesetuppage_tsx",
-      "target": "pages_racesetuppage_selectopponentportraits",
-      "confidence_score": 1.0
+      "target": "pages_racesetuppage_selectopponentportraits"
     },
     {
       "relation": "contains",
@@ -36342,9 +36342,9 @@
       "source_file": "frontend/src/pages/ResultsScreenPage.test.tsx",
       "source_location": "L164",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_resultsscreenpage_test_tsx",
-      "target": "pages_resultsscreenpage_test_calls",
-      "confidence_score": 1.0
+      "target": "pages_resultsscreenpage_test_calls"
     },
     {
       "relation": "contains",
@@ -36373,9 +36373,9 @@
       "source_file": "frontend/src/pages/SettingsPage.tsx",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_settingspage_tsx",
-      "target": "frontend_src_engine_race_problemtimelimit_ts",
-      "confidence_score": 1.0
+      "target": "frontend_src_engine_race_problemtimelimit_ts"
     },
     {
       "relation": "imports",
@@ -36384,9 +36384,9 @@
       "source_file": "frontend/src/pages/SettingsPage.tsx",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_settingspage_tsx",
-      "target": "race_problemtimelimit_isvalidproblemtimelimitseconds",
-      "confidence_score": 1.0
+      "target": "race_problemtimelimit_isvalidproblemtimelimitseconds"
     },
     {
       "relation": "imports",
@@ -36395,9 +36395,9 @@
       "source_file": "frontend/src/pages/SettingsPage.tsx",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_settingspage_tsx",
-      "target": "race_problemtimelimit_readproblemtimelimitseconds",
-      "confidence_score": 1.0
+      "target": "race_problemtimelimit_readproblemtimelimitseconds"
     },
     {
       "relation": "contains",
@@ -36820,9 +36820,9 @@
       "source_file": "frontend/src/pages/RaceSetupPage.test.tsx",
       "source_location": "L47",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_racesetuppage_test_tsx",
-      "target": "pages_racesetuppage_test_racerouteprobe",
-      "confidence_score": 1.0
+      "target": "pages_racesetuppage_test_racerouteprobe"
     },
     {
       "relation": "contains",
@@ -36850,9 +36850,9 @@
       "source_file": "frontend/src/pages/RaceSetupPage.test.tsx",
       "source_location": "L146",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_racesetuppage_test_tsx",
-      "target": "pages_racesetuppage_test_state",
-      "confidence_score": 1.0
+      "target": "pages_racesetuppage_test_state"
     },
     {
       "relation": "contains",
@@ -37103,9 +37103,9 @@
       "source_file": "frontend/src/pages/SettingsPage.test.tsx",
       "source_location": "L86",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_settingspage_test_tsx",
-      "target": "pages_settingspage_test_dispatchevent",
-      "confidence_score": 1.0
+      "target": "pages_settingspage_test_dispatchevent"
     },
     {
       "relation": "contains",
@@ -37671,9 +37671,9 @@
       "source_file": "frontend/src/pages/RaceScreenPage.test.tsx",
       "source_location": "L317",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_racescreenpage_test_tsx",
-      "target": "pages_racescreenpage_test_resolverequest",
-      "confidence_score": 1.0
+      "target": "pages_racescreenpage_test_resolverequest"
     },
     {
       "relation": "contains",
@@ -37681,9 +37681,9 @@
       "source_file": "frontend/src/pages/RaceScreenPage.test.tsx",
       "source_location": "L328",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_racescreenpage_test_tsx",
-      "target": "pages_racescreenpage_test_activestate",
-      "confidence_score": 1.0
+      "target": "pages_racescreenpage_test_activestate"
     },
     {
       "relation": "contains",
@@ -37691,9 +37691,9 @@
       "source_file": "frontend/src/pages/RaceScreenPage.test.tsx",
       "source_location": "L352",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_racescreenpage_test_tsx",
-      "target": "pages_racescreenpage_test_view",
-      "confidence_score": 1.0
+      "target": "pages_racescreenpage_test_view"
     },
     {
       "relation": "contains",
@@ -37802,9 +37802,9 @@
       "source_file": "frontend/src/pages/RaceScreenPage.test.tsx",
       "source_location": "L329",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "pages_racescreenpage_test_activestate",
-      "target": "pages_racescreenpage_test_makeenginereturn",
-      "confidence_score": 1.0
+      "target": "pages_racescreenpage_test_makeenginereturn"
     },
     {
       "relation": "imports_from",
@@ -37934,9 +37934,9 @@
       "source_file": "frontend/src/pages/RaceScreenPage.tsx",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_racescreenpage_tsx",
-      "target": "frontend_src_engine_race_problemtimelimit_ts",
-      "confidence_score": 1.0
+      "target": "frontend_src_engine_race_problemtimelimit_ts"
     },
     {
       "relation": "imports",
@@ -37945,9 +37945,9 @@
       "source_file": "frontend/src/pages/RaceScreenPage.tsx",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_racescreenpage_tsx",
-      "target": "race_problemtimelimit_isvalidproblemtimelimitseconds",
-      "confidence_score": 1.0
+      "target": "race_problemtimelimit_isvalidproblemtimelimitseconds"
     },
     {
       "relation": "imports_from",
@@ -37998,9 +37998,9 @@
       "source_file": "frontend/src/pages/RaceScreenPage.tsx",
       "source_location": "L41",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_pages_racescreenpage_tsx",
-      "target": "pages_racescreenpage_fallback_avatars",
-      "confidence_score": 1.0
+      "target": "pages_racescreenpage_fallback_avatars"
     },
     {
       "relation": "contains",
@@ -38341,9 +38341,9 @@
       "source_file": "frontend/src/engine/math/tiers.ts",
       "source_location": "L21",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_engine_math_tiers_ts",
-      "target": "math_tiers_supportsdivisionrange",
-      "confidence_score": 1.0
+      "target": "math_tiers_supportsdivisionrange"
     },
     {
       "relation": "imports_from",
@@ -38396,9 +38396,9 @@
       "source_file": "frontend/src/engine/math/generator.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_engine_math_generator_ts",
-      "target": "math_tiers_supportsdivisionrange",
-      "confidence_score": 1.0
+      "target": "math_tiers_supportsdivisionrange"
     },
     {
       "relation": "calls",
@@ -38440,9 +38440,9 @@
       "source_file": "frontend/src/engine/math/tiers.test.ts",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_engine_math_tiers_test_ts",
-      "target": "frontend_src_engine_math_types_ts",
-      "confidence_score": 1.0
+      "target": "frontend_src_engine_math_types_ts"
     },
     {
       "relation": "imports",
@@ -38451,9 +38451,9 @@
       "source_file": "frontend/src/engine/math/tiers.test.ts",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_engine_math_tiers_test_ts",
-      "target": "math_types_tierconfig",
-      "confidence_score": 1.0
+      "target": "math_types_tierconfig"
     },
     {
       "relation": "contains",
@@ -38461,9 +38461,9 @@
       "source_file": "frontend/src/engine/math/tiers.test.ts",
       "source_location": "L71",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_engine_math_tiers_test_ts",
-      "target": "math_tiers_test_config",
-      "confidence_score": 1.0
+      "target": "math_tiers_test_config"
     },
     {
       "relation": "contains",
@@ -38471,9 +38471,9 @@
       "source_file": "frontend/src/engine/math/tiers.test.ts",
       "source_location": "L77",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_engine_math_tiers_test_ts",
-      "target": "math_tiers_test_expected",
-      "confidence_score": 1.0
+      "target": "math_tiers_test_expected"
     },
     {
       "relation": "imports_from",
@@ -39063,9 +39063,9 @@
       "source_file": "frontend/src/engine/avatar/types.ts",
       "source_location": "L53",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_engine_avatar_types_ts",
-      "target": "avatar_types_avatarcatalogitem",
-      "confidence_score": 1.0
+      "target": "avatar_types_avatarcatalogitem"
     },
     {
       "relation": "contains",
@@ -39148,9 +39148,9 @@
       "source_file": "frontend/src/engine/avatar/avatarApi.ts",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_engine_avatar_avatarapi_ts",
-      "target": "avatar_types_avatarcatalogitem",
-      "confidence_score": 1.0
+      "target": "avatar_types_avatarcatalogitem"
     },
     {
       "relation": "imports",
@@ -39221,9 +39221,9 @@
       "source_file": "frontend/src/engine/avatar/avatarApi.ts",
       "source_location": "L27",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_engine_avatar_avatarapi_ts",
-      "target": "avatar_avatarapi_listavatarcatalog",
-      "confidence_score": 1.0
+      "target": "avatar_avatarapi_listavatarcatalog"
     },
     {
       "relation": "contains",
@@ -40444,9 +40444,9 @@
       "source_file": "frontend/src/engine/race/problemTimeLimit.ts",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_engine_race_problemtimelimit_ts",
-      "target": "race_problemtimelimit_isvalidproblemtimelimitseconds",
-      "confidence_score": 1.0
+      "target": "race_problemtimelimit_isvalidproblemtimelimitseconds"
     },
     {
       "relation": "contains",
@@ -40454,9 +40454,9 @@
       "source_file": "frontend/src/engine/race/problemTimeLimit.ts",
       "source_location": "L15",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_engine_race_problemtimelimit_ts",
-      "target": "race_problemtimelimit_readproblemtimelimitseconds",
-      "confidence_score": 1.0
+      "target": "race_problemtimelimit_readproblemtimelimitseconds"
     },
     {
       "relation": "calls",
@@ -40465,9 +40465,9 @@
       "source_file": "frontend/src/engine/race/problemTimeLimit.ts",
       "source_location": "L20",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "race_problemtimelimit_readproblemtimelimitseconds",
-      "target": "race_problemtimelimit_isvalidproblemtimelimitseconds",
-      "confidence_score": 1.0
+      "target": "race_problemtimelimit_isvalidproblemtimelimitseconds"
     },
     {
       "relation": "imports_from",
@@ -40517,9 +40517,9 @@
       "source_file": "frontend/src/engine/race/hooks/useRaceEngine.test.ts",
       "source_location": "L49",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_engine_race_hooks_useraceengine_test_ts",
-      "target": "hooks_useraceengine_test_hidden",
-      "confidence_score": 1.0
+      "target": "hooks_useraceengine_test_hidden"
     },
     {
       "relation": "contains",
@@ -41954,9 +41954,9 @@
       "source_file": "backend/app/avatars/schemas.py",
       "source_location": "L97",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "avatars_schemas_avatarcatalogitem",
-      "target": "basemodel",
-      "confidence_score": 1.0
+      "target": "basemodel"
     },
     {
       "relation": "inherits",
@@ -44758,9 +44758,9 @@
       "source_file": "backend/app/mathematics/tiers.py",
       "source_location": "L35",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "backend_app_mathematics_tiers_py",
-      "target": "mathematics_tiers_supports_division",
-      "confidence_score": 1.0
+      "target": "mathematics_tiers_supports_division"
     },
     {
       "relation": "uses",
@@ -47399,9 +47399,9 @@
       "source_file": "backend/app/avatars/generation_service.py",
       "source_location": "L74",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "avatars_generation_service_rationale_74",
-      "target": "avatars_generation_service_run_generation_job",
-      "confidence_score": 1.0
+      "target": "avatars_generation_service_run_generation_job"
     },
     {
       "relation": "calls",
@@ -47738,9 +47738,9 @@
       "source_file": "backend/app/avatars/domain_service.py",
       "source_location": "L212",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "avatars_domain_service_avatardomainservice",
-      "target": "avatars_domain_service_avatardomainservice_list_catalog",
-      "confidence_score": 1.0
+      "target": "avatars_domain_service_avatardomainservice_list_catalog"
     },
     {
       "relation": "method",
@@ -47978,9 +47978,9 @@
       "source_file": "backend/app/avatars/schemas.py",
       "source_location": "L97",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "backend_app_avatars_schemas_py",
-      "target": "avatars_schemas_avatarcatalogitem",
-      "confidence_score": 1.0
+      "target": "avatars_schemas_avatarcatalogitem"
     },
     {
       "relation": "contains",
@@ -48068,9 +48068,9 @@
       "source_file": "backend/app/avatars/repository.py",
       "source_location": "L29",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "avatars_repository_avatarrepository",
-      "target": "avatars_repository_avatarrepository_list_published_catalog",
-      "confidence_score": 1.0
+      "target": "avatars_repository_avatarrepository_list_published_catalog"
     },
     {
       "relation": "method",
@@ -48258,9 +48258,9 @@
       "source_file": "backend/app/avatars/repository.py",
       "source_location": "L102",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "avatars_repository_sqlalchemyavatarrepository",
-      "target": "avatars_repository_sqlalchemyavatarrepository_list_published_catalog",
-      "confidence_score": 1.0
+      "target": "avatars_repository_sqlalchemyavatarrepository_list_published_catalog"
     },
     {
       "relation": "method",
@@ -48460,9 +48460,9 @@
       "source_file": "backend/app/avatars/presentation/api/v1/avatars.py",
       "source_location": "L71",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "backend_app_avatars_presentation_api_v1_avatars_py",
-      "target": "v1_avatars_list_avatar_catalog",
-      "confidence_score": 1.0
+      "target": "v1_avatars_list_avatar_catalog"
     },
     {
       "relation": "contains",
@@ -48544,9 +48544,9 @@
       "source_file": "backend/app/avatars/presentation/api/v1/avatars.py",
       "source_location": "L75",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "v1_avatars_list_avatar_catalog",
-      "target": "v1_avatars_service",
-      "confidence_score": 1.0
+      "target": "v1_avatars_service"
     },
     {
       "relation": "calls",
@@ -51136,9 +51136,9 @@
       "source_file": "backend/infrastructure/ai/interfaces.py",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "backend_infrastructure_ai_interfaces_py",
-      "target": "ai_interfaces_image_model_version",
-      "confidence_score": 1.0
+      "target": "ai_interfaces_image_model_version"
     },
     {
       "relation": "method",
@@ -51186,9 +51186,9 @@
       "source_file": "backend/infrastructure/ai/openai_provider.py",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "backend_infrastructure_ai_openai_provider_py",
-      "target": "ai_openai_provider_image_model_version",
-      "confidence_score": 1.0
+      "target": "ai_openai_provider_image_model_version"
     },
     {
       "relation": "method",
@@ -60146,9 +60146,9 @@
       "source_file": "initial_spec/gdd.md",
       "source_location": "L4683",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "initial_spec_gdd_8_5_championship",
-      "target": "initial_spec_gdd_purpose_4683",
-      "confidence_score": 1.0
+      "target": "initial_spec_gdd_purpose_4683"
     },
     {
       "relation": "contains",
@@ -60216,9 +60216,9 @@
       "source_file": "initial_spec/gdd.md",
       "source_location": "L4771",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "initial_spec_gdd_8_6_training_mode",
-      "target": "initial_spec_gdd_purpose_4771",
-      "confidence_score": 1.0
+      "target": "initial_spec_gdd_purpose_4771"
     },
     {
       "relation": "contains",
@@ -60226,9 +60226,9 @@
       "source_file": "initial_spec/gdd.md",
       "source_location": "L4781",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "initial_spec_gdd_8_6_training_mode",
-      "target": "initial_spec_gdd_characteristics_4781",
-      "confidence_score": 1.0
+      "target": "initial_spec_gdd_characteristics_4781"
     },
     {
       "relation": "contains",
@@ -60276,9 +60276,9 @@
       "source_file": "initial_spec/gdd.md",
       "source_location": "L4820",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "initial_spec_gdd_8_7_duel_mode",
-      "target": "initial_spec_gdd_purpose_4820",
-      "confidence_score": 1.0
+      "target": "initial_spec_gdd_purpose_4820"
     },
     {
       "relation": "contains",
@@ -60286,9 +60286,9 @@
       "source_file": "initial_spec/gdd.md",
       "source_location": "L4828",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "initial_spec_gdd_8_7_duel_mode",
-      "target": "initial_spec_gdd_characteristics_4828",
-      "confidence_score": 1.0
+      "target": "initial_spec_gdd_characteristics_4828"
     },
     {
       "relation": "contains",
@@ -66455,5 +66455,5 @@
       "source_file": "initial_spec/"
     }
   ],
-  "built_at_commit": "e56fa21df7874e2a5f81294e694264f6b103d7ef"
+  "built_at_commit": "d9d0f77febd0da0b1c42e40e1be71b80b06cbf3b"
 }

@@ -21,6 +21,7 @@ const { mockAuthState, mockLogout } = vi.hoisted(() => {
 });
 
 vi.mock('./engine/avatar/avatarApi', () => ({
+  listAvatarCatalog: () => Promise.resolve([]),
   listAvatars: () =>
     Promise.resolve([
       {

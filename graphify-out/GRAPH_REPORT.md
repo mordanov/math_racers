@@ -1,16 +1,16 @@
 # Graph Report - math-racers  (2026-10-12)
 
 ## Corpus Check
-- 288 files · ~114,916 words
+- 288 files · ~114,920 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2913 nodes · 3889 edges · 382 communities (200 shown, 182 thin omitted)
+- 2913 nodes · 3889 edges · 384 communities (200 shown, 184 thin omitted)
 - Extraction: 93% EXTRACTED · 7% INFERRED · 0% AMBIGUOUS · INFERRED: 285 edges (avg confidence: 0.74)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `e56fa21d`
+- Built from commit: `d9d0f77f`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -89,11 +89,13 @@
 - [[_COMMUNITY_Community 121|Community 121]]
 - [[_COMMUNITY_Community 122|Community 122]]
 - [[_COMMUNITY_Community 123|Community 123]]
+- [[_COMMUNITY_Community 124|Community 124]]
 - [[_COMMUNITY_Community 125|Community 125]]
 - [[_COMMUNITY_Community 126|Community 126]]
 - [[_COMMUNITY_Community 127|Community 127]]
 - [[_COMMUNITY_Community 128|Community 128]]
 - [[_COMMUNITY_Community 129|Community 129]]
+- [[_COMMUNITY_Community 130|Community 130]]
 - [[_COMMUNITY_Community 132|Community 132]]
 - [[_COMMUNITY_Community 133|Community 133]]
 - [[_COMMUNITY_Community 134|Community 134]]
@@ -377,7 +379,7 @@
 - **SDD sprint ledgers** — s1, s2, s3 [INFERRED 0.80]
 - **Creative documentation set** — gdd, art, prompt, econ [INFERRED 0.75]
 
-## Communities (382 total, 182 thin omitted)
+## Communities (384 total, 184 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.08
@@ -432,8 +434,8 @@ Cohesion: 0.10
 Nodes (14): getBadgeUrl(), KNOWN_BADGE_IDS, activeChampionship, user, ResultsRouteState, SyncStatus, createChampionship(), recordChampionshipRace() (+6 more)
 
 ### Community 14 - "Community 14"
-Cohesion: 0.15
-Nodes (19): clampTier(), selectTier(), compute(), generateProblemSet(), isDuplicate(), pickOperands(), pickOperation(), randomInt() (+11 more)
+Cohesion: 0.19
+Nodes (11): clampTier(), selectTier(), config, expected, TIER_CONFIGS, Problem, ProblemSet, Tier (+3 more)
 
 ### Community 15 - "Community 15"
 Cohesion: 0.10
@@ -476,8 +478,8 @@ Cohesion: 0.11
 Nodes (15): AuthContext, AuthState, JwtPayload, ChildProfileListResponse, createChildProfile(), fetchChildProfiles(), Account, ChildProfile (+7 more)
 
 ### Community 25 - "Community 25"
-Cohesion: 0.21
-Nodes (15): SyncState, pending, summary, cacheChildData(), deleteCachedChildData(), getCachedChildData(), listPendingTrainingResults(), openDatabase() (+7 more)
+Cohesion: 0.20
+Nodes (16): SyncState, pending, summary, cacheChildData(), deleteCachedChildData(), getCachedChildData(), listPendingTrainingResults(), openDatabase() (+8 more)
 
 ### Community 26 - "Community 26"
 Cohesion: 0.10
@@ -500,8 +502,8 @@ Cohesion: 0.29
 Nodes (6): clearIntervalSpy, pending, published, { result }, second, setIntervalSpy
 
 ### Community 31 - "Community 31"
-Cohesion: 0.12
-Nodes (6): SQLAlchemyAccountRepository, ApproveAccountUseCase, RejectAccountUseCase, approve_account(), list_accounts(), reject_account()
+Cohesion: 0.15
+Nodes (5): SQLAlchemyAccountRepository, ApproveAccountUseCase, approve_account(), list_accounts(), reject_account()
 
 ### Community 32 - "Community 32"
 Cohesion: 0.09
@@ -532,8 +534,8 @@ Cohesion: 0.33
 Nodes (5): inst, paths, { result }, species, unique
 
 ### Community 39 - "Community 39"
-Cohesion: 0.10
-Nodes (25): config, engine, hidden, { result }, state, trainingConfig, useRaceEngine(), calculateMovement() (+17 more)
+Cohesion: 0.13
+Nodes (18): config, engine, hidden, { result }, state, trainingConfig, useRaceEngine(), calculateMovement() (+10 more)
 
 ### Community 40 - "Community 40"
 Cohesion: 0.13
@@ -548,8 +550,8 @@ Cohesion: 0.18
 Nodes (7): KEYS, SettingsPage(), dispatchEvent, slider, toggle, isValidProblemTimeLimitSeconds(), readProblemTimeLimitSeconds()
 
 ### Community 43 - "Community 43"
-Cohesion: 0.46
-Nodes (7): _check_database(), _check_redis(), _check_storage(), _get_db_engine(), _get_http_client(), _get_redis_client(), health()
+Cohesion: 0.23
+Nodes (11): image_model_version(), OpenAIAvatarGenerationProvider, type, get_config(), _check_database(), _check_redis(), _check_storage(), _get_db_engine() (+3 more)
 
 ### Community 44 - "Community 44"
 Cohesion: 0.01
@@ -610,6 +612,10 @@ Nodes (24): AI Configuration, AI Orchestrator, AI Responsibilities, Architecture
 ### Community 61 - "Community 61"
 Cohesion: 0.67
 Nodes (3): build_character_prompt(), Build a deterministic image generation prompt from avatar metadata.      attempt, VersionedPrompt
+
+### Community 63 - "Community 63"
+Cohesion: 0.14
+Nodes (14): compute(), generateProblemSet(), isDuplicate(), pickOperands(), pickOperation(), randomInt(), createRng(), supportsDivisionRange() (+6 more)
 
 ### Community 113 - "Community 113"
 Cohesion: 0.07
@@ -723,6 +729,10 @@ Nodes (7): Application Layer, Architectural Layers, code:block2 (Presentation), 
 Cohesion: 0.25
 Nodes (5): Execute the full avatar generation pipeline for a queued job., Execute the full avatar generation pipeline for a queued job., Execute the full avatar generation pipeline for a queued job., run_generation_job(), S3ObjectStorage
 
+### Community 149 - "Community 149"
+Cohesion: 0.13
+Nodes (4): ChampionshipRepository, ChildProfileRepository, Protocol, ObjectStorage
+
 ### Community 152 - "Community 152"
 Cohesion: 0.29
 Nodes (7): 1.4 Design Philosophy, Every Character Matters, Fun First, No Punishment, Positive Reinforcement, Short Sessions, Zero Reading
@@ -739,17 +749,9 @@ Nodes (7): 9.5 Colour Palette, Accent, Error, Neutral, Primary, Secondary, Warni
 Cohesion: 0.29
 Nodes (7): Avatar Generation, code:yaml (species:), code:text (Create a unique child-friendly racing avatar.), Input, Notes, Purpose, User Prompt
 
-### Community 156 - "Community 156"
-Cohesion: 0.13
-Nodes (4): AccountRepository, RefreshTokenRepository, Protocol, ObjectStorage
-
 ### Community 158 - "Community 158"
 Cohesion: 0.33
 Nodes (6): Asset Pipeline, Avatar System, Mathematics Engine, Race Engine, Separation of Responsibilities, Statistics
-
-### Community 159 - "Community 159"
-Cohesion: 0.18
-Nodes (8): image_model_version(), OpenAIAvatarGenerationProvider, check(), Health probe for the worker container.  Checks Redis connectivity. Exits 0 if he, type, get_config(), Re-enqueue pending jobs from job_audit that are older than the threshold.      C, recover_pending_jobs()
 
 ### Community 160 - "Community 160"
 Cohesion: 0.33
@@ -982,16 +984,16 @@ Nodes (3): code:text (Generate fifty encouraging messages shown after answering 
 ## Knowledge Gaps
 - **1521 isolated node(s):** `name`, `version`, `private`, `node`, `dev` (+1516 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **182 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **184 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `PermissionError` connect `Community 123` to `Community 0`, `Community 129`, `Community 2`, `Community 161`, `Community 1`, `Community 34`, `Community 8`, `Community 139`, `Community 12`, `Community 16`, `Community 22`, `Community 119`?**
   _High betweenness centrality (0.014) - this node is a cross-community bridge._
-- **Why does `get_config()` connect `Community 159` to `Community 34`, `Community 35`, `Community 36`, `Community 137`, `Community 43`, `Community 50`, `Community 148`, `Community 55`, `Community 28`?**
+- **Why does `get_config()` connect `Community 43` to `Community 34`, `Community 35`, `Community 36`, `Community 130`, `Community 137`, `Community 50`, `Community 148`, `Community 55`, `Community 28`, `Community 159`?**
   _High betweenness centrality (0.011) - this node is a cross-community bridge._
-- **Why does `_run_pipeline()` connect `Community 28` to `Community 10`, `Community 148`, `Community 61`, `Community 159`?**
+- **Why does `_run_pipeline()` connect `Community 28` to `Community 10`, `Community 43`, `Community 148`, `Community 61`?**
   _High betweenness centrality (0.009) - this node is a cross-community bridge._
 - **Are the 27 inferred relationships involving `PermissionError` (e.g. with `_check_access()` and `get_player_achievements()`) actually correct?**
   _`PermissionError` has 27 INFERRED edges - model-reasoned connections that need verification._
