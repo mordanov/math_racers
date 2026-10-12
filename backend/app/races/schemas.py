@@ -7,6 +7,7 @@ from typing import Annotated, Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from app.achievements.schemas import AchievementResponse
+from app.mathematics.tiers import supports_division
 from app.progression.schemas import ProgressionResponse
 
 
@@ -53,6 +54,10 @@ class CustomTierConfigRequest(BaseModel):
             raise ValueError("min_operand cannot be greater than max_operand.")
         if len(self.operations) != len(set(self.operations)):
             raise ValueError("operations must not contain duplicates.")
+        if "division" in self.operations and not supports_division(
+            self.min_operand, self.max_operand
+        ):
+            raise ValueError("division requires a range that can produce a quotient above one.")
         return self
 
 

@@ -19,11 +19,11 @@ function readMuted(): boolean {
 function readVolume(): number {
   if (readMuted()) return 0;
   try {
-    const master = parseInt(localStorage.getItem('settings.masterVolume') ?? '100', 10);
-    const music = parseInt(localStorage.getItem('settings.musicVolume') ?? '100', 10);
+    const master = parseInt(localStorage.getItem('settings.masterVolume') ?? '80', 10);
+    const music = parseInt(localStorage.getItem('settings.musicVolume') ?? '70', 10);
     return (master / 100) * (music / 100);
   } catch {
-    return 1;
+    return 0.56;
   }
 }
 

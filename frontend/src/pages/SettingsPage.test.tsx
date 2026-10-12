@@ -69,6 +69,42 @@ describe('SettingsPage', () => {
     expect((slider as HTMLInputElement).value).toBe('42');
   });
 
+  it('defaults the timed-race problem limit to 30 seconds', () => {
+    renderPage();
+    expect(screen.getByRole('slider', { name: /time per problem/i })).toHaveValue('30');
+  });
+
+  it('persists the selected timed-race problem limit', () => {
+    renderPage();
+    fireEvent.change(screen.getByRole('slider', { name: /time per problem/i }), {
+      target: { value: '45' },
+    });
+    expect(localStorage.getItem('settings.problemTimeLimitSeconds')).toBe('45');
+  });
+
+  it('notifies active audio when a volume setting changes', () => {
+    const dispatchEvent = vi.spyOn(window, 'dispatchEvent');
+    renderPage();
+    fireEvent.change(screen.getByLabelText(/music volume/i), { target: { value: '50' } });
+    expect(dispatchEvent).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'storage', key: 'settings.musicVolume' }),
+    );
+  });
+
+  it('persists music and SFX volumes independently', () => {
+    renderPage();
+    fireEvent.change(screen.getByLabelText(/music volume/i), { target: { value: '35' } });
+    fireEvent.change(screen.getByLabelText(/sfx volume/i), { target: { value: '65' } });
+    expect(localStorage.getItem('settings.musicVolume')).toBe('35');
+    expect(localStorage.getItem('settings.sfxVolume')).toBe('65');
+  });
+
+  it('uses the default timed-race problem limit for invalid saved values', () => {
+    localStorage.setItem('settings.problemTimeLimitSeconds', '17');
+    renderPage();
+    expect(screen.getByRole('slider', { name: /time per problem/i })).toHaveValue('30');
+  });
+
   it('persists reduced motion toggle to localStorage', () => {
     renderPage();
     const toggle = screen.getByLabelText(/reduce motion/i);

@@ -186,3 +186,90 @@ async def test_championship_rejects_placements_that_differ_from_saved_race() -> 
         )
 
     session.add.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_championship_replays_identical_recorded_race_without_adding_points() -> None:
+    race_id = uuid.uuid4()
+    championship = SimpleNamespace(
+        status="completed",
+        championship_races=[
+            SimpleNamespace(
+                race_id=race_id,
+                race_index=2,
+                avatar_id="human",
+                is_player=True,
+                finishing_position=1,
+                points_earned=10,
+            ),
+            SimpleNamespace(
+                race_id=race_id,
+                race_index=2,
+                avatar_id="opponent",
+                is_player=False,
+                finishing_position=2,
+                points_earned=8,
+            ),
+        ],
+    )
+    session = MagicMock()
+    session.execute = AsyncMock()
+    repository = SQLAlchemyChampionshipRepository(session)
+
+    result = await repository.add_race(
+        championship,
+        race_id,
+        2,
+        [
+            {
+                "avatar_id": "human",
+                "is_player": True,
+                "finishing_position": 1,
+                "points_earned": 10,
+            },
+            {
+                "avatar_id": "opponent",
+                "is_player": False,
+                "finishing_position": 2,
+                "points_earned": 8,
+            },
+        ],
+    )
+
+    assert result is championship
+    assert len(championship.championship_races) == 2
+    session.execute.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_championship_rejects_retry_with_different_recorded_results() -> None:
+    race_id = uuid.uuid4()
+    championship = SimpleNamespace(
+        status="completed",
+        championship_races=[
+            SimpleNamespace(
+                race_id=race_id,
+                race_index=2,
+                avatar_id="human",
+                is_player=True,
+                finishing_position=1,
+                points_earned=10,
+            ),
+        ],
+    )
+    repository = SQLAlchemyChampionshipRepository(MagicMock())
+
+    with pytest.raises(ConflictError, match="different results"):
+        await repository.add_race(
+            championship,
+            race_id,
+            2,
+            [
+                {
+                    "avatar_id": "human",
+                    "is_player": True,
+                    "finishing_position": 2,
+                    "points_earned": 8,
+                },
+            ],
+        )

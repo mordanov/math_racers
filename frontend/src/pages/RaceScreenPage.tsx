@@ -1,10 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useBlocker, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useRaceEngine } from '../engine/race/hooks/useRaceEngine';
 import { submitRaceAnswer } from '../engine/race/raceApi';
 import { MAX_TRACK_DISTANCE, OBSTACLE_COUNT } from '../engine/race/constants';
 import { PERSONALITIES } from '../engine/race/personalities';
 import type { ParticipantConfig, RaceConfig, RaceMode } from '../engine/race/types';
+import {
+  DEFAULT_PROBLEM_TIME_LIMIT_SECONDS,
+  isValidProblemTimeLimitSeconds,
+} from '../engine/race/problemTimeLimit';
 import type { Tier, TierConfig } from '../engine/math/types';
 import { ConfirmDialog } from '../shared/components/ConfirmDialog';
 import { useAudioManager } from '../shared/hooks/useAudioManager';
@@ -29,14 +33,30 @@ interface RaceScreenRouteState {
   childProfileId?: string;
   championshipId?: string;
   raceIndex: number;
+  avatarPortraitUrl?: string;
+  opponentPortraitUrls?: string[];
+  problemTimeLimitSeconds?: number;
 }
 
-function buildParticipants(playerAvatarId: string, opponentCount: number): ParticipantConfig[] {
-  const player: ParticipantConfig = { runnerId: 'player', isHuman: true, avatarId: playerAvatarId };
+const FALLBACK_AVATARS = ['🏎️', '🦊', '🐻', '🐰', '🐼'];
+
+function buildParticipants(
+  playerAvatarId: string,
+  opponentCount: number,
+  playerPortraitUrl?: string,
+  opponentPortraitUrls: string[] = [],
+): ParticipantConfig[] {
+  const player: ParticipantConfig = {
+    runnerId: 'player',
+    isHuman: true,
+    avatarId: playerAvatarId,
+    portraitUrl: playerPortraitUrl,
+  };
   const ai: ParticipantConfig[] = Array.from({ length: opponentCount }, (_, i) => ({
     runnerId: `ai-${i + 1}`,
     isHuman: false,
     avatarId: `ai-${i + 1}`,
+    portraitUrl: opponentPortraitUrls[i],
     personality: PERSONALITIES[i % PERSONALITIES.length],
   }));
   return [player, ...ai];
@@ -58,6 +78,8 @@ export default function RaceScreenPage() {
     participants: buildParticipants(
       routeState.avatarId,
       routeState.mode === 'training' ? 0 : routeState.opponentCount,
+      routeState.avatarPortraitUrl,
+      routeState.opponentPortraitUrls,
     ),
   };
 
@@ -98,7 +120,14 @@ function RaceScreen({
   const [answerInput, setAnswerInput] = useState('');
   const [submittingAnswer, setSubmittingAnswer] = useState(false);
   const [answerError, setAnswerError] = useState<TranslationKey | null>(null);
+  const [failedPortraits, setFailedPortraits] = useState<Set<string>>(() => new Set());
   const inputRef = useRef<HTMLInputElement>(null);
+  const submissionInFlightRef = useRef(false);
+  const timedOutObstacleRef = useRef<number | null>(null);
+  const answeredObstacleRef = useRef<number | null>(null);
+  const pendingAnswerRef = useRef<{ obstacleIndex: number; answer: string } | null>(null);
+  const latestObstacleClockRef = useRef(obstacleClockMs);
+  latestObstacleClockRef.current = obstacleClockMs;
   const { playMusic, stopMusic } = useAudioManager();
   const { playSfx } = useSfxPlayer();
   const { triggerAmbience } = useAmbienceManager();
@@ -106,6 +135,11 @@ function RaceScreen({
   const reduced = useReducedMotion();
   const isOffline = useOffline();
   const { t } = useLocale();
+  const configuredTimeLimit = routeState.problemTimeLimitSeconds;
+  const problemTimeLimitSeconds = isValidProblemTimeLimitSeconds(configuredTimeLimit ?? 0)
+    ? configuredTimeLimit!
+    : DEFAULT_PROBLEM_TIME_LIMIT_SECONDS;
+  const problemTimeLimitMs = problemTimeLimitSeconds * 1000;
 
   const blocker = useBlocker(state === 'RACING' && config.mode !== 'training');
 
@@ -158,18 +192,30 @@ function RaceScreen({
     });
   }, [state]); // intentionally omits stable refs: navigate, getSummary, routeState
 
-  async function handleSubmit(): Promise<void> {
-    if (state !== 'RACING' || submittingAnswer) return;
+  const handleSubmit = useCallback(async (): Promise<void> => {
+    if (state !== 'RACING' || submittingAnswer || submissionInFlightRef.current) return;
     const problem = problemSet?.problems[currentObstacle];
     if (!problem) return;
+    const pendingAnswer =
+      pendingAnswerRef.current?.obstacleIndex === currentObstacle ? pendingAnswerRef.current : null;
+    const timedOut =
+      !pendingAnswer && config.mode !== 'training' && obstacleClockMs >= problemTimeLimitMs;
+    const submittedAnswer = timedOut ? '' : (pendingAnswer?.answer ?? answerInput);
+    if (timedOut) {
+      timedOutObstacleRef.current = currentObstacle;
+      setAnswerInput('');
+    } else if (!pendingAnswer) {
+      pendingAnswerRef.current = { obstacleIndex: currentObstacle, answer: submittedAnswer };
+    }
+    submissionInFlightRef.current = true;
     setSubmittingAnswer(true);
     setAnswerError(null);
     try {
       const serverAnswer = isOffline
         ? null
-        : await submitRaceAnswer(raceId, currentObstacle, problem.operation, answerInput);
+        : await submitRaceAnswer(raceId, currentObstacle, problem.operation, submittedAnswer);
       const result = submitAnswer({
-        answer: answerInput,
+        answer: submittedAnswer,
         ...(serverAnswer
           ? {
               isCorrect: serverAnswer.is_correct,
@@ -185,13 +231,54 @@ function RaceScreen({
         playSfx('incorrect');
         playVoice('surprised');
       }
+      answeredObstacleRef.current = currentObstacle;
+      pendingAnswerRef.current = null;
       setAnswerInput('');
     } catch (error) {
+      if (
+        !timedOut &&
+        pendingAnswerRef.current?.obstacleIndex === currentObstacle &&
+        latestObstacleClockRef.current < problemTimeLimitMs
+      ) {
+        pendingAnswerRef.current = null;
+      }
       setAnswerError('The answer could not be saved.');
     } finally {
+      submissionInFlightRef.current = false;
       setSubmittingAnswer(false);
     }
-  }
+  }, [
+    answerInput,
+    config.mode,
+    currentObstacle,
+    isOffline,
+    obstacleClockMs,
+    problemSet,
+    problemTimeLimitMs,
+    raceId,
+    state,
+    submitAnswer,
+    submittingAnswer,
+    playSfx,
+    playVoice,
+    triggerAmbience,
+  ]);
+
+  useEffect(() => {
+    if (
+      state !== 'RACING' ||
+      config.mode === 'training' ||
+      obstacleClockMs < problemTimeLimitMs ||
+      timedOutObstacleRef.current === currentObstacle ||
+      answeredObstacleRef.current === currentObstacle ||
+      pendingAnswerRef.current?.obstacleIndex === currentObstacle ||
+      submissionInFlightRef.current
+    ) {
+      return;
+    }
+    timedOutObstacleRef.current = currentObstacle;
+    void handleSubmit();
+  }, [config.mode, currentObstacle, handleSubmit, obstacleClockMs, problemTimeLimitMs, state]);
 
   const problem = problemSet?.problems[currentObstacle];
   const isCountdownPhase = state === 'IDLE' || state === 'LOBBY' || state === 'COUNTDOWN';
@@ -251,14 +338,27 @@ function RaceScreen({
         <div role="list" style={{ marginBottom: tokens.spacing.lg }} aria-label={t('Race track')}>
           {runners.map((runner) => {
             const pct = Math.min(100, (runner.totalDistanceMetres / MAX_TRACK_DISTANCE) * 100);
+            const participant = config.participants.find(
+              (candidate) => candidate.runnerId === runner.runnerId,
+            );
+            const runnerName = runner.isHuman
+              ? t('You')
+              : t('CPU {{number}}', { number: runner.runnerId.replace('ai-', '') });
+            const avatarLabel = t('{{runner}} avatar', { runner: runnerName });
+            const portraitUrl = participant?.portraitUrl;
+            const portraitFailed = failedPortraits.has(runner.runnerId);
+            const fallback =
+              FALLBACK_AVATARS[
+                runner.isHuman
+                  ? 0
+                  : Number(runner.runnerId.replace('ai-', '')) % FALLBACK_AVATARS.length
+              ];
             return (
               <div
                 key={runner.runnerId}
                 role="listitem"
                 aria-label={t('{{runner}}: {{distance}}m', {
-                  runner: runner.isHuman
-                    ? t('You')
-                    : t('CPU {{number}}', { number: runner.runnerId.replace('ai-', '') }),
+                  runner: runnerName,
                   distance: runner.totalDistanceMetres,
                 })}
                 style={{
@@ -296,15 +396,31 @@ function RaceScreen({
                       left: `${pct}%`,
                       top: '50%',
                       transform: 'translate(-50%, -50%)',
-                      width: 28,
-                      height: 28,
+                      width: 30,
+                      height: 30,
                       borderRadius: '50%',
-                      background: runner.isHuman
-                        ? tokens.color.primary
-                        : tokens.color.textSecondary,
+                      background: tokens.color.surface,
                       transition: reduced ? undefined : `left ${tokens.animation.micro} ease-out`,
+                      display: 'grid',
+                      placeItems: 'center',
+                      overflow: 'hidden',
                     }}
-                  />
+                  >
+                    {portraitUrl && !portraitFailed ? (
+                      <img
+                        src={portraitUrl}
+                        alt={avatarLabel}
+                        onError={() =>
+                          setFailedPortraits((current) => new Set(current).add(runner.runnerId))
+                        }
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    ) : (
+                      <span role="img" aria-label={avatarLabel} style={{ fontSize: 22 }}>
+                        {fallback}
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <span
                   aria-hidden="true"
@@ -326,7 +442,18 @@ function RaceScreen({
       {/* Timer bar */}
       {state === 'RACING' && config.mode !== 'training' && (
         <div style={{ marginBottom: tokens.spacing.md }}>
+          <div style={{ marginBottom: tokens.spacing.xs, textAlign: 'right' }}>
+            {Math.max(0, Math.ceil((problemTimeLimitMs - obstacleClockMs) / 1000))} {t('seconds')}
+          </div>
           <div
+            role="progressbar"
+            aria-label={t('Time remaining')}
+            aria-valuemin={0}
+            aria-valuemax={problemTimeLimitSeconds}
+            aria-valuenow={Math.min(problemTimeLimitSeconds, Math.floor(obstacleClockMs / 1000))}
+            aria-valuetext={t('{{seconds}} seconds remaining', {
+              seconds: Math.max(0, Math.ceil((problemTimeLimitMs - obstacleClockMs) / 1000)),
+            })}
             style={{
               height: 8,
               borderRadius: 999,
@@ -338,11 +465,11 @@ function RaceScreen({
             <div
               style={{
                 height: '100%',
-                width: `${Math.min(100, (obstacleClockMs / 8000) * 100)}%`,
+                width: `${Math.min(100, (obstacleClockMs / problemTimeLimitMs) * 100)}%`,
                 background:
-                  obstacleClockMs < 2000
+                  obstacleClockMs < problemTimeLimitMs / 3
                     ? tokens.color.success
-                    : obstacleClockMs < 4000
+                    : obstacleClockMs < (problemTimeLimitMs * 2) / 3
                       ? tokens.color.warning
                       : tokens.color.error,
                 transition: reduced ? undefined : 'width 0.1s linear',

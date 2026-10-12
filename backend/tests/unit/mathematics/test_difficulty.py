@@ -7,6 +7,7 @@ from pydantic import ValidationError
 
 from app.mathematics.difficulty import select_tier
 from app.mathematics.schemas import Tier6Settings
+from app.races.schemas import CustomTierConfigRequest
 
 
 def test_advances_tier_at_high_skill() -> None:
@@ -53,6 +54,17 @@ def test_tier6_settings_accept_unique_supported_operations() -> None:
     )
 
     assert settings.operations == ["addition", "division"]
+
+
+@pytest.mark.parametrize("schema", [Tier6Settings, CustomTierConfigRequest])
+def test_tier6_division_requires_a_range_that_can_make_a_quotient_above_one(
+    schema: type[Tier6Settings] | type[CustomTierConfigRequest],
+) -> None:
+    with pytest.raises(ValidationError, match="division"):
+        schema.model_validate({"operations": ["division"], "min_operand": 2, "max_operand": 3})
+
+    valid = schema.model_validate({"operations": ["division"], "min_operand": 2, "max_operand": 4})
+    assert valid.max_operand == 4
 
 
 @pytest.mark.parametrize(

@@ -45,6 +45,37 @@ describe('useRaceEngine', () => {
     await waitFor(() => expect(result.current.state).toBe('RACING'));
   });
 
+  it('pauses the race clock while the document is hidden and resumes when visible', async () => {
+    const hidden = vi.spyOn(document, 'hidden', 'get').mockReturnValue(false);
+    const { result } = renderHook(() => useRaceEngine(config));
+    act(() => {
+      result.current.startCountdown();
+      result.current.startRacing();
+    });
+    await waitFor(() => expect(result.current.state).toBe('RACING'));
+    act(() => {
+      vi.advanceTimersByTime(500);
+    });
+
+    hidden.mockReturnValue(true);
+    act(() => {
+      document.dispatchEvent(new Event('visibilitychange'));
+      vi.advanceTimersByTime(1000);
+    });
+    const pausedClock = result.current.clockMs;
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+    expect(result.current.clockMs).toBe(pausedClock);
+
+    hidden.mockReturnValue(false);
+    act(() => {
+      document.dispatchEvent(new Event('visibilitychange'));
+      vi.advanceTimersByTime(500);
+    });
+    expect(result.current.clockMs).toBeGreaterThan(pausedClock);
+  });
+
   it('getSummary() throws before RESULTS state', () => {
     const { result } = renderHook(() => useRaceEngine(config));
     expect(() => result.current.getSummary()).toThrow();
@@ -71,6 +102,26 @@ describe('useRaceEngine', () => {
       responseTimeMs: 3750,
       distanceMetres: 15,
     });
+  });
+
+  it('records an empty timeout answer with no movement', () => {
+    const { result } = renderHook(() => useRaceEngine(config));
+    act(() => {
+      result.current.startCountdown();
+      result.current.startRacing();
+    });
+
+    let obstacle: ReturnType<typeof result.current.submitAnswer> | undefined;
+    act(() => {
+      obstacle = result.current.submitAnswer({
+        answer: '',
+        isCorrect: false,
+        responseTimeMs: 30_000,
+      });
+    });
+
+    expect(obstacle).toMatchObject({ isCorrect: false, distanceMetres: 0, tier: 'incorrect' });
+    expect(result.current.runners[0]?.totalDistanceMetres).toBe(0);
   });
 
   it('does not expose summaryStatus', () => {

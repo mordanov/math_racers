@@ -1,4 +1,5 @@
 import type {
+  AvatarCatalogItem,
   AvatarCreationResponse,
   AvatarDetail,
   AvatarListItem,
@@ -21,6 +22,10 @@ export async function pollGenerationJob(
 
 export async function listAvatars(): Promise<AvatarListItem[]> {
   return apiClient.get<AvatarListItem[]>('/avatars');
+}
+
+export async function listAvatarCatalog(): Promise<AvatarCatalogItem[]> {
+  return apiClient.get<AvatarCatalogItem[]>('/avatars/catalog');
 }
 
 export async function getAvatar(avatarId: string): Promise<AvatarDetail> {

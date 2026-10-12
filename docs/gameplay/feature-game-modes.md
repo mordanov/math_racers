@@ -34,6 +34,9 @@ Four modes are available in v1.0, each serving a different educational and engag
 - Each race awards points based on finishing position.
 - Cumulative standings shown between races.
 - Final ceremony on championship completion.
+- Race results are persisted before standings advance. Retried submissions do
+  not duplicate points or awards; interrupted championships resume at the next
+  unplayed race; the final race persists standings and completes the series.
 
 **Scoring example:**
 

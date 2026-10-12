@@ -46,6 +46,14 @@ Parents or players may manually select a tier. Adaptive difficulty may recommend
 - Numbers stay within the appropriate range for the selected tier.
 - Division problems always produce whole-number results.
 - Problems are age-appropriate (no negatives at low tiers, no remainders).
+- Tier 3 multiplication uses a two-digit number times a one-digit number.
+- Tier 4 division uses an exact one-digit divisor and a quotient greater than one.
+- Tier 5 addition uses two two-digit operands; multiplication and division use the tier 3 and tier 4 operand patterns.
+- Tiers 3–5 do not generate single-digit addition or two-digit-by-two-digit multiplication.
+- Division generation excludes quotient one, so self-division frequency is zero.
+- Tiers 1 and 2 retain their existing generation rules. Tier 6 keeps its
+  parent-selected operations and ranges, but division must have quotient > 1;
+  reject a Tier 6 division range that cannot generate a valid problem.
 
 ---
 

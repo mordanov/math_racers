@@ -134,7 +134,7 @@ def test_create_championship_returns_201() -> None:
     resp = httpx.post(
         f"{BASE_URL}/api/v1/championships",
         json={"total_races": 3},
-        headers={"Authorization": f"Bearer {token}", "X-Child-Profile-ID": child_id},
+        headers={"Authorization": "Bearer " + token, "X-Child-Profile-ID": child_id},
         timeout=10.0,
     )
     assert resp.status_code == 201, resp.text
@@ -256,8 +256,29 @@ def test_patch_race_updates_standings_and_auto_completes() -> None:
         assert body["races_completed"] == race_index + 1
 
     assert body["status"] == "completed"
+    assert body["completion_xp_awarded"] == 500
     standings = body["standings"]
     assert standings[0]["avatar_id"] == avatar_id
+
+    retry = httpx.patch(
+        f"{BASE_URL}/api/v1/championships/{champ_id}/races/{race_id}",
+        json={
+            "race_index": 2,
+            "participants": [
+                {
+                    "avatar_id": avatar_id,
+                    "is_player": True,
+                    "finishing_position": 1,
+                },
+            ],
+        },
+        headers={"Authorization": "Bearer " + token, "X-Child-Profile-ID": child_id},
+        timeout=10.0,
+    )
+    assert retry.status_code == 200, retry.text
+    assert retry.json()["races_completed"] == 3
+    assert retry.json()["standings"] == standings
+    assert retry.json()["completion_xp_awarded"] == 0
     assert standings[0]["points"] == 30
     assert standings[0]["position"] == 1
 

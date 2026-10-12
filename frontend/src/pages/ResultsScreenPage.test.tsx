@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as raceApiModule from '../engine/race/raceApi';
@@ -158,6 +158,80 @@ describe('ResultsScreenPage', () => {
       ),
     );
     expect(screen.getByRole('button', { name: /view championship/i })).toBeInTheDocument();
+  });
+
+  it('saves race results before recording the championship round and refreshing progression', async () => {
+    const calls: string[] = [];
+    vi.mocked(raceApiModule.postRaceSummary).mockImplementation(() => {
+      calls.push('race-results');
+      return Promise.resolve({
+        new_achievements: [],
+        progression: { xp_earned_this_race: 80 },
+      });
+    });
+    vi.mocked(championshipApiModule.recordChampionshipRace).mockImplementation(() => {
+      calls.push('championship-round');
+      return Promise.resolve({
+        championship_id: 'ch1',
+        total_races: 3,
+        races_completed: 1,
+        status: 'active',
+        standings: [],
+      });
+    });
+    vi.mocked(progressionApiModule.fetchProgression).mockImplementation(() => {
+      calls.push('progression');
+      return Promise.resolve({
+        total_xp: 200,
+        current_level: 1,
+        xp_to_next_level: 200,
+      });
+    });
+
+    renderPage({
+      summary: { ...makeSummary(), mode: 'championship' },
+      playerAvatarId: 'av1',
+      championshipId: 'ch1',
+      raceIndex: 0,
+    });
+
+    await waitFor(() =>
+      expect(calls).toEqual(['race-results', 'championship-round', 'progression']),
+    );
+  });
+
+  it('retries a saved championship result without duplicating the completed race', async () => {
+    vi.mocked(championshipApiModule.recordChampionshipRace).mockResolvedValue({
+      championship_id: 'ch1',
+      total_races: 3,
+      races_completed: 3,
+      status: 'completed',
+      standings: [],
+      completion_xp_awarded: 500,
+    });
+    vi.mocked(progressionApiModule.fetchProgression)
+      .mockRejectedValueOnce(new Error('Temporary progression failure'))
+      .mockResolvedValue({
+        total_xp: 700,
+        current_level: 2,
+        xp_to_next_level: 200,
+      });
+
+    renderPage({
+      summary: { ...makeSummary(), mode: 'championship' },
+      playerAvatarId: 'av1',
+      championshipId: 'ch1',
+      raceIndex: 2,
+    });
+    await waitFor(() => expect(screen.getByRole('alert')).toBeInTheDocument());
+
+    fireEvent.click(screen.getByRole('button', { name: /retry/i }));
+
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: /view championship/i })).toBeInTheDocument(),
+    );
+    expect(raceApiModule.postRaceSummary).toHaveBeenCalledTimes(2);
+    expect(championshipApiModule.recordChampionshipRace).toHaveBeenCalledTimes(2);
   });
 
   it('includes the one-time championship completion bonus in the XP reward', async () => {

@@ -106,9 +106,6 @@ class ChampionshipDomainService:
                 error_code="CHAMPIONSHIP_ACCESS_DENIED",
                 message="You do not own this championship.",
             )
-        if championship.status == "completed":
-            raise ValidationError(message="Championship is already completed.")
-
         player_entries = [p for p in request.participants if p.is_player]
         if len(player_entries) != 1:
             raise ValidationError(message="Exactly one participant must have is_player=true.")

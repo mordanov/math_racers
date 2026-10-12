@@ -23,6 +23,12 @@ Start → Obstacle 1 → Obstacle 2 → … → Obstacle 8 → Finish
 
 Each checkpoint presents one mathematics problem. Answering it moves the runner forward.
 
+Competitive modes use a configurable per-problem limit of 10–60 seconds in
+5-second increments (30 seconds by default). The value is captured for the
+whole race. The timer pauses/resumes with the race clock when the browser tab
+loses/gains focus. An unanswered timeout records no movement and advances to
+the next problem; Training remains untimed.
+
 ---
 
 ## Movement Model
@@ -47,6 +53,9 @@ Speed modifier: Fast = 1.2, Normal = 1.0, Slow = 0.8
 - Participants: 1–5 runners.
 - Runner types: one human player + up to 4 AI opponents.
 - Track length: scaled to accommodate 8 obstacles.
+- Each participant is represented by a moving avatar portrait. Opponents use
+  shared published portraits when available, otherwise distinct built-in
+  fallbacks; private child-profile portraits are never exposed.
 
 ---
 

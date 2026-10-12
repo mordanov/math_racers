@@ -108,7 +108,14 @@ Championship Setup → Create ChampionshipState
   Final Standings Screen → Complete Championship
 ```
 
-Each race in a championship uses a fresh `RaceSession`. Points are accumulated in `ChampionshipState`. If interrupted (browser closed, session expired), the championship is resumable until all races are complete.
+Each race in a championship uses a fresh `RaceSession`. Points are accumulated
+in `ChampionshipState`. If interrupted (browser closed, session expired), the
+championship is resumable until all races are complete.
+
+The client submits and persists the race result before recording that race in
+the championship. If a later step fails, retrying the result/championship
+handoff must not award points or XP twice. Recording the final scheduled race
+persists final standings and transitions the championship to `completed`.
 
 ### Training
 

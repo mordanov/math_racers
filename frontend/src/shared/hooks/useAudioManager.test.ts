@@ -125,6 +125,15 @@ describe('useAudioManager — sequential playback', () => {
     localStorage.removeItem('settings.musicVolume');
   });
 
+  it('uses the Settings defaults before preferences have been saved', () => {
+    localStorage.clear();
+    const { result } = renderHook(() => useAudioManager());
+    act(() => {
+      result.current.playMusic('menu');
+    });
+    expect(audioInstances[0].volume).toBeCloseTo(0.56, 2);
+  });
+
   it('updates playing track volume when storage event fires', () => {
     localStorage.setItem('settings.masterVolume', '100');
     localStorage.setItem('settings.musicVolume', '100');

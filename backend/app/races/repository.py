@@ -5,6 +5,7 @@ import uuid
 from datetime import UTC, datetime
 from typing import Protocol
 
+from pydantic import ValidationError as PydanticValidationError
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -146,7 +147,17 @@ class SQLAlchemyRaceRepository:
                     "TIER_6_SETTINGS_REQUIRED",
                     "Save parent Tier 6 settings before starting this race.",
                 )
-            custom_tier_config = difficulty.custom_tier_config
+            from app.races.schemas import CustomTierConfigRequest
+
+            try:
+                custom_tier_config = CustomTierConfigRequest.model_validate(
+                    difficulty.custom_tier_config
+                ).model_dump(mode="json")
+            except PydanticValidationError as error:
+                raise ValidationError(
+                    "TIER_6_SETTINGS_INVALID",
+                    "Update parent Tier 6 settings before starting this race.",
+                ) from error
 
         seed = secrets.randbits(32)
         now = datetime.now(UTC)

@@ -43,6 +43,7 @@ export type ParticipantConfig = {
   runnerId: string;
   isHuman: boolean;
   avatarId: string;
+  portraitUrl?: string;
   personality?: AiPersonality;
 };
 

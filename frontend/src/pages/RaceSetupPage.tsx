@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { listAvatars } from '../engine/avatar/avatarApi';
+import { listAvatarCatalog, listAvatars } from '../engine/avatar/avatarApi';
 import type { AvatarListItem } from '../engine/avatar/types';
 import { createChampionship } from '../engine/race/championshipApi';
+import { readProblemTimeLimitSeconds } from '../engine/race/problemTimeLimit';
 import type { RaceMode } from '../engine/race/types';
 import type { Operation, Tier, TierConfig } from '../engine/math/types';
+import { supportsDivisionRange } from '../engine/math/tiers';
 import { createRaceSession } from '../features/race/raceSessionApi';
 import { fetchTier6Settings, saveTier6Settings } from '../features/race/tier6SettingsApi';
 import { fetchPlayerStats } from '../features/statistics/statisticsApi';
@@ -37,6 +39,21 @@ const MODES: Array<{ mode: RaceMode; label: TranslationKey; defaultOpponents: nu
 ];
 const OPERATIONS: Operation[] = ['addition', 'subtraction', 'multiplication', 'division'];
 
+function selectOpponentPortraits(
+  catalog: string[],
+  seed: number,
+  opponentCount: number,
+  playerPortraitUrl?: string,
+): string[] {
+  const available = [...new Set(catalog)].filter((url) => url !== playerPortraitUrl);
+  if (available.length === 0) return [];
+  const firstIndex = seed % available.length;
+  return Array.from(
+    { length: Math.min(opponentCount, available.length) },
+    (_, index) => available[(firstIndex + index) % available.length],
+  );
+}
+
 export default function RaceSetupPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -45,6 +62,8 @@ export default function RaceSetupPage() {
   const { t } = useLocale();
 
   const [avatars, setAvatars] = useState<AvatarListItem[]>([]);
+  const [catalogPortraitUrls, setCatalogPortraitUrls] = useState<string[]>([]);
+  const [catalogLoadFailed, setCatalogLoadFailed] = useState(false);
   const [loading, setLoading] = useState(true);
   const [mode, setMode] = useState<RaceMode>(
     routeState.continueChampionshipId ? 'championship' : 'quick',
@@ -97,6 +116,23 @@ export default function RaceSetupPage() {
 
   useEffect(() => {
     if (isOffline) setMode('training');
+  }, [isOffline]);
+
+  useEffect(() => {
+    if (isOffline) return;
+    let cancelled = false;
+    void listAvatarCatalog()
+      .then((items) => {
+        if (!cancelled) setCatalogPortraitUrls(items.map((item) => item.portrait_url));
+      })
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        console.error('Could not load the shared avatar catalog.', error);
+        setCatalogLoadFailed(true);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [isOffline]);
 
   useEffect(() => {
@@ -201,7 +237,13 @@ export default function RaceSetupPage() {
     try {
       const saved = await saveTier6Settings(account.id, customTierConfig);
       setCustomTierConfig(saved);
-      setTier6SettingsSaved(true);
+      const divisionRangeSupported =
+        !saved.operations.includes('division') ||
+        supportsDivisionRange(saved.minOperand, saved.maxOperand);
+      setTier6SettingsSaved(divisionRangeSupported);
+      if (!divisionRangeSupported) {
+        setTier6SettingsError('Saved Tier 6 division range is invalid. Update it before racing.');
+      }
     } catch {
       setTier6SettingsError('Settings could not be saved.');
     } finally {
@@ -251,6 +293,15 @@ export default function RaceSetupPage() {
           ...(sessionTier === 6 ? { customTierConfig } : {}),
           seed: session.seed,
           avatarId: raceAvatarId,
+          avatarPortraitUrl: avatars.find((avatar) => avatar.avatar_id === raceAvatarId)?.portrait
+            ?.thumb_url,
+          opponentPortraitUrls: selectOpponentPortraits(
+            catalogPortraitUrls,
+            session.seed,
+            opponentCount,
+            avatars.find((avatar) => avatar.avatar_id === raceAvatarId)?.portrait?.thumb_url,
+          ),
+          problemTimeLimitSeconds: readProblemTimeLimitSeconds(),
           avatarSpecies:
             cachedTraining?.avatar_species ??
             avatars.find((a) => a.avatar_id === raceAvatarId)?.species ??
@@ -473,6 +524,17 @@ export default function RaceSetupPage() {
                   }}
                 />
               </label>
+              {customTierConfig.operations.includes('division') &&
+                !supportsDivisionRange(
+                  customTierConfig.minOperand,
+                  customTierConfig.maxOperand,
+                ) && (
+                  <p role="alert">
+                    {t(
+                      'This range cannot make a division problem with a quotient greater than one.',
+                    )}
+                  </p>
+                )}
               <Button
                 variant="secondary"
                 disabled={
@@ -480,7 +542,12 @@ export default function RaceSetupPage() {
                   customTierConfig.operations.length === 0 ||
                   customTierConfig.minOperand < 1 ||
                   customTierConfig.minOperand > customTierConfig.maxOperand ||
-                  customTierConfig.maxOperand > 100
+                  customTierConfig.maxOperand > 100 ||
+                  (customTierConfig.operations.includes('division') &&
+                    !supportsDivisionRange(
+                      customTierConfig.minOperand,
+                      customTierConfig.maxOperand,
+                    ))
                 }
                 onClick={() => void handleSaveTier6Settings()}
               >
@@ -528,6 +595,11 @@ export default function RaceSetupPage() {
               {t(offlineError)}
             </p>
           )}
+          {catalogLoadFailed && (
+            <p role="status">
+              {t('Opponent portraits could not be loaded. Using built-in avatars.')}
+            </p>
+          )}
           <div style={{ width: '100%' }}>
             <Button
               variant="primary"
@@ -540,7 +612,12 @@ export default function RaceSetupPage() {
                   (customTierConfig.operations.length === 0 ||
                     customTierConfig.minOperand < 1 ||
                     customTierConfig.minOperand > customTierConfig.maxOperand ||
-                    customTierConfig.maxOperand > 100))
+                    customTierConfig.maxOperand > 100 ||
+                    (customTierConfig.operations.includes('division') &&
+                      !supportsDivisionRange(
+                        customTierConfig.minOperand,
+                        customTierConfig.maxOperand,
+                      ))))
               }
               onClick={() => void handleStart()}
             >

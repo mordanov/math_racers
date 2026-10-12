@@ -25,8 +25,8 @@
     "semantic_hash": "8ec35cbcb093db6ea74631fae2904933"
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/App.tsx": {
-    "mtime": 1791666210.796606,
-    "ast_hash": "f89ac1a53c5532d878df5cc6ea8c08d5",
+    "mtime": 1791809857.0733,
+    "ast_hash": "cb78da2b21b7e48c8163fa607933dbf2",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/main.tsx": {
@@ -35,8 +35,8 @@
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/router.test.tsx": {
-    "mtime": 1791623796.5271707,
-    "ast_hash": "58b0abb8496c4a67fd8bc467921a7580",
+    "mtime": 1791711263.9968603,
+    "ast_hash": "c608d801bf53452aff76f81cec4ae82e",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/test-setup.ts": {
@@ -45,9 +45,9 @@
     "semantic_hash": "93dbd1b803f0cebad1c5185b685431e5"
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/router.tsx": {
-    "mtime": 1791584169.005012,
-    "ast_hash": "6a4aa41e0f55842711ff744084f7c855",
-    "semantic_hash": "6a4aa41e0f55842711ff744084f7c855"
+    "mtime": 1791711263.9972527,
+    "ast_hash": "a9d48908cb62c7870fc46d93277429ca",
+    "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/features/statistics/statisticsApi.ts": {
     "mtime": 1791623796.4892726,
@@ -70,14 +70,14 @@
     "semantic_hash": "655917e5b01b0cb944639514acdf7b06"
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/features/achievements/achievementBadges.ts": {
-    "mtime": 1791384654.2360334,
-    "ast_hash": "38c8578a85f4afb3e62a500bbe506e41",
-    "semantic_hash": "38c8578a85f4afb3e62a500bbe506e41"
+    "mtime": 1791809857.0747645,
+    "ast_hash": "452e3b656ec1e39eeb35894af58ea780",
+    "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/features/achievements/achievementBadges.test.ts": {
-    "mtime": 1791384654.2357001,
-    "ast_hash": "f7aaf50e076510abc8248ca3ed3d6cfc",
-    "semantic_hash": "f7aaf50e076510abc8248ca3ed3d6cfc"
+    "mtime": 1791809857.0741682,
+    "ast_hash": "64b86e50ef0f34c5016e066bb55f596f",
+    "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/features/avatar/useAvatarGallery.ts": {
     "mtime": 1791666210.7980566,
@@ -90,9 +90,9 @@
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/features/avatar/AvatarCard.test.tsx": {
-    "mtime": 1791584168.9797785,
-    "ast_hash": "5df707956f648c0e252869ffb0e2f788",
-    "semantic_hash": "5df707956f648c0e252869ffb0e2f788"
+    "mtime": 1791711263.9926069,
+    "ast_hash": "e28fb6ea13cb069fadcbe2216fd5ad9e",
+    "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/features/avatar/useAvatarGallery.test.ts": {
     "mtime": 1791584168.9809568,
@@ -100,9 +100,9 @@
     "semantic_hash": "55704d7acc0a848a09ffaaafebba3c97"
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/features/race/progressionApi.ts": {
-    "mtime": 1791362755.6539443,
-    "ast_hash": "9d8dc0356a7167ce6e915438a22567bf",
-    "semantic_hash": "9d8dc0356a7167ce6e915438a22567bf"
+    "mtime": 1791711263.993318,
+    "ast_hash": "4b83b8f55c3268e1e82b08f9d4510765",
+    "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/features/race/raceSessionApi.test.ts": {
     "mtime": 1791362755.6544373,
@@ -170,9 +170,9 @@
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/shared/components/Button.tsx": {
-    "mtime": 1791584169.0085783,
-    "ast_hash": "b5ff0322018f9fb9d41c815c62e9e299",
-    "semantic_hash": "b5ff0322018f9fb9d41c815c62e9e299"
+    "mtime": 1791809857.0827305,
+    "ast_hash": "7c782de241e59de5c3aaef4b74ced0d5",
+    "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/shared/components/XPBar.test.tsx": {
     "mtime": 1791236074.6921496,
@@ -195,9 +195,9 @@
     "semantic_hash": "d5b732e5630c4f5e5c654b7f2a3bc2bb"
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/shared/hooks/useSfxPlayer.ts": {
-    "mtime": 1791584169.011748,
-    "ast_hash": "145ab7f9da286574f771e991a36e94ed",
-    "semantic_hash": "145ab7f9da286574f771e991a36e94ed"
+    "mtime": 1791837702.898015,
+    "ast_hash": "a82085b60f140def8ac39f82827df123",
+    "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/shared/hooks/useOffline.test.ts": {
     "mtime": 1791384654.2433095,
@@ -215,9 +215,9 @@
     "semantic_hash": "4ae645eadddb5ffabf586ac6bc9f7f4a"
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/shared/hooks/useAudioManager.ts": {
-    "mtime": 1791585394.9150538,
-    "ast_hash": "88c67455198866aa106885884cbc4381",
-    "semantic_hash": "88c67455198866aa106885884cbc4381"
+    "mtime": 1791837702.8965414,
+    "ast_hash": "d1e8a51307a4911315a99cafea4b147a",
+    "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/shared/hooks/useOffline.ts": {
     "mtime": 1791384654.2436562,
@@ -230,9 +230,9 @@
     "semantic_hash": "16ab11f227bf41adb5a097656a4be1a5"
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/shared/hooks/useAudioManager.test.ts": {
-    "mtime": 1791585394.9145834,
-    "ast_hash": "56c6b8fc269fb7a94eccf31c0e8c26a5",
-    "semantic_hash": "56c6b8fc269fb7a94eccf31c0e8c26a5"
+    "mtime": 1791836402.708383,
+    "ast_hash": "513bd9ba55face17a07d118046eb7f9b",
+    "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/shared/hooks/useReducedMotion.ts": {
     "mtime": 1791584169.0113306,
@@ -240,9 +240,9 @@
     "semantic_hash": "ff81fc438fbc1a1fed673c08d9731ada"
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/shared/hooks/useSfxPlayer.test.ts": {
-    "mtime": 1791584169.0115292,
-    "ast_hash": "d1caaee80e57768500822f77da592b94",
-    "semantic_hash": "d1caaee80e57768500822f77da592b94"
+    "mtime": 1791836402.709848,
+    "ast_hash": "50fb3c54724d0cfefc07776a03afcc30",
+    "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/components/achievements/AchievementToast.tsx": {
     "mtime": 1791666210.7970688,
@@ -260,8 +260,8 @@
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/infrastructure/auth/AuthContext.test.tsx": {
-    "mtime": 1791623796.492758,
-    "ast_hash": "015802bd0bcd10ceac48d1872bc27dee",
+    "mtime": 1791711263.9937222,
+    "ast_hash": "712fa6892cb039d6e7bc022aa616627c",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/infrastructure/auth/RequireParent.test.tsx": {
@@ -290,8 +290,8 @@
     "semantic_hash": "7906febb7262be732cc1bd2031645795"
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/infrastructure/auth/AuthContext.tsx": {
-    "mtime": 1791663497.4794762,
-    "ast_hash": "4d440b4445f37e05b5e708165f86043c",
+    "mtime": 1791711263.9940667,
+    "ast_hash": "277683b7754884e6f20eed1c89aac969",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/infrastructure/auth/childProfilesApi.ts": {
@@ -305,28 +305,28 @@
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/pages/RegisterPage.tsx": {
-    "mtime": 1791666210.8068955,
-    "ast_hash": "d1fd457e9960f878c68602b69021922e",
+    "mtime": 1791809857.0800889,
+    "ast_hash": "5ee927d287b6adaa2fbc2ade8dea29f9",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/pages/RaceSetupPage.tsx": {
-    "mtime": 1791666210.8065367,
-    "ast_hash": "e288693d31b68c33373b449a4ffc1d33",
+    "mtime": 1791838168.060284,
+    "ast_hash": "6e77c95b08fb400bafc72addad1e800d",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/pages/LoginPage.tsx": {
-    "mtime": 1791666210.8053193,
-    "ast_hash": "8394a923ac661e98cbe150c9311ca171",
+    "mtime": 1791809857.0788329,
+    "ast_hash": "8800cb2eae275fcb32b2ecec5232a8c2",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/pages/ResultsScreenPage.test.tsx": {
-    "mtime": 1791666210.8072934,
-    "ast_hash": "361734450ccace78ebed392242264163",
+    "mtime": 1791838168.1018593,
+    "ast_hash": "47265ecf797ed8d45d8a40d6bab3dc00",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/pages/SettingsPage.tsx": {
-    "mtime": 1791666210.808235,
-    "ast_hash": "8d762bf42d1584b77df52ae9c4bb98fc",
+    "mtime": 1791838168.1216521,
+    "ast_hash": "dd68508972a191b7ac73246df6dfcb35",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/pages/StatisticsPage.test.tsx": {
@@ -335,18 +335,18 @@
     "semantic_hash": "8102a79ee3297987f8007dfcf827f2bd"
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/pages/ResultsScreenPage.tsx": {
-    "mtime": 1791666210.8077352,
-    "ast_hash": "300d765eff298906c73b73dc14a910b9",
+    "mtime": 1791809857.0805752,
+    "ast_hash": "d0cb0ec5152f813b0c4eac3fc205eba3",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/pages/ChildProfileSelectPage.tsx": {
-    "mtime": 1791666210.8045928,
-    "ast_hash": "bb6a9c4dfdffb387dcf9035a87f51f9b",
+    "mtime": 1791711263.9960532,
+    "ast_hash": "db9e885ca8ca1e7899e1a0a56b20f2b8",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/pages/ChildProfileSelectPage.test.tsx": {
-    "mtime": 1791666210.8041632,
-    "ast_hash": "a908e90bf4e92992e92eacdc8f2cd8cd",
+    "mtime": 1791711263.9956484,
+    "ast_hash": "1afd930439dcd4840fa41b3f8f945bbc",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/pages/HomePageAudio.test.tsx": {
@@ -355,8 +355,8 @@
     "semantic_hash": "f0851681326ee04ac7897ed31dfd9a15"
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/pages/RaceSetupPage.test.tsx": {
-    "mtime": 1791623796.520398,
-    "ast_hash": "0746d79a760b45894387ce63a7c75f9a",
+    "mtime": 1791838086.4817626,
+    "ast_hash": "654fdeae234c63b04100c72f1d3446b8",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/pages/ParentDashboardPage.tsx": {
@@ -375,13 +375,13 @@
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/pages/SettingsPage.test.tsx": {
-    "mtime": 1791584169.0031323,
-    "ast_hash": "b2a0d8629ede26f48afe758b86b44ec3",
-    "semantic_hash": "b2a0d8629ede26f48afe758b86b44ec3"
+    "mtime": 1791837926.8583798,
+    "ast_hash": "5e94c86aaddc07a851a4610694b70350",
+    "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/pages/AvatarGalleryPage.test.tsx": {
-    "mtime": 1791666210.8028939,
-    "ast_hash": "4760c437fcc5f0eca7e26d2df52a5c6d",
+    "mtime": 1791711263.9952872,
+    "ast_hash": "b4dc14944f12b327e1cb9f38293e755d",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/pages/AvatarCreatorPage.tsx": {
@@ -420,18 +420,18 @@
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/pages/RaceScreenPage.test.tsx": {
-    "mtime": 1791623796.5160668,
-    "ast_hash": "7dfd080def1584035d1c64a1633e6b59",
+    "mtime": 1791838167.8820496,
+    "ast_hash": "360305b72ac49b2cdbe21c02221f9d11",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/pages/RaceScreenPage.tsx": {
-    "mtime": 1791666210.8061361,
-    "ast_hash": "8d4ec316c973b90aaa0efc851079194b",
+    "mtime": 1791838167.983212,
+    "ast_hash": "9baebcaed41b17721f66f4b583493b14",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/pages/HomePage.tsx": {
-    "mtime": 1791666210.8049555,
-    "ast_hash": "38de927973babb58ade0ee016ab056c0",
+    "mtime": 1791809857.0777087,
+    "ast_hash": "d5252b4612859cd9c5a1ba7b96640816",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/engine/achievements/achievementsApi.ts": {
@@ -445,13 +445,13 @@
     "semantic_hash": "58677f8c11280260ad27efccfd237297"
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/engine/math/tiers.ts": {
-    "mtime": 1791623796.4700994,
-    "ast_hash": "7492a923f3a8ff71cde4395d1a67dc40",
+    "mtime": 1791837669.4625618,
+    "ast_hash": "8617ad990122f97ddbd2e6e4e70f5f92",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/engine/math/generator.ts": {
-    "mtime": 1791623796.466374,
-    "ast_hash": "dce7b36dd8e063a3a807333dee36d972",
+    "mtime": 1791837669.4640243,
+    "ast_hash": "92dd2421f0626cb3a0c1e8f90d190899",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/engine/math/types.ts": {
@@ -480,14 +480,14 @@
     "semantic_hash": "e1e99d468361b54c255a84ec27c6e38a"
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/engine/avatar/types.ts": {
-    "mtime": 1791301217.0312154,
-    "ast_hash": "42d208d74d0012036145e10c1731e618",
-    "semantic_hash": "42d208d74d0012036145e10c1731e618"
+    "mtime": 1791837755.1104903,
+    "ast_hash": "058be47089739c5c9227c9c959876a38",
+    "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/engine/avatar/avatarApi.ts": {
-    "mtime": 1791236074.6642718,
-    "ast_hash": "932b42a1559673e9ba7b3061c6b52866",
-    "semantic_hash": "932b42a1559673e9ba7b3061c6b52866"
+    "mtime": 1791837755.1115086,
+    "ast_hash": "0d7f7f47b61a5ad87d557f7afcc63fce",
+    "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/engine/race/duelConfig.ts": {
     "mtime": 1786387083.8255339,
@@ -530,8 +530,8 @@
     "semantic_hash": "4026c91c58d383d25bd5d31478a68eb2"
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/engine/race/types.ts": {
-    "mtime": 1791623796.483305,
-    "ast_hash": "f43142fc5c86669c9bd00f42dbf4e34c",
+    "mtime": 1791837796.8400235,
+    "ast_hash": "f081bd213e616acce06a3ee1f7a11b66",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/engine/race/constants.ts": {
@@ -555,8 +555,8 @@
     "semantic_hash": "f188f074cbcd4180b01be5f74fb96b26"
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/engine/race/hooks/useRaceEngine.test.ts": {
-    "mtime": 1791655882.18321,
-    "ast_hash": "0f1411caeeee2809499ed55e3151b340",
+    "mtime": 1791837888.3799882,
+    "ast_hash": "712bd7a53e59b498f47e8e8ad82d5cc1",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/engine/race/hooks/useRaceEngine.ts": {
@@ -760,13 +760,13 @@
     "semantic_hash": "5aa8f09b1345141cfc147e3c680ec5e0"
   },
   "/Users/aleksandr/Local/web-projects/math-racers/backend/app/mathematics/generator.py": {
-    "mtime": 1791623796.3976777,
-    "ast_hash": "ba7e987ddb478108a4f2c3ea98abad1c",
+    "mtime": 1791837661.4556363,
+    "ast_hash": "8dddf702d6822fcef70776c88aa66d04",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/backend/app/mathematics/schemas.py": {
-    "mtime": 1791623796.3987021,
-    "ast_hash": "5b324226488160868bb300716dbd7c83",
+    "mtime": 1791837673.5497255,
+    "ast_hash": "1b94794726412f21950a46a1e81c6907",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/backend/app/mathematics/exceptions.py": {
@@ -780,8 +780,8 @@
     "semantic_hash": "73cf3cb4a48d49d7ac0f139a3c27e336"
   },
   "/Users/aleksandr/Local/web-projects/math-racers/backend/app/mathematics/tiers.py": {
-    "mtime": 1791623796.4030356,
-    "ast_hash": "e4d3ca417b48a4eb2a53e35853097b99",
+    "mtime": 1791837661.4543362,
+    "ast_hash": "5aaa578350a36c83377088226d3e9e13",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/backend/app/shared/__init__.py": {
@@ -825,8 +825,8 @@
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/backend/app/championships/domain_service.py": {
-    "mtime": 1791623796.3902156,
-    "ast_hash": "a83ec0e0a42a9aa08e528d84abe279fd",
+    "mtime": 1791837832.204947,
+    "ast_hash": "609dc150c2ae87cbd66e65c3b7ae612f",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/backend/app/championships/__init__.py": {
@@ -840,8 +840,8 @@
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/backend/app/championships/repository.py": {
-    "mtime": 1791623796.39121,
-    "ast_hash": "678b6b5a23c3de9672b16321013f01d5",
+    "mtime": 1791837832.2064562,
+    "ast_hash": "3e7719104daa4653fb7496b34de73a89",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/backend/app/progression/models.py": {
@@ -900,13 +900,13 @@
     "semantic_hash": "edf2a95293348944f8bc214f24b97546"
   },
   "/Users/aleksandr/Local/web-projects/math-racers/backend/app/avatars/generation_service.py": {
-    "mtime": 1791669590.9484243,
-    "ast_hash": "19299e008ffe50b6ec8ae249c8a8e667",
+    "mtime": 1791809857.068441,
+    "ast_hash": "5f5bb14eff0d978d2c567f26908d454b",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/backend/app/avatars/domain_service.py": {
-    "mtime": 1791623796.3884516,
-    "ast_hash": "536815482bc7153a2204694a1e39b31b",
+    "mtime": 1791838276.908584,
+    "ast_hash": "5b5e4554e145b132420c17f7fa489cd0",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/backend/app/avatars/__init__.py": {
@@ -915,13 +915,13 @@
     "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
   },
   "/Users/aleksandr/Local/web-projects/math-racers/backend/app/avatars/schemas.py": {
-    "mtime": 1786539495.6734462,
-    "ast_hash": "9682a92e80856640781a523f5dd4b0bd",
-    "semantic_hash": "9682a92e80856640781a523f5dd4b0bd"
+    "mtime": 1791837748.6280165,
+    "ast_hash": "25520ba9465b2ffdd974366b799f91b5",
+    "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/backend/app/avatars/repository.py": {
-    "mtime": 1791623796.3897703,
-    "ast_hash": "c9148414444588f21f4e60eaf92bcca5",
+    "mtime": 1791837748.6295784,
+    "ast_hash": "7bf557d6bfccb757765b142859025c7a",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/backend/app/avatars/presentation/__init__.py": {
@@ -940,8 +940,8 @@
     "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
   },
   "/Users/aleksandr/Local/web-projects/math-racers/backend/app/avatars/presentation/api/v1/avatars.py": {
-    "mtime": 1791623796.3894658,
-    "ast_hash": "178742d8300045db958038143b0c2dc7",
+    "mtime": 1791837755.1092744,
+    "ast_hash": "74a688948391d71981df79935ec7eaf0",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/backend/app/races/models.py": {
@@ -960,13 +960,13 @@
     "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
   },
   "/Users/aleksandr/Local/web-projects/math-racers/backend/app/races/schemas.py": {
-    "mtime": 1791623796.412919,
-    "ast_hash": "d8cd585bd3903fb8a193ae6d0dc3e0db",
+    "mtime": 1791837673.5515146,
+    "ast_hash": "80802d0ba235f0abc6b896837aec660c",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/backend/app/races/repository.py": {
-    "mtime": 1791655882.1825745,
-    "ast_hash": "d6269269fabcbe19e30c877d174d8491",
+    "mtime": 1791837814.8633976,
+    "ast_hash": "adb335c81ee572312b0003f5d439b83c",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/backend/app/races/presentation/__init__.py": {
@@ -1100,8 +1100,8 @@
     "semantic_hash": "0d463601a9938e4180ab0221f18e6ec3"
   },
   "/Users/aleksandr/Local/web-projects/math-racers/backend/infrastructure/config.py": {
-    "mtime": 1791623796.4179204,
-    "ast_hash": "efae5d703b7eff9a16d602390f978018",
+    "mtime": 1791711263.990304,
+    "ast_hash": "ac30bc3d96f88b76bf3a75399e8a0df4",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/backend/infrastructure/__init__.py": {
@@ -1180,13 +1180,13 @@
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/CLAUDE.md": {
-    "mtime": 1791666210.7944665,
-    "ast_hash": "f14d5f805e52252591cb0d30734e5312",
+    "mtime": 1791810997.9190412,
+    "ast_hash": "03fadc3e8365858c5730a0bc01123834",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/index.html": {
-    "mtime": 1791669860.0390823,
-    "ast_hash": "2c0681ff36e27288cb146c4cf8eba4d2",
+    "mtime": 1791809857.0726209,
+    "ast_hash": "2faccf63e8a41196d7aec1fdea142ec2",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/pnpm-workspace.yaml": {
@@ -1215,8 +1215,8 @@
     "semantic_hash": "21e36c501bbe4637e6d4c5f047fe3737"
   },
   "/Users/aleksandr/Local/web-projects/math-racers/initial_spec/gdd.md": {
-    "mtime": 1791623796.7406282,
-    "ast_hash": "5164862c166ea215b313bfbcc6eea896",
+    "mtime": 1791836124.2611725,
+    "ast_hash": "768d6a462b26c12c2a9d5fb90c9d0b5a",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/initial_spec/art_bible.md": {
@@ -1310,8 +1310,8 @@
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/engine/math/tiers.test.ts": {
-    "mtime": 1791623796.468049,
-    "ast_hash": "32e7e9f26ea3c50303151fc2b0019b32",
+    "mtime": 1791838167.7739046,
+    "ast_hash": "e7429ab02ca37e7fb198240b505a9e41",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/backend/app/races/ai_scoring.py": {
@@ -1355,13 +1355,13 @@
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/backend/infrastructure/ai/interfaces.py": {
-    "mtime": 1791623796.416608,
-    "ast_hash": "d59d807084231ddb063689b36af50165",
+    "mtime": 1791711263.9895864,
+    "ast_hash": "680d445903bc6bf01b280d29b9c1c165",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/backend/infrastructure/ai/openai_provider.py": {
-    "mtime": 1791623796.4174256,
-    "ast_hash": "0d3f91aa7624eceb77b8f2b4d7b291f3",
+    "mtime": 1791711263.989903,
+    "ast_hash": "b4931ac987971fe507a4f23661369e5e",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/audit/implementation-plan.md": {
@@ -1385,8 +1385,8 @@
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/App.test.tsx": {
-    "mtime": 1791666210.7960835,
-    "ast_hash": "e33396e9b44f6d72c229566d795a87ff",
+    "mtime": 1791711263.9918146,
+    "ast_hash": "5f6c47468e9db5ac64335dbc52a1d677",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/shared/components/LanguageSwitcher.test.tsx": {
@@ -1420,8 +1420,8 @@
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/infrastructure/localization/catalogs.ts": {
-    "mtime": 1791666210.8008084,
-    "ast_hash": "f285c0f5a2af68d27e6610dde73d0b13",
+    "mtime": 1791837805.4085205,
+    "ast_hash": "c5ff6ac4f891a3830323116a0116041c",
     "semantic_hash": ""
   },
   "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/infrastructure/localization/catalogs.test.ts": {
@@ -1442,6 +1442,21 @@
   "/Users/aleksandr/Local/web-projects/math-racers/README.md": {
     "mtime": 1791655001.3680947,
     "ast_hash": "a3cd0babe76ebd91fa553a2ab76020ea",
+    "semantic_hash": ""
+  },
+  "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/features/race/progressionApi.test.ts": {
+    "mtime": 1791711263.9929075,
+    "ast_hash": "8751c97a5f7880ea4b847756a07c0e6a",
+    "semantic_hash": ""
+  },
+  "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/infrastructure/auth/RequireChildProfile.tsx": {
+    "mtime": 1791711263.9943635,
+    "ast_hash": "9adc3088ffd8060fd549d5677142a56e",
+    "semantic_hash": ""
+  },
+  "/Users/aleksandr/Local/web-projects/math-racers/frontend/src/engine/race/problemTimeLimit.ts": {
+    "mtime": 1791837740.5138714,
+    "ast_hash": "9dec8ab23fc9d40aa4172122d7745477",
     "semantic_hash": ""
   }
 }

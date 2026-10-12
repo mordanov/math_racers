@@ -50,6 +50,10 @@ export interface AvatarListItem {
   created_at: string;
 }
 
+export interface AvatarCatalogItem {
+  portrait_url: string;
+}
+
 export interface AvatarDetail {
   avatar_id: string;
   species: string;

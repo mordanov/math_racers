@@ -9,6 +9,7 @@ from app.accounts.models import Account
 from app.avatars.domain_service import AvatarDomainService
 from app.avatars.repository import SQLAlchemyAvatarRepository
 from app.avatars.schemas import (
+    AvatarCatalogItem,
     AvatarCreationResponse,
     AvatarDetailResponse,
     AvatarListItem,
@@ -64,6 +65,14 @@ async def list_avatars(
     session: AsyncSession = Depends(get_session),
 ) -> list[AvatarListItem]:
     return await _service(session).list(account.id, child_profile.id)
+
+
+@router.get("/catalog", response_model=list[AvatarCatalogItem])
+async def list_avatar_catalog(
+    account: Account = Depends(get_current_account),
+    session: AsyncSession = Depends(get_session),
+) -> list[AvatarCatalogItem]:
+    return await _service(session).list_catalog()
 
 
 @router.get("/{avatar_id}", response_model=AvatarDetailResponse)

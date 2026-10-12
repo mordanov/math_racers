@@ -78,15 +78,48 @@ class SQLAlchemyChampionshipRepository:
         participants: list[dict[str, Any]],
     ) -> Championship:
         existing_races = championship.championship_races
-        if any(str(cr.race_id) == str(race_id) for cr in existing_races):
+        existing_race = next(
+            (race for race in existing_races if str(race.race_id) == str(race_id)),
+            None,
+        )
+        if existing_race is not None:
+            existing_participants = sorted(
+                (
+                    row.avatar_id,
+                    row.is_player,
+                    row.finishing_position,
+                    row.points_earned,
+                )
+                for row in existing_races
+                if row.race_index == existing_race.race_index
+            )
+            submitted_participants = sorted(
+                (
+                    participant["avatar_id"],
+                    participant["is_player"],
+                    participant["finishing_position"],
+                    participant["points_earned"],
+                )
+                for participant in participants
+            )
+            if (
+                existing_race.race_index == race_index
+                and existing_participants == submitted_participants
+            ):
+                return championship
             raise ConflictError(
                 error_code="RACE_ALREADY_RECORDED",
-                message=f"Race {race_id} is already recorded for this championship.",
+                message=f"Race {race_id} is already recorded with different results.",
             )
         if any(cr.race_index == race_index for cr in existing_races):
             raise ConflictError(
                 error_code="RACE_INDEX_ALREADY_RECORDED",
                 message=f"Race index {race_index} is already recorded for this championship.",
+            )
+        if championship.status == "completed":
+            raise ConflictError(
+                error_code="CHAMPIONSHIP_ALREADY_COMPLETED",
+                message="Championship is already completed.",
             )
         race_result = await self._session.execute(
             select(Race)

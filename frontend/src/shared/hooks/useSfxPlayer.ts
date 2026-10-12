@@ -33,11 +33,11 @@ const SFX_FILES: Record<SfxName, string> = {
 
 function readSfxVolume(): number {
   try {
-    const master = parseInt(localStorage.getItem('settings.masterVolume') ?? '100', 10);
+    const master = parseInt(localStorage.getItem('settings.masterVolume') ?? '80', 10);
     const sfx = parseInt(localStorage.getItem('settings.sfxVolume') ?? '80', 10);
     return (master / 100) * (sfx / 100);
   } catch {
-    return 0.8;
+    return 0.64;
   }
 }
 

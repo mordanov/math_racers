@@ -19,7 +19,7 @@
 | Race Screen | `/race/:id` | Active gameplay; render runners, problems, progress |
 | Results Screen | `/race/:id/results` | Show finishing order, XP, achievements |
 | Statistics | `/statistics` | Player and avatar statistics; history |
-| Settings | `/settings` | Audio, difficulty preference, account |
+| Settings | `/settings` | Audio, per-problem race time, difficulty preference, account |
 | Parent Dashboard | `/parent` | Weekly summary, child profile management |
 | Championship | `/championship/:id` | Championship standings and next race |
 
@@ -66,9 +66,22 @@ interface RaceFeatureState {
   opponents: AIOpponentState[];
   answerHistory: AnswerRecord[];
   clock: number;                     // ms since race start (single source of truth)
+  problemTimeLimitSeconds: number;   // 10–60 by 5; not enforced for Training
   seed: number;
 }
 ```
+
+Competitive problem timing defaults to 30 seconds and is configurable from 10
+to 60 seconds in 5-second increments. The selected value is fixed when a race
+starts; Training remains untimed. The timer pauses/resumes with the race clock
+when the browser tab becomes hidden/visible. A timeout submits one empty answer
+through the existing ordered answer API, awards no movement, and advances.
+
+Each track participant is rendered with an accessible portrait image. The
+player uses the selected avatar; opponents may use shared published-avatar
+catalog images or distinct built-in fallbacks. Private child-profile portraits
+must never be fetched or displayed as opponents. Portrait position follows the
+existing runner progress and does not affect race distance.
 
 ### Avatar Gallery Feature
 
@@ -231,7 +244,7 @@ The browser Back button must work correctly on all routes. Race Screen disables 
 
 ## Edge Cases
 
-1. **Race screen loses focus mid-race** (e.g., Alt+Tab) — the race timer continues; the game does not pause. On focus return, the current problem is still displayed. This matches the design decision that there is no pause mechanic in Quick Race.
+1. **Race screen loses focus mid-race** (e.g., Alt+Tab) — the race and problem clocks pause automatically and resume on focus return. This visibility pause does not add a player-controlled pause mechanic.
 2. **Avatar Gallery empty (no avatars yet)** — show an empty-state illustration with a "Create Your First Avatar" call-to-action button linking to Avatar Creator. Do not show a blank page.
 3. **Results screen with network failure during sync** — show the results locally from the in-memory race state. Display a "Couldn't save results — tap to retry" inline message. The race result must not be lost; retry with the stored `idempotency_key`.
 4. **Settings page with no audio hardware** — Web Audio API context creation may fail silently. All audio controls are still shown and functional; they simply produce no sound. No error is shown.
@@ -252,8 +265,10 @@ The browser Back button must work correctly on all routes. Race Screen disables 
 6. **Results Screen** — complete a race. Confirm the finishing positions, XP earned, and correct/incorrect counts are all correct. Confirm achievements play their animation.
 7. **Statistics** — complete 3 races. Open Statistics. Confirm `total_races == 3` and accuracy is computed correctly.
 8. **Settings** — reduce music volume to 0. Leave Settings. Start a race. Confirm no music plays.
-9. **Offline simulation** — disable network. Attempt to open Avatar Creator. Confirm "Internet required" message is shown. Open Race Setup. Confirm only Training Mode is available.
-10. **Parent Dashboard** — log in as a parent. Open Parent Dashboard. Confirm the weekly summary shows data for all child profiles. Confirm export and delete options are present.
+9. **Timed race** — choose 30 seconds per problem. Let one expire and confirm an empty answer is saved once, with no progress, before the next problem appears. Hide the tab mid-problem and confirm the timer pauses and resumes on return.
+10. **Racer portraits** — start a race with the selected player avatar. Confirm opponent portraits come only from the shared published-avatar catalog or use a distinct fallback; private child-profile portraits are not shown.
+11. **Offline simulation** — disable network. Attempt to open Avatar Creator. Confirm "Internet required" message is shown. Open Race Setup. Confirm only Training Mode is available.
+12. **Parent Dashboard** — log in as a parent. Open Parent Dashboard. Confirm the weekly summary shows data for all child profiles. Confirm export and delete options are present.
 
 ---
 

@@ -56,7 +56,15 @@ All distances are in metres. The track total length = sum of all 8 obstacle move
 - Start: COUNTDOWN state end (when "GO!" appears).
 - Per-obstacle time starts when the problem card becomes visible.
 - Per-obstacle time ends when the player submits an answer.
-- The clock is not affected by tab visibility changes (pause logic handled separately).
+- In competitive modes, the problem countdown is 10–60 seconds in 5-second
+  increments, defaulting to 30 seconds; the selected value is fixed for the race.
+- When the browser tab becomes hidden, the race and problem clocks pause. They
+  resume when the tab becomes visible. This automatic visibility pause does not
+  add a player-controlled pause action.
+- Training has no problem countdown.
+- On timeout, submit one empty answer at the current answer index. The server
+  persists it as incorrect; the runner receives zero movement and advances.
+  Guard the timeout against a simultaneous answer submission.
 
 ---
 
@@ -118,7 +126,7 @@ After each race, persist:
 | Player submits after timer expires | Treat as "Slow" tier if correct; incorrect if wrong |
 | Two runners finish simultaneously | Lower array index wins tiebreak (first in participant list) |
 | Player disconnects mid-race | Race continues client-side; results synced on reconnect |
-| Browser tab loses focus during race | Clock pauses; resume on tab focus |
+| Browser tab loses focus during race | Race and problem clocks pause; resume on tab focus |
 | Race with 1 participant (Training) | No position indicator; no opponent columns |
 | Incorrect answer at obstacle 8 (final) | 0 m movement; race ends after the problem is resolved |
 

@@ -84,7 +84,7 @@ def _register_and_approve() -> str:
     child_resp = httpx.post(
         f"{BASE_URL}/api/v1/child-profiles",
         json={"display_name": "Avatar Test Child"},
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": "Bearer " + token},
         timeout=10.0,
     )
     assert child_resp.status_code == 201, child_resp.text
@@ -108,6 +108,24 @@ def test_create_avatar_returns_201() -> None:
     assert "avatar_id" in data
     assert "job_id" in data
     assert data["status"] == "queued"
+
+
+def test_avatar_catalog_is_authenticated_and_exposes_only_portrait_urls() -> None:
+    unauthenticated = httpx.get(f"{BASE_URL}/api/v1/avatars/catalog", timeout=10.0)
+    assert unauthenticated.status_code == 401
+
+    token = _register_and_approve()
+    response = httpx.get(
+        f"{BASE_URL}/api/v1/avatars/catalog",
+        headers={"Authorization": _auth_headers(token)["Authorization"]},
+        timeout=10.0,
+    )
+    assert response.status_code == 200, response.text
+    catalog = response.json()
+    assert isinstance(catalog, list)
+    assert all(
+        set(item) == {"portrait_url"} and isinstance(item["portrait_url"], str) for item in catalog
+    )
 
 
 def test_parallel_avatar_generation_respects_active_job_limit() -> None:
