@@ -3,12 +3,7 @@ import type { Tier, TierConfig } from './types';
 export const TIER_CONFIGS: Record<Exclude<Tier, 6>, TierConfig> = {
   1: { tier: 1, operations: ['addition'], minOperand: 1, maxOperand: 10 },
   2: { tier: 2, operations: ['addition', 'subtraction'], minOperand: 1, maxOperand: 20 },
-  3: {
-    tier: 3,
-    operations: ['multiplication'],
-    minOperand: 1,
-    maxOperand: 12,
-  },
+  3: { tier: 3, operations: ['multiplication'], minOperand: 1, maxOperand: 99 },
   4: {
     tier: 4,
     operations: ['division'],
@@ -22,3 +17,7 @@ export const TIER_CONFIGS: Record<Exclude<Tier, 6>, TierConfig> = {
     maxOperand: 100,
   },
 };
+
+export function supportsDivisionRange(minOperand: number, maxOperand: number): boolean {
+  return maxOperand >= 2 * Math.max(2, minOperand);
+}

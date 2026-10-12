@@ -45,10 +45,10 @@
 |------|-----------|---------------|-------|
 | 1 | Addition only | 1–10 | Intro level |
 | 2 | Addition, Subtraction | 1–20 | No negative results |
-| 3 | Multiplication only | 1–12 | ×1–×12 tables |
-| 4 | Division only | 1–25 | Exact divisors only |
-| 5 | All four operations | 1–100 | Mixed sets |
-| 6 | All four operations | Custom per parent setting | Teacher/parent-configured |
+| 3 | Multiplication only | Two-digit × one-digit | One-digit multiplier |
+| 4 | Division only | Existing dividend ceiling: 25 | Exact; one-digit divisor; quotient > 1 |
+| 5 | All four operations | Operation-specific; at most two-digit × one-digit | Two-digit addition operands; exact division; quotient > 1 |
+| 6 | All four operations | Custom per parent setting | Division requires quotient > 1; incompatible ranges are rejected |
 
 ---
 
@@ -79,16 +79,46 @@ function generateProblemSet(tier, seed, count):
 
 **Determinism guarantee:** identical `(tier, seed, count)` always produces identical output.
 
+### Tiers 3–5 operand constraints
+
+- Tier 3 multiplication selects a two-digit multiplicand and a one-digit
+  multiplier.
+- Tier 4 division remains within the existing maximum dividend of 25, uses a
+  one-digit divisor, and selects an integer quotient greater than one.
+- Tier 5 addition selects two two-digit operands. Multiplication uses a
+  two-digit multiplicand and one-digit multiplier. Division uses a two-digit
+  dividend and one-digit divisor, with an exact quotient greater than one.
+- Tiers 3–5 do not generate single-digit addition or two-digit-by-two-digit
+  multiplication. Division never generates `n ÷ n` in any tier.
+- A Tier 6 range that includes division must allow a valid divisor and exact
+  dividend with quotient > 1; reject incompatible settings when saved or before
+  race start.
+- The backend reference generator and browser generator use the same seeded
+  rules. Tier 6 keeps its selected operations and operand bounds.
+
 ### Division safety
 
 ```
 function pickOperands(division, tier, rng):
-  b = randomInt(rng, 2, maxOperand(tier))
-  a = b * randomInt(rng, 1, maxOperand(tier) // b)
+  (minDividend, maxDividend, minDivisor, maxDivisor) = divisionBounds(tier)
+  validDivisors = [
+    b for b in range(minDivisor, maxDivisor + 1)
+    if max(2, ceil(minDividend / b)) <= floor(maxDividend / b)
+  ]
+  if validDivisors is empty:
+    reject configuration
+  b = pick(validDivisors, rng)
+  q = randomInt(rng, max(2, ceil(minDividend / b)), floor(maxDividend / b))
+  a = b * q
   return (a, b)
 ```
 
-Division by zero is structurally impossible.
+For tiers 4 and 5, `divisionBounds` restricts the divisor to one digit; tier 4
+retains its maximum dividend of 25, and tier 5 uses a two-digit dividend.
+Tier 6 bounds both operands by the saved parent range. Division by zero and
+self-division are structurally impossible. Reject Tier 6 division settings if
+no divisor and quotient greater than one can produce a dividend within that
+range.
 
 ### Duplicate prevention
 

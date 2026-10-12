@@ -638,6 +638,10 @@ All runners use identical movement rules.
 
 No participant receives hidden advantages.
 
+The player's lane displays the selected avatar. AI lanes may display portraits
+from the shared published-avatar catalog or a distinct built-in fallback.
+Private child-profile portraits must never be exposed as opponents.
+
 ---
 
 # 2.5 Race Start
@@ -783,6 +787,14 @@ From these values, the system calculates:
 - personal bests.
 
 These statistics are later shown to both parents and children.
+
+In competitive modes, each problem also has a configurable answer limit of
+10–60 seconds in 5-second increments, defaulting to 30 seconds. The setting is
+captured when a race starts and applies to every problem in that race. If the
+browser tab loses focus, the problem timer pauses with the race clock and
+resumes when the tab becomes active. Training remains untimed. When time runs
+out, the unanswered problem earns no movement and the race advances to the next
+problem.
 
 ---
 
@@ -1439,10 +1451,15 @@ The game should motivate without creating anxiety.
 
 Avoid:
 
-- countdown timers for answers
+- punitive or anxiety-inducing countdowns;
+- answer timers in Training mode;
 - harsh penalties
 - ranking shame
 - public leaderboards
+
+Competitive modes use a generous, parent-configurable per-problem limit with a
+calm visual presentation. Timeouts award no movement and do not show shaming or
+punitive feedback.
 
 Encourage:
 
@@ -2666,6 +2683,18 @@ Generated problems must satisfy the following principles.
 
 Every generated problem should feel natural.
 
+For tiers 3–5, preserve mental-arithmetic suitability: tier 3 multiplication
+uses a two-digit number and a one-digit multiplier; tier 4 division is exact,
+uses a one-digit divisor, and has a quotient greater than one; tier 5 addition
+uses two two-digit operands, with multiplication and division following the
+tier 3 and tier 4 constraints. These tiers do not generate single-digit
+addition or two-digit-by-two-digit multiplication. Division never uses a
+quotient of one in any tier, so self-division occurs 0% of the time. Tiers 1
+and 2 retain their existing rules. Tier 6 retains parent-selected operations
+and ranges, but a range that includes division must support at least one exact
+division with a quotient greater than one; otherwise the configuration is
+rejected before the race starts.
+
 ---
 
 # 5.13 Duplicate Prevention
@@ -3643,6 +3672,14 @@ The Race Engine maintains:
 All timing uses a monotonic clock.
 
 Wall-clock time must never influence gameplay.
+
+During competitive races, the race and problem clocks pause when the browser
+tab becomes hidden and resume when it becomes visible. This automatic
+visibility pause is not a player-controlled pause mechanic.
+
+For competitive races, the problem countdown pauses when the browser tab loses
+focus and resumes when it becomes active again. This is an automatic
+visibility pause, not a player-controlled pause mechanic.
 
 ---
 
@@ -4721,6 +4758,11 @@ After each race the player sees:
 - races remaining.
 
 This creates anticipation between races.
+
+Each race result is persisted before standings advance. Retrying a recorded
+race must not duplicate points or awards. An interrupted championship resumes
+at the next unplayed race. Recording the final scheduled race persists final
+standings and marks the championship completed.
 
 ---
 
@@ -7415,7 +7457,9 @@ Players (or parents) may adjust:
 - ambience;
 - character voices.
 
-Settings are saved automatically.
+Music and sound-effects volume are independent, apply immediately to their own
+audio layers, and are saved automatically. Their initial settings are 70% for
+music and 80% for sound effects.
 
 ---
 

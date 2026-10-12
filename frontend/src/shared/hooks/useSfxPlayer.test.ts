@@ -69,4 +69,13 @@ describe('useSfxPlayer', () => {
     localStorage.removeItem('settings.masterVolume');
     localStorage.removeItem('settings.sfxVolume');
   });
+
+  it('uses the Settings defaults before preferences have been saved', () => {
+    localStorage.clear();
+    const { result } = renderHook(() => useSfxPlayer());
+    act(() => {
+      result.current.playSfx('correct');
+    });
+    expect(audioInstances[0].volume).toBeCloseTo(0.64, 2);
+  });
 });

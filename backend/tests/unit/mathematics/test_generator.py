@@ -5,6 +5,7 @@ from __future__ import annotations
 import pytest
 
 from app.mathematics.generator import generate_problem_set
+from app.mathematics.tiers import TierConfig
 from app.mathematics.types import Operation
 
 
@@ -63,6 +64,50 @@ def test_division_integer_answers() -> None:
         assert p.operand_b != 0
         assert p.operand_a % p.operand_b == 0
         assert p.answer == p.operand_a // p.operand_b
+        assert p.answer > 1
+        assert 2 <= p.operand_b <= 9
+
+
+def test_tiers_three_through_five_use_mental_arithmetic_operand_widths() -> None:
+    for tier in (3, 4, 5):
+        result = generate_problem_set(tier, 9102, 1000)
+        for problem in result.problems:
+            if problem.operation == Operation.addition and tier == 5:
+                assert 10 <= problem.operand_a <= 99
+                assert 10 <= problem.operand_b <= 99
+            elif problem.operation == Operation.multiplication:
+                assert 10 <= problem.operand_a <= 99
+                assert 1 <= problem.operand_b <= 9
+            elif problem.operation == Operation.division:
+                assert 2 <= problem.operand_b <= 9
+                assert problem.answer > 1
+                assert problem.operand_a % problem.operand_b == 0
+
+
+def test_no_self_division_in_any_division_tier() -> None:
+    custom = TierConfig(
+        tier=6,
+        operations=(Operation.division,),
+        min_operand=2,
+        max_operand=30,
+    )
+    for tier, config in ((4, None), (5, None), (6, custom)):
+        result = generate_problem_set(tier, 20, 10_000, config)
+        for problem in result.problems:
+            if problem.operation == Operation.division:
+                assert problem.answer > 1
+                assert problem.operand_a != problem.operand_b
+
+
+def test_tier6_rejects_division_range_without_quotient_above_one() -> None:
+    custom = TierConfig(
+        tier=6,
+        operations=(Operation.division,),
+        min_operand=2,
+        max_operand=3,
+    )
+    with pytest.raises(ValueError, match="division"):
+        generate_problem_set(6, 42, 1, custom)
 
 
 def test_subtraction_non_negative_results() -> None:

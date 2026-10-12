@@ -1,4 +1,11 @@
 import { useState } from 'react';
+import {
+  MAX_PROBLEM_TIME_LIMIT_SECONDS,
+  MIN_PROBLEM_TIME_LIMIT_SECONDS,
+  PROBLEM_TIME_LIMIT_STEP_SECONDS,
+  isValidProblemTimeLimitSeconds,
+  readProblemTimeLimitSeconds,
+} from '../engine/race/problemTimeLimit';
 import tokens from '../shared/tokens';
 import { useLocale } from '../infrastructure/localization/LocaleContext';
 
@@ -9,6 +16,7 @@ const KEYS = {
   ambienceVolume: 'settings.ambienceVolume',
   voiceVolume: 'settings.voiceVolume',
   reducedMotion: 'settings.reducedMotion',
+  problemTimeLimitSeconds: 'settings.problemTimeLimitSeconds',
 } as const;
 
 function loadInt(key: string, fallback: number): number {
@@ -35,6 +43,7 @@ function loadBool(key: string, fallback: boolean): boolean {
 function saveKey(key: string, value: string): void {
   try {
     localStorage.setItem(key, value);
+    window.dispatchEvent(new StorageEvent('storage', { key, newValue: value }));
   } catch {
     // localStorage unavailable (private mode, storage full) — silently ignore
   }
@@ -48,6 +57,9 @@ export default function SettingsPage() {
   const [ambienceVolume, setAmbienceVolume] = useState(() => loadInt(KEYS.ambienceVolume, 60));
   const [voiceVolume, setVoiceVolume] = useState(() => loadInt(KEYS.voiceVolume, 80));
   const [reducedMotion, setReducedMotion] = useState(() => loadBool(KEYS.reducedMotion, false));
+  const [problemTimeLimitSeconds, setProblemTimeLimitSeconds] = useState(
+    readProblemTimeLimitSeconds,
+  );
 
   function handleVolume(key: string, setter: (v: number) => void, value: string) {
     const n = parseInt(value, 10);
@@ -128,6 +140,34 @@ export default function SettingsPage() {
             />
           </div>
         ))}
+      </section>
+
+      <section aria-label={t('Race Settings')} style={{ marginBottom: tokens.spacing.xl }}>
+        <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: tokens.spacing.md }}>
+          {t('Race Settings')}
+        </h2>
+        <label
+          htmlFor="problem-time-limit"
+          style={{ display: 'block', marginBottom: tokens.spacing.xs, fontWeight: 600 }}
+        >
+          {t('Time per Problem')}: {problemTimeLimitSeconds} {t('seconds')}
+        </label>
+        <input
+          id="problem-time-limit"
+          type="range"
+          min={MIN_PROBLEM_TIME_LIMIT_SECONDS}
+          max={MAX_PROBLEM_TIME_LIMIT_SECONDS}
+          step={PROBLEM_TIME_LIMIT_STEP_SECONDS}
+          value={problemTimeLimitSeconds}
+          onChange={(event) => {
+            const value = Number(event.target.value);
+            if (!isValidProblemTimeLimitSeconds(value)) return;
+            setProblemTimeLimitSeconds(value);
+            saveKey(KEYS.problemTimeLimitSeconds, String(value));
+          }}
+          style={{ width: '100%', accentColor: tokens.color.primary }}
+        />
+        <p>{t('Time limit applies to competitive races. Training stays untimed.')}</p>
       </section>
 
       <section aria-label={t('Accessibility settings')}>

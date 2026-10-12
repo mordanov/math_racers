@@ -5,7 +5,7 @@ import uuid
 from collections.abc import Generator
 
 from app.mathematics.rng import create_rng
-from app.mathematics.tiers import TIER_CONFIGS, TierConfig
+from app.mathematics.tiers import TIER_CONFIGS, TierConfig, supports_division
 from app.mathematics.types import Operation, Problem, ProblemSet
 
 logger = logging.getLogger(__name__)
@@ -27,14 +27,23 @@ def _pick_operands(
 ) -> tuple[int, int]:
     lo, hi = config.min_operand, config.max_operand
     if operation == Operation.division:
-        b = _random_int(rng, 2, hi)
-        max_multiplier = max(1, hi // b)
-        a = b * _random_int(rng, 1, max_multiplier)
+        if config.tier in (4, 5):
+            min_divisor = max(2, lo)
+            max_divisor = min(9, hi // 2)
+        else:
+            min_divisor = max(2, lo)
+            max_divisor = hi // 2
+        b = _random_int(rng, min_divisor, max_divisor)
+        a = b * _random_int(rng, 2, hi // b)
         return a, b
     if operation == Operation.subtraction:
         a = _random_int(rng, lo, hi)
         b = _random_int(rng, lo, a)
         return a, b
+    if operation == Operation.addition and config.tier == 5:
+        return _random_int(rng, 10, 99), _random_int(rng, 10, 99)
+    if operation == Operation.multiplication and config.tier in (3, 5):
+        return _random_int(rng, 10, 99), _random_int(rng, 1, 9)
     return _random_int(rng, lo, hi), _random_int(rng, lo, hi)
 
 
@@ -70,6 +79,10 @@ def generate_problem_set(
         config = custom_tier_config
     else:
         config = TIER_CONFIGS[tier]
+    if Operation.division in config.operations and not supports_division(
+        config.min_operand, config.max_operand
+    ):
+        raise ValueError("The operand range cannot generate a division quotient above one.")
 
     rng = create_rng(seed)
     problems: list[Problem] = []

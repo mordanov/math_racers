@@ -26,6 +26,7 @@ class AvatarRepository(Protocol):
     async def list_by_account(
         self, account_id: uuid.UUID, child_profile_id: uuid.UUID | None = None
     ) -> list[Avatar]: ...
+    async def list_published_catalog(self) -> list[str]: ...
     async def update(self, avatar: Avatar) -> Avatar: ...
     async def delete(self, avatar: Avatar) -> None: ...
     async def count_by_account(self, account_id: uuid.UUID) -> int: ...
@@ -95,6 +96,19 @@ class SQLAlchemyAvatarRepository:
             )
             .options(selectinload(Avatar.active_portrait))
             .order_by(Avatar.created_at.desc())
+        )
+        return list(result.scalars().all())
+
+    async def list_published_catalog(self) -> list[str]:
+        result = await self._session.execute(
+            select(AvatarPortrait.thumb_url)
+            .join(Avatar, Avatar.active_portrait_id == AvatarPortrait.id)
+            .where(
+                Avatar.status == "published",
+                AvatarPortrait.avatar_id == Avatar.id,
+            )
+            .order_by(Avatar.created_at.desc(), Avatar.id)
+            .limit(50)
         )
         return list(result.scalars().all())
 

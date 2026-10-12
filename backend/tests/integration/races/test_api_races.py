@@ -269,6 +269,41 @@ def test_answer_submission_uses_server_time_and_replays_an_exact_retry() -> None
 
 
 @pytest.mark.integration
+def test_empty_answer_records_timeout_and_replays_exact_retry() -> None:
+    token = _auth_token()
+    child_id, avatar_id = create_child_and_avatar(BASE_URL, token)
+    session = create_race_session(BASE_URL, token, child_id, avatar_id)
+    problems = generate_problem_set(2, session["seed"], 8).problems
+    url = f"{BASE_URL}/api/v1/races/{session['race_id']}/answers"
+    headers = mutation_headers(BASE_URL, token, child_id)
+    timeout_request = {
+        "answer_index": 0,
+        "operation": problems[0].operation.value,
+        "answer": "",
+    }
+
+    first = httpx.post(url, json=timeout_request, headers=headers, timeout=10.0)
+    retry = httpx.post(url, json=timeout_request, headers=headers, timeout=10.0)
+    next_answer = httpx.post(
+        url,
+        json={
+            "answer_index": 1,
+            "operation": problems[1].operation.value,
+            "answer": str(problems[1].answer),
+        },
+        headers=headers,
+        timeout=10.0,
+    )
+
+    assert first.status_code == 200, first.text
+    assert first.json()["is_correct"] is False
+    assert retry.status_code == 200, retry.text
+    assert retry.json() == first.json()
+    assert next_answer.status_code == 200, next_answer.text
+    assert next_answer.json()["is_correct"] is True
+
+
+@pytest.mark.integration
 def test_tier6_session_uses_saved_parent_settings() -> None:
     token = _auth_token()
     payload = token.split(".")[1]

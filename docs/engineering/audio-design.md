@@ -175,6 +175,8 @@ Configurable per user (or parent):
 - Ambience volume
 - Character voices volume
 
+Music and sound-effects volume are independent and apply immediately to their
+own layers. Their initial settings are 70% for music and 80% for sound effects.
 Settings persist automatically.
 
 ---

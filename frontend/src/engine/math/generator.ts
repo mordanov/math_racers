@@ -1,5 +1,5 @@
 import { createRng } from './rng';
-import { TIER_CONFIGS } from './tiers';
+import { supportsDivisionRange, TIER_CONFIGS } from './tiers';
 import type { Operation, Problem, ProblemSet, Tier, TierConfig } from './types';
 
 const MAX_RETRIES = 10;
@@ -20,15 +20,25 @@ function pickOperands(
 ): [number, number] {
   const { minOperand, maxOperand } = config;
   if (operation === 'division') {
-    const b = randomInt(rng, 2, maxOperand);
-    const maxMultiplier = Math.floor(maxOperand / b);
-    const a = b * randomInt(rng, 1, Math.max(1, maxMultiplier));
+    const minDivisor = Math.max(2, minOperand);
+    const maxDivisor =
+      config.tier === 4 || config.tier === 5
+        ? Math.min(9, Math.floor(maxOperand / 2))
+        : Math.floor(maxOperand / 2);
+    const b = randomInt(rng, minDivisor, maxDivisor);
+    const a = b * randomInt(rng, 2, Math.floor(maxOperand / b));
     return [a, b];
   }
   if (operation === 'subtraction') {
     const a = randomInt(rng, minOperand, maxOperand);
     const b = randomInt(rng, minOperand, a);
     return [a, b];
+  }
+  if (operation === 'addition' && config.tier === 5) {
+    return [randomInt(rng, 10, 99), randomInt(rng, 10, 99)];
+  }
+  if (operation === 'multiplication' && (config.tier === 3 || config.tier === 5)) {
+    return [randomInt(rng, 10, 99), randomInt(rng, 1, 9)];
   }
   return [randomInt(rng, minOperand, maxOperand), randomInt(rng, minOperand, maxOperand)];
 }
@@ -69,6 +79,12 @@ export function generateProblemSet(
     config = customTierConfig;
   } else {
     config = TIER_CONFIGS[tier];
+  }
+  if (
+    config.operations.includes('division') &&
+    !supportsDivisionRange(config.minOperand, config.maxOperand)
+  ) {
+    throw new Error('The operand range cannot generate a division quotient above one.');
   }
 
   const rng = createRng(seed);

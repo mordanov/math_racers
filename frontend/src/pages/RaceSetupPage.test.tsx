@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as avatarApiModule from '../engine/avatar/avatarApi';
 import * as raceSessionApiModule from '../features/race/raceSessionApi';
@@ -30,14 +30,34 @@ const published = {
   species: 'fox',
   status: 'published' as const,
   is_favourite: false,
-  portrait: null,
+  portrait: {
+    id: 'portrait-1',
+    version: 1,
+    prompt_version: 'v1',
+    model_version: 'v1',
+    full_url: '/player-full.webp',
+    medium_url: '/player.webp',
+    small_url: '/player-small.webp',
+    thumb_url: '/player-thumb.webp',
+    created_at: '',
+  },
   created_at: '',
 };
+
+function RaceRouteProbe() {
+  const location = useLocation();
+  return <pre data-testid="race-route-state">{JSON.stringify(location.state)}</pre>;
+}
 
 describe('RaceSetupPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.clear();
     vi.mocked(avatarApiModule.listAvatars).mockResolvedValue([published]);
+    vi.mocked(avatarApiModule.listAvatarCatalog).mockResolvedValue([
+      { portrait_url: '/catalog-1.webp' },
+      { portrait_url: '/catalog-2.webp' },
+    ]);
     vi.mocked(raceSessionApiModule.createRaceSession).mockResolvedValue({
       race_id: 'r1',
       seed: 42,
@@ -76,7 +96,7 @@ describe('RaceSetupPage', () => {
           <Route path="/race/setup" element={<RaceSetupPage />} />
           <Route path="/avatars/new" element={<div>Avatar Creator</div>} />
           <Route path="/child-profiles" element={<div>Choose Child</div>} />
-          <Route path="/race/:id" element={<div>Race Screen</div>} />
+          <Route path="/race/:id" element={<RaceRouteProbe />} />
         </Routes>
       </MemoryRouter>,
     );
@@ -115,13 +135,20 @@ describe('RaceSetupPage', () => {
     expect(screen.getByLabelText(/number of races/i)).toBeInTheDocument();
   });
 
-  it('creates race session and navigates to /race/:id on start', async () => {
+  it('passes the configured timing and public opponent portraits into a race', async () => {
+    localStorage.setItem('settings.problemTimeLimitSeconds', '45');
     const user = userEvent.setup();
     renderPage();
     await waitFor(() => screen.getByRole('button', { name: /start race/i }));
     await user.click(screen.getByRole('button', { name: /start race/i }));
-    await waitFor(() => expect(screen.getByText('Race Screen')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByTestId('race-route-state')).toBeInTheDocument());
     expect(raceSessionApiModule.createRaceSession).toHaveBeenCalled();
+    const state: unknown = JSON.parse(screen.getByTestId('race-route-state').textContent ?? '{}');
+    expect(state).toMatchObject({
+      problemTimeLimitSeconds: 45,
+      avatarPortraitUrl: '/player-thumb.webp',
+      opponentPortraitUrls: ['/catalog-1.webp', '/catalog-2.webp'],
+    });
   });
 
   it('saves parent-selected Tier 6 settings before creating a session', async () => {
@@ -145,12 +172,30 @@ describe('RaceSetupPage', () => {
     );
     await user.click(screen.getByRole('button', { name: /start race/i }));
 
-    await waitFor(() => expect(screen.getByText('Race Screen')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByTestId('race-route-state')).toBeInTheDocument());
     expect(raceSessionApiModule.createRaceSession).toHaveBeenCalledWith(
       expect.objectContaining({
         tier: 6,
       }),
     );
+  });
+
+  it('rejects Tier 6 division settings that cannot produce a quotient above one', async () => {
+    const user = userEvent.setup();
+    renderPage();
+    await waitFor(() => screen.getByLabelText(/difficulty/i));
+    await user.selectOptions(screen.getByLabelText(/difficulty/i), '6');
+    await user.click(screen.getByLabelText('division'));
+    await user.clear(screen.getByLabelText(/minimum operand/i));
+    await user.type(screen.getByLabelText(/minimum operand/i), '2');
+    await user.clear(screen.getByLabelText(/maximum operand/i));
+    await user.type(screen.getByLabelText(/maximum operand/i), '3');
+
+    expect(
+      screen.getByText(/cannot make a division problem with a quotient greater than one/i),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /save tier 6 settings/i })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /start race/i })).toBeDisabled();
   });
 
   it('uses the saved Training session when offline', async () => {
@@ -174,7 +219,7 @@ describe('RaceSetupPage', () => {
     expect(screen.getByLabelText(/difficulty/i)).toBeDisabled();
     await user.click(screen.getByRole('button', { name: /start race/i }));
 
-    await waitFor(() => expect(screen.getByText('Race Screen')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByTestId('race-route-state')).toBeInTheDocument());
     expect(raceSessionApiModule.createRaceSession).not.toHaveBeenCalled();
   });
 

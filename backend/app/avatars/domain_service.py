@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import builtins
 import json
 import uuid
 from typing import TYPE_CHECKING
 
 from app.avatars.schemas import (
+    AvatarCatalogItem,
     AvatarCreationResponse,
     AvatarDetailResponse,
     AvatarListItem,
@@ -206,6 +208,10 @@ class AvatarDomainService:
     ) -> list[AvatarListItem]:
         avatars = await self._repository.list_by_account(account_id, child_profile_id)
         return [_to_list_item(a) for a in avatars]
+
+    async def list_catalog(self) -> builtins.list[AvatarCatalogItem]:
+        portrait_urls = await self._repository.list_published_catalog()
+        return [AvatarCatalogItem(portrait_url=url) for url in portrait_urls]
 
     async def regenerate(
         self,

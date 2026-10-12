@@ -16,7 +16,7 @@ class TierConfig:
 TIER_CONFIGS: dict[int, TierConfig] = {
     1: TierConfig(1, (Operation.addition,), 1, 10),
     2: TierConfig(2, (Operation.addition, Operation.subtraction), 1, 20),
-    3: TierConfig(3, (Operation.multiplication,), 1, 12),
+    3: TierConfig(3, (Operation.multiplication,), 1, 99),
     4: TierConfig(4, (Operation.division,), 1, 25),
     5: TierConfig(
         5,
@@ -30,3 +30,7 @@ TIER_CONFIGS: dict[int, TierConfig] = {
         100,
     ),
 }
+
+
+def supports_division(min_operand: int, max_operand: int) -> bool:
+    return max_operand >= 2 * max(2, min_operand)

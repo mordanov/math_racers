@@ -94,6 +94,10 @@ class AvatarListItem(BaseModel):
     created_at: datetime
 
 
+class AvatarCatalogItem(BaseModel):
+    portrait_url: str
+
+
 class AvatarDetailResponse(BaseModel):
     avatar_id: uuid.UUID
     species: str

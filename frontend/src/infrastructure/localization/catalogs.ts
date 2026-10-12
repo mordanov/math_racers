@@ -65,6 +65,20 @@ const en = {
   'Profile name': 'Profile name',
   'New profile name': 'New profile name',
   Settings: 'Settings',
+  'Race Settings': 'Race Settings',
+  'Time per Problem': 'Time per Problem',
+  'Time remaining': 'Time remaining',
+  seconds: 'seconds',
+  '{{seconds}} seconds remaining': '{{seconds}} seconds remaining',
+  'Time limit applies to competitive races. Training stays untimed.':
+    'Time limit applies to competitive races. Training stays untimed.',
+  'This range cannot make a division problem with a quotient greater than one.':
+    'This range cannot make a division problem with a quotient greater than one.',
+  'Saved Tier 6 division range is invalid. Update it before racing.':
+    'Saved Tier 6 division range is invalid. Update it before racing.',
+  'Opponent portraits could not be loaded. Using built-in avatars.':
+    'Opponent portraits could not be loaded. Using built-in avatars.',
+  '{{runner}} avatar': '{{runner}} avatar',
   Audio: 'Audio',
   'Master Volume': 'Master Volume',
   'Music Volume': 'Music Volume',
@@ -359,6 +373,20 @@ const ru: Record<TranslationKey, string> = {
   'Profile name': 'Имя профиля',
   'New profile name': 'Имя нового профиля',
   Settings: 'Настройки',
+  'Race Settings': 'Настройки гонки',
+  'Time per Problem': 'Время на пример',
+  'Time remaining': 'Осталось времени',
+  seconds: 'секунд',
+  '{{seconds}} seconds remaining': 'Осталось {{seconds}} секунд',
+  'Time limit applies to competitive races. Training stays untimed.':
+    'Ограничение времени действует в соревновательных гонках. В тренировке таймера нет.',
+  'This range cannot make a division problem with a quotient greater than one.':
+    'Этот диапазон не позволяет составить пример на деление с частным больше единицы.',
+  'Saved Tier 6 division range is invalid. Update it before racing.':
+    'Сохранённый диапазон деления для уровня 6 недопустим. Измените его перед гонкой.',
+  'Opponent portraits could not be loaded. Using built-in avatars.':
+    'Не удалось загрузить портреты соперников. Используются встроенные аватары.',
+  '{{runner}} avatar': 'Аватар: {{runner}}',
   Audio: 'Звук',
   'Master Volume': 'Общая громкость',
   'Music Volume': 'Громкость музыки',
@@ -654,6 +682,20 @@ const es: Record<TranslationKey, string> = {
   'Profile name': 'Nombre del perfil',
   'New profile name': 'Nombre del nuevo perfil',
   Settings: 'Ajustes',
+  'Race Settings': 'Ajustes de carrera',
+  'Time per Problem': 'Tiempo por problema',
+  'Time remaining': 'Tiempo restante',
+  seconds: 'segundos',
+  '{{seconds}} seconds remaining': 'Quedan {{seconds}} segundos',
+  'Time limit applies to competitive races. Training stays untimed.':
+    'El límite se aplica a las carreras competitivas. El entrenamiento no tiene temporizador.',
+  'This range cannot make a division problem with a quotient greater than one.':
+    'Este rango no permite crear una división con cociente mayor que uno.',
+  'Saved Tier 6 division range is invalid. Update it before racing.':
+    'El rango de división guardado para el nivel 6 no es válido. Actualízalo antes de correr.',
+  'Opponent portraits could not be loaded. Using built-in avatars.':
+    'No se pudieron cargar los retratos de los oponentes. Se usarán avatares integrados.',
+  '{{runner}} avatar': 'Avatar de {{runner}}',
   Audio: 'Audio',
   'Master Volume': 'Volumen general',
   'Music Volume': 'Volumen de la música',
